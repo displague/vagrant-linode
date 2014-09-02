@@ -1,18 +1,18 @@
-require 'vagrant-digitalocean/actions/check_state'
-require 'vagrant-digitalocean/actions/create'
-require 'vagrant-digitalocean/actions/destroy'
-require 'vagrant-digitalocean/actions/power_off'
-require 'vagrant-digitalocean/actions/power_on'
-require 'vagrant-digitalocean/actions/rebuild'
-require 'vagrant-digitalocean/actions/reload'
-require 'vagrant-digitalocean/actions/setup_user'
-require 'vagrant-digitalocean/actions/setup_sudo'
-require 'vagrant-digitalocean/actions/setup_key'
-require 'vagrant-digitalocean/actions/sync_folders'
-require 'vagrant-digitalocean/actions/modify_provision_path'
+require 'vagrant-linode/actions/check_state'
+require 'vagrant-linode/actions/create'
+require 'vagrant-linode/actions/destroy'
+require 'vagrant-linode/actions/power_off'
+require 'vagrant-linode/actions/power_on'
+require 'vagrant-linode/actions/rebuild'
+require 'vagrant-linode/actions/reload'
+require 'vagrant-linode/actions/setup_user'
+require 'vagrant-linode/actions/setup_sudo'
+require 'vagrant-linode/actions/setup_key'
+require 'vagrant-linode/actions/sync_folders'
+require 'vagrant-linode/actions/modify_provision_path'
 
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Actions
       include Vagrant::Action::Builtin
 
@@ -22,7 +22,7 @@ module VagrantPlugins
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]
             when :not_created
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.not_created')
+              env[:ui].info I18n.t('vagrant_linode.info.not_created')
             else
               b.use Call, DestroyConfirm do |env2, b2|
                 if env2[:result]
@@ -43,9 +43,9 @@ module VagrantPlugins
             when :active
               b.use SSHExec
             when :off
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.off')
+              env[:ui].info I18n.t('vagrant_linode.info.off')
             when :not_created
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.not_created')
+              env[:ui].info I18n.t('vagrant_linode.info.not_created')
             end
           end
         end
@@ -59,9 +59,9 @@ module VagrantPlugins
             when :active
               b.use SSHRun
             when :off
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.off')
+              env[:ui].info I18n.t('vagrant_linode.info.off')
             when :not_created
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.not_created')
+              env[:ui].info I18n.t('vagrant_linode.info.not_created')
             end
           end
         end
@@ -77,9 +77,9 @@ module VagrantPlugins
               b.use ModifyProvisionPath
               b.use SyncFolders
             when :off
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.off')
+              env[:ui].info I18n.t('vagrant_linode.info.off')
             when :not_created
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.not_created')
+              env[:ui].info I18n.t('vagrant_linode.info.not_created')
             end
           end
         end
@@ -91,7 +91,7 @@ module VagrantPlugins
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]
             when :active
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.already_active')
+              env[:ui].info I18n.t('vagrant_linode.info.already_active')
             when :off
               b.use PowerOn
               b.use provision
@@ -114,9 +114,9 @@ module VagrantPlugins
             when :active
               b.use PowerOff
             when :off
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.already_off')
+              env[:ui].info I18n.t('vagrant_linode.info.already_off')
             when :not_created
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.not_created')
+              env[:ui].info I18n.t('vagrant_linode.info.not_created')
             end
           end
         end
@@ -131,9 +131,9 @@ module VagrantPlugins
               b.use Reload
               b.use provision
             when :off
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.off')
+              env[:ui].info I18n.t('vagrant_linode.info.off')
             when :not_created
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.not_created')
+              env[:ui].info I18n.t('vagrant_linode.info.not_created')
             end
           end
         end
@@ -150,7 +150,7 @@ module VagrantPlugins
               b.use SetupUser
               b.use provision
             when :not_created
-              env[:ui].info I18n.t('vagrant_digital_ocean.info.not_created')
+              env[:ui].info I18n.t('vagrant_linode.info.not_created')
             end
           end
         end

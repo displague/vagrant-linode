@@ -2,13 +2,13 @@ require 'vagrant/util/subprocess'
 require 'vagrant/util/which'
 
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Actions
       class SyncFolders
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @logger = Log4r::Logger.new('vagrant::digitalocean::sync_folders')
+          @logger = Log4r::Logger.new('vagrant::linode::sync_folders')
         end
 
         def call(env)
@@ -39,7 +39,7 @@ module VagrantPlugins
               hostpath = hostpath.gsub(/^(\w):/) { "/cygdrive/#{$1}" }
             end
 
-            env[:ui].info I18n.t('vagrant_digital_ocean.info.rsyncing', {
+            env[:ui].info I18n.t('vagrant_linode.info.rsyncing', {
               :hostpath => hostpath,
               :guestpath => guestpath
             })

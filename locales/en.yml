@@ -1,18 +1,18 @@
 en:
-  vagrant_digital_ocean:
+  vagrant_linode:
     info:
-      off: "Droplet is off"
-      not_created: "Droplet has not been created"
-      already_active: "Droplet is already active"
-      already_off: "Droplet is already off"
-      creating: "Creating a new droplet..."
-      droplet_ip: "Assigned IP address: %{ip}"
-      droplet_private_ip: "Private IP address: %{ip}"
-      destroying: "Destroying the droplet..."
-      powering_off: "Powering off the droplet..."
-      powering_on: "Powering on the droplet..."
-      rebuilding: "Rebuilding the droplet..."
-      reloading: "Rebooting the droplet..."
+      off: "Linode is off"
+      not_created: "Linode has not been created"
+      already_active: "Linode is already active"
+      already_off: "Linode is already off"
+      creating: "Creating a new linode..."
+      linode_ip: "Assigned IP address: %{ip}"
+      linode_private_ip: "Private IP address: %{ip}"
+      destroying: "Destroying the linode..."
+      powering_off: "Powering off the linode..."
+      powering_on: "Powering on the linode..."
+      rebuilding: "Rebuilding the linode..."
+      reloading: "Rebooting the linode..."
       creating_user: "Creating user account: %{user}..."
       modifying_sudo: "Modifying sudoers file to remove tty requirement..."
       using_key: "Using existing SSH key: %{name}"
@@ -32,7 +32,7 @@ en:
 
         Please check the file's permissions.
       api_status: |-
-        There was an issue with the request made to the Digital Ocean
+        There was an issue with the request made to the Linode
         API at:
 
         Path: %{path}
@@ -50,7 +50,7 @@ en:
         Guest path: %{guestpath}
         Error: %{stderr}
       json: |-
-        There was an issue with the JSON response from the Digital Ocean
+        There was an issue with the JSON response from the Linode
         API at:
 
         Path: %{path}
@@ -69,11 +69,11 @@ en:
 
         Please ensure that the configured value exists in the collection.
       certificate: |-
-        The secure connection to the Digital Ocean API has failed. Please
+        The secure connection to the Linode API has failed. Please
         ensure that your local certificates directory is defined in the
         provider config.
 
-            config.vm.provider :digital_ocean do |vm|
+            config.vm.provider :linode do |vm|
               vm.ca_path = "/path/to/ssl/ca/cert.crt"
             end
 
@@ -81,4 +81,4 @@ en:
         with the Ruby install being unaware of the system specific ca
         certs.
       local_ip: |-
-        The Digital Ocean provider was unable to determine the host's IP.
+        The Linode provider was unable to determine the host's IP.

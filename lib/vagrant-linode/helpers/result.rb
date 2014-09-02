@@ -1,5 +1,5 @@
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Helpers
       class Result
         def initialize(body)

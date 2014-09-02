@@ -1,5 +1,5 @@
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     class Config < Vagrant.plugin('2', :config)
       attr_accessor :token
       attr_accessor :image
@@ -42,19 +42,19 @@ module VagrantPlugins
 
       def validate(machine)
         errors = []
-        errors << I18n.t('vagrant_digital_ocean.config.token') if !@token
+        errors << I18n.t('vagrant_linode.config.token') if !@token
 
         key = machine.config.ssh.private_key_path
         key = key[0] if key.is_a?(Array)
         if !key
-          errors << I18n.t('vagrant_digital_ocean.config.private_key')
+          errors << I18n.t('vagrant_linode.config.private_key')
         elsif !File.file?(File.expand_path("#{key}.pub", machine.env.root_path))
-          errors << I18n.t('vagrant_digital_ocean.config.public_key', {
+          errors << I18n.t('vagrant_linode.config.public_key', {
             :key => "#{key}.pub"
           })
         end
 
-        { 'Digital Ocean Provider' => errors }
+        { 'Linode Provider' => errors }
       end
     end
   end

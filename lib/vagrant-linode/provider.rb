@@ -1,41 +1,41 @@
-require 'vagrant-digitalocean/actions'
+require 'vagrant-linode/actions'
 
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     class Provider < Vagrant.plugin('2', :provider)
 
-      # This class method caches status for all droplets within
-      # the Digital Ocean account. A specific droplet's status
+      # This class method caches status for all linodes within
+      # the Linode account. A specific linode's status
       # may be refreshed by passing :refresh => true as an option.
-      def self.droplet(machine, opts = {})
+      def self.linode(machine, opts = {})
         client = Helpers::ApiClient.new(machine)
 
-        # load status of droplets if it has not been done before
-        if !@droplets
-          result = client.request('/v2/droplets')
-          @droplets = result['droplets']
+        # load status of linodes if it has not been done before
+        if !@linodes
+          result = client.request('/v2/linodes')
+          @linodes = result['linodes']
         end
 
         if opts[:refresh] && machine.id
-          # refresh the droplet status for the given machine
-          @droplets.delete_if { |d| d['id'].to_s == machine.id }
-          result = client.request("/v2/droplets/#{machine.id}")
-          @droplets << droplet = result['droplet']
+          # refresh the linode status for the given machine
+          @linodes.delete_if { |d| d['id'].to_s == machine.id }
+          result = client.request("/v2/linodes/#{machine.id}")
+          @linodes << linode = result['linode']
         else
-          # lookup droplet status for the given machine
-          droplet = @droplets.find { |d| d['id'].to_s == machine.id }
+          # lookup linode status for the given machine
+          linode = @linodes.find { |d| d['id'].to_s == machine.id }
         end
 
-        # if lookup by id failed, check for a droplet with a matching name
+        # if lookup by id failed, check for a linode with a matching name
         # and set the id to ensure vagrant stores locally
         # TODO allow the user to configure this behavior
-        if !droplet
+        if !linode
           name = machine.config.vm.hostname || machine.name
-          droplet = @droplets.find { |d| d['name'] == name.to_s }
-          machine.id = droplet['id'].to_s if droplet
+          linode = @linodes.find { |d| d['name'] == name.to_s }
+          machine.id = linode['id'].to_s if linode
         end
 
-        droplet ||= {'status' => 'not_created'}
+        linode ||= {'status' => 'not_created'}
       end
 
       def initialize(machine)
@@ -75,11 +75,11 @@ module VagrantPlugins
       # `ssh` prompt with a password, whereas we can pass a private key
       # via commandline.
       def ssh_info
-        droplet = Provider.droplet(@machine)
+        linode = Provider.linode(@machine)
 
-        return nil if droplet['status'].to_sym != :active
+        return nil if linode['status'].to_sym != :active
 
-        public_network = droplet['networks']['v4'].find { |network| network['type'] == 'public' }
+        public_network = linode['networks']['v4'].find { |network| network['type'] == 'public' }
 
         return {
           :host => public_network['ip_address'],
@@ -93,7 +93,7 @@ module VagrantPlugins
       # The state must be an instance of {MachineState}. Please read the
       # documentation of that class for more information.
       def state
-        state = Provider.droplet(@machine)['status'].to_sym
+        state = Provider.linode(@machine)['status'].to_sym
         long = short = state.to_s
         Vagrant::MachineState.new(state, short, long)
       end

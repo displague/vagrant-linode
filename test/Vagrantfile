@@ -1,4 +1,4 @@
-Vagrant.require_plugin('vagrant-digitalocean')
+Vagrant.require_plugin('vagrant-linode')
 Vagrant.require_plugin('vagrant-omnibus')
 
 Vagrant.configure('2') do |config|
@@ -9,9 +9,9 @@ Vagrant.configure('2') do |config|
 
   config.vm.synced_folder '.', '/vagrant', :disabled => true
 
-  config.vm.provider :digital_ocean do |provider, override|
-    override.vm.box = 'digital_ocean'
-    override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+  config.vm.provider :linode do |provider, override|
+    override.vm.box = 'linode'
+    override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
     provider.token = ENV['DO_TOKEN']
     provider.ssh_key_name = 'Test Key'
   end
@@ -24,14 +24,14 @@ Vagrant.configure('2') do |config|
   end
 
   config.vm.define :ubuntu do |ubuntu|
-    ubuntu.vm.provider :digital_ocean do |provider|
-      provider.image = 'Ubuntu 14.04 x64'
+    ubuntu.vm.provider :linode do |provider|
+      provider.image = 'Ubuntu 14.04 LTS'
     end
   end
 
   config.vm.define :centos do |centos|
-    centos.vm.provider :digital_ocean do |provider|
-      provider.image = 'CentOS 6.4 x64'
+    centos.vm.provider :linode do |provider|
+      provider.image = 'CentOS 7'
     end
   end
 end

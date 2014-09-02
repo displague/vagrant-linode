@@ -1,11 +1,11 @@
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Actions
       class CheckState
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @logger = Log4r::Logger.new('vagrant::digitalocean::check_state')
+          @logger = Log4r::Logger.new('vagrant::linode::check_state')
         end
 
         def call(env)

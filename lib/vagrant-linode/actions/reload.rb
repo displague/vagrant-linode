@@ -1,7 +1,7 @@
-require 'vagrant-digitalocean/helpers/client'
+require 'vagrant-linode/helpers/client'
 
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Actions
       class Reload
         include Helpers::Client
@@ -10,17 +10,17 @@ module VagrantPlugins
           @app = app
           @machine = env[:machine]
           @client = client
-          @logger = Log4r::Logger.new('vagrant::digitalocean::reload')
+          @logger = Log4r::Logger.new('vagrant::linode::reload')
         end
 
         def call(env)
-          # submit reboot droplet request
-          result = @client.post("/v2/droplets/#{@machine.id}/actions", {
+          # submit reboot linode request
+          result = @client.post("/v2/linodes/#{@machine.id}/actions", {
             :type => 'reboot'
           })
 
           # wait for request to complete
-          env[:ui].info I18n.t('vagrant_digital_ocean.info.reloading')
+          env[:ui].info I18n.t('vagrant_linode.info.reloading')
           @client.wait_for_event(env, result['action']['id'])
 
           @app.call(env)

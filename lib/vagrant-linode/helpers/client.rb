@@ -1,9 +1,9 @@
-require 'vagrant-digitalocean/helpers/result'
+require 'vagrant-linode/helpers/result'
 require 'faraday'
 require 'json'
 
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Helpers
       module Client
         def client
@@ -15,10 +15,10 @@ module VagrantPlugins
         include Vagrant::Util::Retryable
 
         def initialize(machine)
-          @logger = Log4r::Logger.new('vagrant::digitalocean::apiclient')
+          @logger = Log4r::Logger.new('vagrant::linode::apiclient')
           @config = machine.provider_config
           @client = Faraday.new({
-            :url => 'https://api.digitalocean.com/',
+            :url => 'https://api.linode.com/',
             :ssl => {
               :ca_file => @config.ca_path
             }

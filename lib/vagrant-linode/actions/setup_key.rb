@@ -1,7 +1,7 @@
-require 'vagrant-digitalocean/helpers/client'
+require 'vagrant-linode/helpers/client'
 
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Actions
       class SetupKey
         include Helpers::Client
@@ -10,7 +10,7 @@ module VagrantPlugins
           @app = app
           @machine = env[:machine]
           @client = client
-          @logger = Log4r::Logger.new('vagrant::digitalocean::setup_key')
+          @logger = Log4r::Logger.new('vagrant::linode::setup_key')
         end
 
         # TODO check the content of the key to see if it has changed
@@ -23,7 +23,7 @@ module VagrantPlugins
               .request('/v2/account/keys')
               .find_id(:ssh_keys, :name => ssh_key_name)
 
-            env[:ui].info I18n.t('vagrant_digital_ocean.info.using_key', {
+            env[:ui].info I18n.t('vagrant_linode.info.using_key', {
               :name => ssh_key_name
             })
           rescue Errors::ResultMatchError
@@ -40,9 +40,9 @@ module VagrantPlugins
           path = @machine.config.ssh.private_key_path
           path = path[0] if path.is_a?(Array)
           path = File.expand_path(path, @machine.env.root_path)
-          pub_key = DigitalOcean.public_key(path)
+          pub_key = Linode.public_key(path)
 
-          env[:ui].info I18n.t('vagrant_digital_ocean.info.creating_key', {
+          env[:ui].info I18n.t('vagrant_linode.info.creating_key', {
             :name => name
           }) 
 

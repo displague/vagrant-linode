@@ -1,18 +1,18 @@
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     class Plugin < Vagrant.plugin('2')
-      name 'DigitalOcean'
+      name 'Linode'
       description <<-DESC
         This plugin installs a provider that allows Vagrant to manage
-        machines using DigitalOcean's API.
+        machines using Linode's API.
       DESC
 
-      config(:digital_ocean, :provider) do
+      config(:linode, :provider) do
         require_relative 'config'
         Config
       end
 
-      provider(:digital_ocean) do
+      provider(:linode) do
         require_relative 'provider'
         Provider
       end

@@ -5,7 +5,7 @@ gem 'vagrant-omnibus'
 gem 'rake'
 
 group :plugins do
-  gem 'vagrant-digitalocean', :path => '.'
+  gem 'vagrant-linode', :path => '.'
 end
 
 gemspec

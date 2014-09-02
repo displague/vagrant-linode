@@ -1,7 +1,7 @@
 require 'optparse'
 
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Commands
       class Rebuild < Vagrant.plugin('2', :command)
         def execute

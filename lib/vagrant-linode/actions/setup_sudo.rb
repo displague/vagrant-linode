@@ -1,11 +1,11 @@
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Actions
       class SetupSudo
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @logger = Log4r::Logger.new('vagrant::digitalocean::setup_sudo')
+          @logger = Log4r::Logger.new('vagrant::linode::setup_sudo')
         end
 
         def call(env)
@@ -22,7 +22,7 @@ module VagrantPlugins
 
           case guest_name
           when /redhat/
-            env[:ui].info I18n.t('vagrant_digital_ocean.info.modifying_sudo')
+            env[:ui].info I18n.t('vagrant_linode.info.modifying_sudo')
 
             # disable tty requirement for sudo
             @machine.communicate.execute(<<-'BASH')

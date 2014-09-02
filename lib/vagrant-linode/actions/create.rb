@@ -1,7 +1,7 @@
-require 'vagrant-digitalocean/helpers/client'
+require 'vagrant-linode/helpers/client'
 
 module VagrantPlugins
-  module DigitalOcean
+  module Linode
     module Actions
       class Create
         include Helpers::Client
@@ -11,7 +11,7 @@ module VagrantPlugins
           @app = app
           @machine = env[:machine]
           @client = client
-          @logger = Log4r::Logger.new('vagrant::digitalocean::create')
+          @logger = Log4r::Logger.new('vagrant::linode::create')
         end
 
         def call(env)
@@ -21,8 +21,8 @@ module VagrantPlugins
             .request('/v2/images')
             .find_id(:images, :name => @machine.provider_config.image)
 
-          # submit new droplet request
-          result = @client.post('/v2/droplets', {
+          # submit new linode request
+          result = @client.post('/v2/linodes', {
             :size => @machine.provider_config.size,
             :region => @machine.provider_config.region,
             :image => image_id,
@@ -34,21 +34,21 @@ module VagrantPlugins
           })
 
           # wait for request to complete
-          env[:ui].info I18n.t('vagrant_digital_ocean.info.creating') 
+          env[:ui].info I18n.t('vagrant_linode.info.creating') 
           @client.wait_for_event(env, result['links']['actions'].first['id'])
 
           # assign the machine id for reference in other commands
-          @machine.id = result['droplet']['id'].to_s
+          @machine.id = result['linode']['id'].to_s
 
-          # refresh droplet state with provider and output ip address
-          droplet = Provider.droplet(@machine, :refresh => true)
-          public_network = droplet['networks']['v4'].find { |network| network['type'] == 'public' }
-          private_network = droplet['networks']['v4'].find { |network| network['type'] == 'private' }
-          env[:ui].info I18n.t('vagrant_digital_ocean.info.droplet_ip', {
+          # refresh linode state with provider and output ip address
+          linode = Provider.linode(@machine, :refresh => true)
+          public_network = linode['networks']['v4'].find { |network| network['type'] == 'public' }
+          private_network = linode['networks']['v4'].find { |network| network['type'] == 'private' }
+          env[:ui].info I18n.t('vagrant_linode.info.linode_ip', {
             :ip => public_network['ip_address']
           })
           if private_network
-            env[:ui].info I18n.t('vagrant_digital_ocean.info.droplet_private_ip', {
+            env[:ui].info I18n.t('vagrant_linode.info.linode_private_ip', {
               :ip => private_network['ip_address']
             })
           end
