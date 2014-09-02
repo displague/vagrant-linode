@@ -1,5 +1,5 @@
 require 'vagrant-linode/helpers/result'
-require 'faraday'
+require 'linode'
 require 'json'
 
 module VagrantPlugins
@@ -17,11 +17,8 @@ module VagrantPlugins
         def initialize(machine)
           @logger = Log4r::Logger.new('vagrant::linode::apiclient')
           @config = machine.provider_config
-          @client = Faraday.new({
-            :url => 'https://api.linode.com/',
-            :ssl => {
-              :ca_file => @config.ca_path
-            }
+          @client = Linode.new({
+            :api_key => @config.token
           })
         end
 
