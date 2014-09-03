@@ -22,16 +22,35 @@ module VagrantPlugins
             .find_id(:images, :name => @machine.provider_config.image)
 
           # submit new linode request
-          result = @client.post('/v2/linodes', {
-            :size => @machine.provider_config.size,
-            :region => @machine.provider_config.region,
-            :image => image_id,
-            :name => @machine.config.vm.hostname || @machine.name,
+          result = @client.linode.create(
+            :planid => @machine.provider_config.size || @client.avail.linodeplans.first['planid'],
+            :datacenterid => @machine.provider_config.region,
+            :paymentterm => @machine.provider_config.billing || 1
+          );
+
+          sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => result['jobid']).length
+          
+          disk = @client.linode.disk.createfromdistribution(
+            :linodeid => result.linodeid,
+            :label => 'disk',
+            :type => 'ext4',
+            :size => 
+            :rootSSHKey => ssh_key_id
+          )
+
+          config = @client.linode.config.create(
+            :linodeid => result['linodeid'],
+            :label => 'Config',
+            :disklist => "#{disk['diskid']}"
+          )
+          result = @client.linode.update(
+            :linodeid => result.linodeid,
+            :label => @machine.config.vm.hostname || @machine.name
             :ssh_keys => ssh_key_id,
             :private_networking => @machine.provider_config.private_networking,
             :backups => @machine.provider_config.backups_enabled,
             :ipv6 => @machine.provider_config.ipv6
-          })
+          )
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_linode.info.creating') 
