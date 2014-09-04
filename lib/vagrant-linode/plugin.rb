@@ -12,7 +12,7 @@ module VagrantPlugins
         Config
       end
 
-      provider(:linode) do
+      provider(:linode, parallel: true) do
         require_relative 'provider'
         Provider
       end
