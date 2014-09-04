@@ -12,18 +12,23 @@ module VagrantPlugins
 
         # load status of linodes if it has not been done before
         if !@linodes
-          result = client.request('/v2/linodes')
-          @linodes = result['linodes']
-        end
+          @linodes = client.linodes.list.each { |l| l.network = [] }
+	  network = client.linode.ip.list()
+	  network.each do |n|
+	    _linode = @linodes.find { |l| l.linodeid == n.linodeid } 
+            _linode.network << n
+          end
+	end
 
         if opts[:refresh] && machine.id
           # refresh the linode status for the given machine
-          @linodes.delete_if { |d| d['id'].to_s == machine.id }
-          result = client.request("/v2/linodes/#{machine.id}")
-          @linodes << linode = result['linode']
+          @linodes.delete_if { |d| d['linodeid'].to_s == machine.id }
+          linode = client.linodes.list(:linodeid => machine.id).first
+	  linode.network = client.linodes.ip.list :linodeid => linode['linodeid']
+          @linodes << linode
         else
           # lookup linode status for the given machine
-          linode = @linodes.find { |d| d['id'].to_s == machine.id }
+          linode = @linodes.find { |d| d['linodeid'].to_s == machine.id }
         end
 
         # if lookup by id failed, check for a linode with a matching name
@@ -31,11 +36,11 @@ module VagrantPlugins
         # TODO allow the user to configure this behavior
         if !linode
           name = machine.config.vm.hostname || machine.name
-          linode = @linodes.find { |d| d['name'] == name.to_s }
-          machine.id = linode['id'].to_s if linode
+          linode = @linodes.find { |d| d['label'] == name.to_s }
+          machine.id = linode['linodeid'].to_s if linode
         end
 
-        linode ||= {'status' => 'not_created'}
+        linode ||= {'status' => 0}
       end
 
       def initialize(machine)
@@ -79,10 +84,10 @@ module VagrantPlugins
 
         return nil if linode['status'].to_sym != :active
 
-        public_network = linode['networks']['v4'].find { |network| network['type'] == 'public' }
+        public_network = linode.network.find { |network| network['ispublic'] == 1 }
 
         return {
-          :host => public_network['ip_address'],
+          :host => public_network['ipaddress'],
           :port => '22',
           :username => 'root',
           :private_key_path => nil
