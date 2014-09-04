@@ -34,7 +34,7 @@ module VagrantPlugins
             :linodeid => result.linodeid,
             :label => 'disk',
             :type => 'ext4',
-            :size => 
+            :size => 1024,
             :rootSSHKey => ssh_key_id
           )
 
@@ -43,6 +43,7 @@ module VagrantPlugins
             :label => 'Config',
             :disklist => "#{disk['diskid']}"
           )
+
           result = @client.linode.update(
             :linodeid => result.linodeid,
             :label => @machine.config.vm.hostname || @machine.name
