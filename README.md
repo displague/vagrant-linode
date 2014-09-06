@@ -56,12 +56,12 @@ Vagrant.configure('2') do |config|
   config.vm.provider :linode do |provider, override|
     override.ssh.private_key_path = '~/.ssh/id_rsa'
     override.vm.box = 'linode'
-    override.vm.box_url = "https://github.com/smdahlen/vagrant-linode/raw/master/box/linode.box"
+    override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
 
     provider.token = 'YOUR TOKEN'
     provider.image = 'Ubuntu 14.04 x64'
-    provider.region = 'nyc2'
-    provider.size = '512mb'
+    provider.datacenter = 'newark'
+    provider.plan = '1024'
   end
 end
 ```
@@ -106,28 +106,26 @@ attribute is `true`.
 Each region has been specify with slug name.  
 Current Region-slug table is:
 
-| slug | Region Name     |
-|:---- |:----------------|
-| nyc1 | New York 1      |
-| ams1 | Amsterdam 1     |
-| sfo1 | San Francisco 1 |
-| nyc2 | New York 2      |
-| ams2 | Amsterdam 2     |
-| sgp1 | Singapore 1     |
-| lon1 | London 1        |
-| nyc3 | New York 3      |
+| slug    | Region Name         |
+|:----    |:--------------------|
+| dallas  | Dallas, TX, USA     |
+| fremont | Fremont, CA, USA    |
+| atlanta | Atlanta, GA, USA    |
+| newark  | Newark, NJ, USA     |
+| london  | London, England, UK |
+| tokyo   | Tokyo, JP           |
 
 You can find latest region slug name using Linode API V2 call.
 
 - example call.
 
 ```
-curl -X GET "https://api.linode.com/v2/regions" \
-     -H "Authorization: Bearer $DIGITAL_OCEAN_TOKEN" \
-     2>/dev/null | jq '.regions [] | .slug,.name'
+curl -X POST "https://api.linode.com/?api_action=avail.datacenters" \
+     --data-ascii api_key="$LINODE_API_KEY" \
+     2>/dev/null | jq '.DATA [] | .ABBR,.LOCATION'
 ```
 
-More detail: [Linode API - Regions](https://developers.linode.com/#regions)
+More detail: [Linode API - Datacenters](https://www.linode.com/api/utility/avail.datacenters)
 
 Run
 ---
