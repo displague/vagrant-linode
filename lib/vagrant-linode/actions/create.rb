@@ -46,7 +46,7 @@ module VagrantPlugins
 
           result = @client.linode.update(
             :linodeid => result.linodeid,
-            :label => @machine.config.vm.hostname || @machine.name
+            :label => @machine.config.vm.hostname || @machine.name,
             :ssh_keys => ssh_key_id,
             :private_networking => @machine.provider_config.private_networking,
             :backups => @machine.provider_config.backups_enabled,
