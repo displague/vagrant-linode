@@ -61,7 +61,7 @@ Vagrant.configure('2') do |config|
     provider.token = 'API_KEY'
     provider.image = 'Ubuntu 14.04 LTS'
     provider.datacenter = '6'
-    provider.plan = '1024'
+    provider.plan = '1'
   end
 end
 ```
@@ -100,6 +100,24 @@ The following attributes are available to further configure the provider:
 The provider will create a new user account with the specified SSH key for
 authorization if `config.ssh.username` is set and the `provider.setup`
 attribute is `true`.
+
+### provider.size id
+
+Each Linode Tier has been assigned a Plan Identifcation Number.
+Current Plan-ID table follows:
+
+| ID      | Plan Size                 |
+|:------- |:------------------------- |
+|    1    |  1GB Plan (Linode 1024)   |
+|    2    |  2GB Plan (Linode 2048)   |
+|    4    |  4GB Plan (Linode 4096)   |
+|    6    |  8GB Plan (Linode 8192)   |
+|    7    | 16GB Plan (Linode 16384)  |
+|    8    | 32GB Plan (Linode 32768)  |
+|    9    | 48GB Plan (Linode 49152)  |
+|   10    | 64GB Plan (Linode 65536)  |
+|   12    | 96GB Plan (Linode 98304)  |
+
 
 ### provider.region ID 
 
