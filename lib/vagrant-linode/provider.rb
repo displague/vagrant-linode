@@ -8,23 +8,18 @@ module VagrantPlugins
       # the Linode account. A specific linode's status
       # may be refreshed by passing :refresh => true as an option.
       def self.linode(machine, opts = {})
-        client = Helpers::ApiClient.new(machine)
+        client = Helpers::ApiClient.new(machine).client
 
         # load status of linodes if it has not been done before
         if !@linodes
-          @linodes = client.linodes.list.each { |l| l.network = [] }
-	  network = client.linode.ip.list()
-	  network.each do |n|
-	    _linode = @linodes.find { |l| l.linodeid == n.linodeid } 
-            _linode.network << n
-          end
+          @linodes = client.linode.list.each { |l| l.network = client.linode.ip.list :linodeid => l.linodeid }
 	end
 
         if opts[:refresh] && machine.id
           # refresh the linode status for the given machine
           @linodes.delete_if { |d| d['linodeid'].to_s == machine.id }
-          linode = client.linodes.list(:linodeid => machine.id).first
-	  linode.network = client.linodes.ip.list :linodeid => linode['linodeid']
+          linode = client.linode.list(:linodeid => machine.id).first
+	  linode.network = client.linode.ip.list :linodeid => linode['linodeid']
           @linodes << linode
         else
           # lookup linode status for the given machine
@@ -98,7 +93,7 @@ module VagrantPlugins
       # The state must be an instance of {MachineState}. Please read the
       # documentation of that class for more information.
       def state
-        state = Provider.linode(@machine)['status'].to_sym
+        state = Provider.linode(@machine)['status']
         long = short = state.to_s
         Vagrant::MachineState.new(state, short, long)
       end
