@@ -7,7 +7,9 @@ module VagrantPlugins
     module Helpers
       module Client
         def client
-          @client ||= ApiClient.new(@machine)
+	    ::Linode.new({
+	      :api_key => @machine.provider_config.token
+	    })
         end
       end
 
@@ -17,10 +19,14 @@ module VagrantPlugins
         def initialize(machine)
           @logger = Log4r::Logger.new('vagrant::linode::apiclient')
           @config = machine.provider_config
-          @client = Linode.new({
+          @client = ::Linode.new({
             :api_key => @config.token
           })
         end
+
+	def client
+	   @client
+	end
 
         def delete(path, params = {}, method = :delete)
           @client.request :url_encoded
