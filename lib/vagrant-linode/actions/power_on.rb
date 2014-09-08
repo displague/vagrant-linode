@@ -15,13 +15,13 @@ module VagrantPlugins
 
         def call(env)
           # submit power on linode request
-          result = @client.post("/v2/linodes/#{@machine.id}/actions", {
-            :type => 'power_on'
+          result = @client.linode.boot({
+            :linodeid => machine.id
           })
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_linode.info.powering_on') 
-          @client.wait_for_event(env, result['action']['id'])
+          @client.wait_for_event(env, result['JobID'])
 
           # refresh linode state with provider
           Provider.linode(@machine, :refresh => true)
