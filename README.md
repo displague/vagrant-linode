@@ -58,9 +58,9 @@ Vagrant.configure('2') do |config|
     override.vm.box = 'linode'
     override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
 
-    provider.token = 'YOUR TOKEN'
-    provider.image = 'Ubuntu 14.04 x64'
-    provider.datacenter = 'newark'
+    provider.token = 'API_KEY'
+    provider.image = 'Ubuntu 14.04 LTS'
+    provider.datacenter = '6'
     provider.plan = '1024'
   end
 end
@@ -101,21 +101,21 @@ The provider will create a new user account with the specified SSH key for
 authorization if `config.ssh.username` is set and the `provider.setup`
 attribute is `true`.
 
-### provider.region slug
+### provider.region ID 
 
-Each region has been specify with slug name.  
-Current Region-slug table is:
+Each region has been specified with a Data Center ID.  
+Current Region-ID table is:
 
-| slug    | Region Name         |
-|:----    |:--------------------|
-| dallas  | Dallas, TX, USA     |
-| fremont | Fremont, CA, USA    |
-| atlanta | Atlanta, GA, USA    |
-| newark  | Newark, NJ, USA     |
-| london  | London, England, UK |
-| tokyo   | Tokyo, JP           |
+| ID      | Location            |
+|:------- |:--------------------|
+|   4     | Atlanta, GA, USA    |
+|   2     | Dallas, TX, USA     |
+|   3     | Fremont, CA, USA    |
+|   7     | London, England, UK |
+|   6     | Newark, NJ, USA     |
+|   8     | Tokyo, JP           |
 
-You can find latest region slug name using Linode API V2 call.
+You can find latest region ID number using Linode API call.
 
 - example call.
 
