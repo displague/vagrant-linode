@@ -2,12 +2,10 @@ module VagrantPlugins
   module Linode
     class Config < Vagrant.plugin('2', :config)
       attr_accessor :token
-      attr_accessor :image
-      attr_accessor :region
-      attr_accessor :size
+      attr_accessor :distribution
+      attr_accessor :datacenter
+      attr_accessor :plan
       attr_accessor :private_networking
-      attr_accessor :ipv6
-      attr_accessor :backups_enabled
       attr_accessor :ca_path
       attr_accessor :ssh_key_name
       attr_accessor :setup
@@ -16,12 +14,10 @@ module VagrantPlugins
 
       def initialize
         @token              = UNSET_VALUE
-        @image              = UNSET_VALUE
-        @region             = UNSET_VALUE
-        @size               = UNSET_VALUE
+        @distribution       = UNSET_VALUE
+        @datacenter         = UNSET_VALUE
+        @plan               = UNSET_VALUE
         @private_networking = UNSET_VALUE
-        @ipv6               = UNSET_VALUE
-        @backups_enable     = UNSET_VALUE
         @ca_path            = UNSET_VALUE
         @ssh_key_name       = UNSET_VALUE
         @setup              = UNSET_VALUE
@@ -29,12 +25,10 @@ module VagrantPlugins
 
       def finalize!
         @token              = ENV['LINODE_TOKEN'] if @token == UNSET_VALUE
-        @image              = 'Ubuntu 14.04 x64' if @image == UNSET_VALUE
-        @region             = 'nyc2' if @region == UNSET_VALUE
-        @size               = '512mb' if @size == UNSET_VALUE
+        @distribution       = 'Ubuntu 14.04 x64' if @distribution == UNSET_VALUE
+        @datacenter         = 'dallas' if @datacenter == UNSET_VALUE
+        @plan               = 'Linode 1024' if @plan == UNSET_VALUE
         @private_networking = false if @private_networking == UNSET_VALUE
-        @ipv6               = false if @ipv6 == UNSET_VALUE
-        @backups_enabled    = false if @backups_enabled == UNSET_VALUE
         @ca_path            = nil if @ca_path == UNSET_VALUE
         @ssh_key_name       = 'Vagrant' if @ssh_key_name == UNSET_VALUE
         @setup              = true if @setup == UNSET_VALUE
