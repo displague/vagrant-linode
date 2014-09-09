@@ -17,26 +17,56 @@ module VagrantPlugins
         def call(env)
           ssh_key_id = [env[:ssh_key_id]]
 
-          image_id = @client
-            .request('/v2/images')
-            .find_id(:images, :name => @machine.provider_config.image)
+          if @machine.provider_config.distribution
+            distributions = @client.avail.distributions
+            distribution_id = @machine.provider_config.distribution ? distributions.find { |d| d.label == @machine.provider_config.distribution } : nil # @todo throw if not found
+          else
+            distribution_id = @machine.provider_config.distributionid
+          end
+
+          if @machine.provider_config.datacenter
+            datacenters = @client.avail.datacenters
+            datacenter_id = @machine.provider_config.datacenter ? datacenters.find { |d| d.abbr == @machine.provider_config.datacenter } : nil # @todo throw if not found
+	  else
+            datacenter_id = @machine.provider_config.datacenterid
+          end
+
+          if @machine.provider_config.plan
+            plans = @client.avail.linodeplans
+            plan_id = @machine.provider_config.plan ? plans.find { |p| p.label == @machine.provider_config.plan } : nil # @todo throw if not found
+          else
+            plan_id = @machine.provider_config.planid
+          end
+
+          env[:ui].info I18n.t('vagrant_linode.info.creating')
 
           # submit new linode request
           result = @client.linode.create(
-            :planid => @machine.provider_config.size || @client.avail.linodeplans.first['planid'],
-            :datacenterid => @machine.provider_config.region,
-            :paymentterm => @machine.provider_config.billing || 1
+            :planid => @machine.provider_config.planid,
+            :datacenterid => @machine.provider_config.datacenterid,
+            :paymentterm => @machine.provider_config.paymentterm || 1
           );
+          env[:ui].info I18n.t('vagrant_linode.info.created', { :linodeid => result['linodeid'] })
 
           sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => result['jobid']).length
-          
-          disk = @client.linode.disk.createfromdistribution(
-            :linodeid => result.linodeid,
-            :label => 'disk',
-            :type => 'ext4',
-            :size => 1024,
-            :rootSSHKey => ssh_key_id
-          )
+
+          if distribution_id
+            disk = @client.linode.disk.createfromdistribution(
+              :linodeid => result.linodeid,
+              :distributionid => distribution_id,
+              :label => 'Vagrant Disk Distribution ' + distribution_id + ' Linode ' + result.linodeid,
+              :type => 'ext4',
+              :size => 1024,
+              :rootSSHKey => ssh_key_id
+            )
+          elsif image_id
+            disk = @client.linode.disk.createfromimage(
+              :linodeid => result.linodeid,
+              :imageid => image_id,
+              :size => 1024,
+              :rootSSHKey => ssh_key_id
+            )
+          end
 
           config = @client.linode.config.create(
             :linodeid => result['linodeid'],
@@ -44,26 +74,27 @@ module VagrantPlugins
             :disklist => "#{disk['diskid']}"
           )
 
+	  if @machine.provider_config.private_networking
+	    private_network = @client.linode.ip.addprivate :linodeid => result['linodeid']
+	  end
+
           result = @client.linode.update(
-            :linodeid => result.linodeid,
-            :label => @machine.config.vm.hostname || @machine.name,
-            :ssh_keys => ssh_key_id,
-            :private_networking => @machine.provider_config.private_networking,
-            :backups => @machine.provider_config.backups_enabled,
-            :ipv6 => @machine.provider_config.ipv6
+            :linodeid => result['linodeid'],
+            :label => @machine.config.vm.hostname || @machine.name
           )
 
-          # wait for request to complete
-          env[:ui].info I18n.t('vagrant_linode.info.creating') 
-          @client.wait_for_event(env, result['links']['actions'].first['id'])
+          env[:ui].info I18n.t('vagrant_linode.info.booting', {
+	    :linodeid => result['linodeid']
+	  })
+          sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => result['jobid']).length
 
           # assign the machine id for reference in other commands
-          @machine.id = result['linode']['id'].to_s
+          @machine.id = result['linodeid'].to_s
 
           # refresh linode state with provider and output ip address
           linode = Provider.linode(@machine, :refresh => true)
-          public_network = linode['networks']['v4'].find { |network| network['type'] == 'public' }
-          private_network = linode['networks']['v4'].find { |network| network['type'] == 'private' }
+          public_network = linode.networks.find { |network| network['ispublic'] == '1' }
+          # private_network = linode.networks.find { |network| network['ispublic'] == '0' }
           env[:ui].info I18n.t('vagrant_linode.info.linode_ip', {
             :ip => public_network['ip_address']
           })

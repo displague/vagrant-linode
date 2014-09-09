@@ -77,7 +77,7 @@ module VagrantPlugins
       def ssh_info
         linode = Provider.linode(@machine)
 
-        return nil if linode['status'].to_sym != :active
+        return nil if linode['status'] < 1
 
         public_network = linode.network.find { |network| network['ispublic'] == 1 }
 
