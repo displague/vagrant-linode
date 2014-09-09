@@ -19,21 +19,24 @@ module VagrantPlugins
 
           if @machine.provider_config.distribution
             distributions = @client.avail.distributions
-            distribution_id = @machine.provider_config.distribution ? distributions.find { |d| d.label == @machine.provider_config.distribution } : nil # @todo throw if not found
+            distribution = distributions.find { |d| d.label == @machine.provider_config.distribution }
+	    distribution_id = distribution.distributionid || nil # @todo throw if not found
           else
             distribution_id = @machine.provider_config.distributionid
           end
 
           if @machine.provider_config.datacenter
             datacenters = @client.avail.datacenters
-            datacenter_id = @machine.provider_config.datacenter ? datacenters.find { |d| d.abbr == @machine.provider_config.datacenter } : nil # @todo throw if not found
+            datacenter = datacenters.find { |d| d.abbr == @machine.provider_config.datacenter }
+	    datacenter_id = datacenter.datacenterid || nil # @todo throw if not found
 	  else
             datacenter_id = @machine.provider_config.datacenterid
           end
 
           if @machine.provider_config.plan
             plans = @client.avail.linodeplans
-            plan_id = @machine.provider_config.plan ? plans.find { |p| p.label == @machine.provider_config.plan } : nil # @todo throw if not found
+	    plan = plans.find { |p| p.label == @machine.provider_config.plan }
+	    plan_id = plan.planid || nil # @todo throw if not found
           else
             plan_id = @machine.provider_config.planid
           end
@@ -123,7 +126,7 @@ module VagrantPlugins
         # the Vagrant AWS provider up action
         def recover(env)
           return if env['vagrant.error'].is_a?(Vagrant::Errors::VagrantError)
-
+puts YAML::dump env
           if @machine.state.id != :not_created
             terminate(env)
           end
