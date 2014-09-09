@@ -89,14 +89,14 @@ module VagrantPlugins
         return Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
+	  case env[:machine_state]
             when :active
               env[:ui].info I18n.t('vagrant_linode.info.already_active')
             when :off
               b.use PowerOn
               b.use provision
-            when :not_created
-              b.use SetupKey
+            when 0
+              # b.use SetupKey # no access to ssh keys in linode api
               b.use Create
               b.use SetupSudo
               b.use SetupUser
