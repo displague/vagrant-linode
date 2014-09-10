@@ -16,8 +16,13 @@ module VagrantPlugins
 
         def call(env)
           ssh_key_id = [env[:ssh_key_id]]
-
-          if @machine.provider_config.distribution
+          if @machine.provider_config.root_pass
+            root_pass = @machine.provider_config.root_pass
+	  else
+            root_pass = Digest::SHA2.new.update(@machine.provider_config.api_key).to_s
+          end
+          
+	  if @machine.provider_config.distribution
             distributions = @client.avail.distributions
             distribution = distributions.find { |d| d.label == @machine.provider_config.distribution }
 	    distribution_id = distribution.distributionid || nil # @todo throw if not found
@@ -45,36 +50,39 @@ module VagrantPlugins
 
           # submit new linode request
           result = @client.linode.create(
-            :planid => @machine.provider_config.planid,
-            :datacenterid => @machine.provider_config.datacenterid,
+            :planid => plan_id,
+            :datacenterid => datacenter_id,
             :paymentterm => @machine.provider_config.paymentterm || 1
           );
           env[:ui].info I18n.t('vagrant_linode.info.created', { :linodeid => result['linodeid'] })
 
-          sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => result['jobid']).length
+	  print YAML::dump @client.linode.job.list(:linodeid => result['linodeid'], :pendingonly => 1)
 
           if distribution_id
             disk = @client.linode.disk.createfromdistribution(
-              :linodeid => result.linodeid,
+              :linodeid => result['linodeid'],
               :distributionid => distribution_id,
-              :label => 'Vagrant Disk Distribution ' + distribution_id + ' Linode ' + result.linodeid,
+              :label => 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
               :type => 'ext4',
               :size => 1024,
-              :rootSSHKey => ssh_key_id
+              :rootSSHKey => ssh_key_id,
+	      :rootPass => root_pass
             )
           elsif image_id
             disk = @client.linode.disk.createfromimage(
-              :linodeid => result.linodeid,
+              :linodeid => result['linodeid'],
               :imageid => image_id,
               :size => 1024,
-              :rootSSHKey => ssh_key_id
+              :rootSSHKey => ssh_key_id,
+	      :rootPass => root_pass
             )
           end
 
           config = @client.linode.config.create(
             :linodeid => result['linodeid'],
             :label => 'Config',
-            :disklist => "#{disk['diskid']}"
+            :disklist => "#{disk['diskid']}",
+	    :kernelid => 138 # default - newest @todo make this part of config.. 
           )
 
 	  if @machine.provider_config.private_networking
@@ -89,7 +97,10 @@ module VagrantPlugins
           env[:ui].info I18n.t('vagrant_linode.info.booting', {
 	    :linodeid => result['linodeid']
 	  })
-          sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => result['jobid']).length
+
+
+          bootjob = @client.linode.boot :linodeid => result['linodeid']
+	  sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => bootjob['jobid'], :pendingonly => 1).length
 
           # assign the machine id for reference in other commands
           @machine.id = result['linodeid'].to_s
@@ -110,9 +121,12 @@ module VagrantPlugins
           # wait for ssh to be ready
           switch_user = @machine.provider_config.setup?
           user = @machine.config.ssh.username
-          @machine.config.ssh.username = 'root' if switch_user
+	  if switch_user
+            @machine.config.ssh.username = 'root'
+            @machine.config.ssh.password = root_pass
+          end
 
-          retryable(:tries => 120, :sleep => 10) do
+	  retryable(:tries => 1, :sleep => 10) do # @todo bump tries when this is solid
             next if env[:interrupted]
             raise 'not ready' if !@machine.communicate.ready?
           end
@@ -124,13 +138,13 @@ module VagrantPlugins
 
         # Both the recover and terminate are stolen almost verbatim from
         # the Vagrant AWS provider up action
-        def recover(env)
-          return if env['vagrant.error'].is_a?(Vagrant::Errors::VagrantError)
-puts YAML::dump env
-          if @machine.state.id != :not_created
-            terminate(env)
-          end
-        end
+        #def recover(env)
+	#  print YAML::dump env['vagrant_error']
+        #  return if env['vagrant.error'].is_a?(Vagrant::Errors::VagrantError)
+        #  if @machine.state.id != -1 
+        #    terminate(env)
+        #  end
+        #end
 
         def terminate(env)
           destroy_env = env.dup

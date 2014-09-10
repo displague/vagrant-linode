@@ -35,7 +35,7 @@ module VagrantPlugins
           machine.id = linode['linodeid'].to_s if linode
         end
 
-        linode ||= {'status' => 0}
+        linode ||= {'status' => 0 }
       end
 
       def initialize(machine)

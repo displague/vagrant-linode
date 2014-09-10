@@ -5,6 +5,7 @@ module VagrantPlugins
       attr_accessor :distribution
       attr_accessor :datacenter
       attr_accessor :plan
+      attr_accessor :paymentterm
       attr_accessor :private_networking
       attr_accessor :ca_path
       attr_accessor :ssh_key_name
@@ -17,6 +18,7 @@ module VagrantPlugins
         @distribution       = UNSET_VALUE
         @datacenter         = UNSET_VALUE
         @plan               = UNSET_VALUE
+        @paymentterm        = UNSET_VALUE
         @private_networking = UNSET_VALUE
         @ca_path            = UNSET_VALUE
         @ssh_key_name       = UNSET_VALUE
@@ -25,9 +27,10 @@ module VagrantPlugins
 
       def finalize!
         @token              = ENV['LINODE_TOKEN'] if @token == UNSET_VALUE
-        @distribution       = 'Ubuntu 14.04 x64' if @distribution == UNSET_VALUE
+        @distribution       = 'Ubuntu 14.04 LTS' if @distribution == UNSET_VALUE
         @datacenter         = 'dallas' if @datacenter == UNSET_VALUE
         @plan               = 'Linode 1024' if @plan == UNSET_VALUE
+        @paymentterm        = '1' if @paymentterm == UNSET_VALUE
         @private_networking = false if @private_networking == UNSET_VALUE
         @ca_path            = nil if @ca_path == UNSET_VALUE
         @ssh_key_name       = 'Vagrant' if @ssh_key_name == UNSET_VALUE
