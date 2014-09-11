@@ -8,7 +8,8 @@ module VagrantPlugins
       module Client
         def client
 	    ::Linode.new({
-	      :api_key => @machine.provider_config.token
+	      :api_key => @machine.provider_config.token,
+	      :api_url => @machine.provider_config.api_url || nil
 	    })
         end
       end
