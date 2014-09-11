@@ -59,9 +59,18 @@ Vagrant.configure('2') do |config|
     override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
 
     provider.token = 'API_KEY'
-    provider.image = 'Ubuntu 14.04 LTS'
-    provider.datacenter = '6'
-    provider.plan = '1'
+    provider.distribution = 'Ubuntu 14.04 LTS'
+    provider.datacenter = 'newark'
+    provider.plan = 'Linode 1024'
+    # provider.planid = <int>
+    # provider.paymentterm = <*1*,12,24>
+    # provider.datacenterid = <int>
+    # provider.image = <string>
+    # provider.imageid = <int>
+    # provider.private_networking = <boolean>
+    # provider.stackscript = <string>
+    # provider.stackscriptid = <int>
+    # provider.distributionid = <int>
   end
 end
 ```
@@ -80,16 +89,14 @@ The following attributes are available to further configure the provider:
 - `provider.image` - A string representing the image to use when creating a
    new linode (e.g. `Debian 6.0 x64`). The available options may
    be found on Linode's new linode [form](https://cloud.linode.com/linodes/new).
-   It defaults to `Ubuntu 14.04 x64`.
-- `provider.region` - A string representing the region to create the new
-   linode in. It defaults to `nyc2`.
-- `provider.size` - A string representing the size to use when creating a
-  new linode (e.g. `1gb`). It defaults to `512mb`.
+   It defaults to `Ubuntu 14.04 LTS`.
+- `provider.datacenter` - A string representing the region to create the new
+   linode in. It defaults to `newark`.
+- `provider.plan` - A string representing the size to use when creating a
+  new linode (e.g. `Linode 2048`). It defaults to `Linode 1024`.
 - `provider.private_networking` - A boolean flag indicating whether to enable
   a private network interface (if the region supports private networking). It
   defaults to `false`.
-- `provider.backups_enabled` - A boolean flag indicating whether to enable backups for
-   the linode. It defaults to `false`.
 - `provider.ssh_key_name` - A string representing the name to use when creating
   a Linode SSH key for linode authentication. It defaults to `Vagrant`.
 - `provider.setup` - A boolean flag indicating whether to setup a new user
@@ -101,12 +108,12 @@ The provider will create a new user account with the specified SSH key for
 authorization if `config.ssh.username` is set and the `provider.setup`
 attribute is `true`.
 
-### provider.size id
+### provider.plan
 
 Each Linode Tier has been assigned a Plan Identifcation Number.
 Current Plan-ID table follows:
 
-| ID      | Plan Size                 |
+| PlanID  | Plan                      |
 |:------- |:------------------------- |
 |    1    |  1GB Plan (Linode 1024)   |
 |    2    |  2GB Plan (Linode 2048)   |
@@ -118,29 +125,36 @@ Current Plan-ID table follows:
 |   10    | 64GB Plan (Linode 65536)  |
 |   12    | 96GB Plan (Linode 98304)  |
 
+```
+curl -X POST "https://api.linode.com/?api_action=avail.plans" \
+     --data-ascii api_key="$LINODE_API_KEY" \
+     2>/dev/null | jq '.DATA [] | .PLANID,.LABEL'
+```
 
-### provider.region ID 
+More detail: [Linode API - Plans](https://www.linode.com/api/utility/avail.plans)
+
+### provider.datacenter 
 
 Each region has been specified with a Data Center ID.  
 Current Region-ID table is:
 
-| ID      | Location            |
-|:------- |:--------------------|
-|   4     | Atlanta, GA, USA    |
-|   2     | Dallas, TX, USA     |
-|   3     | Fremont, CA, USA    |
-|   7     | London, England, UK |
-|   6     | Newark, NJ, USA     |
-|   8     | Tokyo, JP           |
+| DatacenterID | Datacenter | Location            |
+|:-------      |:------     |:--------------------|
+|   4          | atlanta    | Atlanta, GA, USA    |
+|   2          | dallas     | Dallas, TX, USA     |
+|   3          | fremont    | Fremont, CA, USA    |
+|   7          | london     | London, England, UK |
+|   6          | newark     | Newark, NJ, USA     |
+|   8          | tokyo      | Tokyo, JP           |
 
-You can find latest region ID number using Linode API call.
+You can find latest datacenter ID number using Linode API call.
 
 - example call.
 
 ```
 curl -X POST "https://api.linode.com/?api_action=avail.datacenters" \
      --data-ascii api_key="$LINODE_API_KEY" \
-     2>/dev/null | jq '.DATA [] | .ABBR,.LOCATION'
+     2>/dev/null | jq '.DATA [] | .DATACENTERID,.ABBR,.LOCATION'
 ```
 
 More detail: [Linode API - Datacenters](https://www.linode.com/api/utility/avail.datacenters)
