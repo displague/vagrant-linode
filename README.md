@@ -58,10 +58,10 @@ Vagrant.configure('2') do |config|
     override.vm.box = 'linode'
     override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
 
-    provider.token = 'YOUR TOKEN'
-    provider.image = 'Ubuntu 14.04 x64'
-    provider.datacenter = 'newark'
-    provider.plan = '1024'
+    provider.token = 'API_KEY'
+    provider.image = 'Ubuntu 14.04 LTS'
+    provider.datacenter = '6'
+    provider.plan = '1'
   end
 end
 ```
@@ -101,21 +101,39 @@ The provider will create a new user account with the specified SSH key for
 authorization if `config.ssh.username` is set and the `provider.setup`
 attribute is `true`.
 
-### provider.region slug
+### provider.size id
 
-Each region has been specify with slug name.  
-Current Region-slug table is:
+Each Linode Tier has been assigned a Plan Identifcation Number.
+Current Plan-ID table follows:
 
-| slug    | Region Name         |
-|:----    |:--------------------|
-| dallas  | Dallas, TX, USA     |
-| fremont | Fremont, CA, USA    |
-| atlanta | Atlanta, GA, USA    |
-| newark  | Newark, NJ, USA     |
-| london  | London, England, UK |
-| tokyo   | Tokyo, JP           |
+| ID      | Plan Size                 |
+|:------- |:------------------------- |
+|    1    |  1GB Plan (Linode 1024)   |
+|    2    |  2GB Plan (Linode 2048)   |
+|    4    |  4GB Plan (Linode 4096)   |
+|    6    |  8GB Plan (Linode 8192)   |
+|    7    | 16GB Plan (Linode 16384)  |
+|    8    | 32GB Plan (Linode 32768)  |
+|    9    | 48GB Plan (Linode 49152)  |
+|   10    | 64GB Plan (Linode 65536)  |
+|   12    | 96GB Plan (Linode 98304)  |
 
-You can find latest region slug name using Linode API V2 call.
+
+### provider.region ID 
+
+Each region has been specified with a Data Center ID.  
+Current Region-ID table is:
+
+| ID      | Location            |
+|:------- |:--------------------|
+|   4     | Atlanta, GA, USA    |
+|   2     | Dallas, TX, USA     |
+|   3     | Fremont, CA, USA    |
+|   7     | London, England, UK |
+|   6     | Newark, NJ, USA     |
+|   8     | Tokyo, JP           |
+
+You can find latest region ID number using Linode API call.
 
 - example call.
 
