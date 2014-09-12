@@ -21,14 +21,16 @@ module VagrantPlugins
             .find_id(:images, :name => @machine.provider_config.image)
 
           # submit rebuild request
-          result = @client.post("/v2/linodes/#{@machine.id}/actions", {
+	  # @todo find a convenient way to send provider_config back to the create action, reusing the diskid or configid
+          raise 'not implemented'
+	  result = @client.post("/v2/linodes/#{@machine.id}/actions", {
             :type => 'rebuild',
             :image => image_id
           })
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_linode.info.rebuilding')
-          @client.wait_for_event(env, result['action']['id'])
+          wait_for_event(env, result['jobid'])
 
           # refresh linode state with provider
           Provider.linode(@machine, :refresh => true)

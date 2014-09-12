@@ -97,10 +97,10 @@ module VagrantPlugins
             next if env[:interrupted]
 
             # check action status
-            result = self.request("/v2/actions/#{id}")
+            result = @client.linode.job.list( :jobid => id, :linodeid => env[:machine].id )
 
             yield result if block_given?
-            raise 'not ready' if result['action']['status'] != 'completed'
+            raise 'not ready' if result['host_finish_dt'] > ''
           end
         end
       end

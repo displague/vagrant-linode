@@ -15,14 +15,11 @@ module VagrantPlugins
 
         def call(env)
           # submit reboot linode request
-          result = @client.post("/v2/linodes/#{@machine.id}/actions", {
-            :type => 'reboot'
-          })
+          result = @client.linode.reboot( :linodeid => @machine.id )
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_linode.info.reloading')
-          @client.wait_for_event(env, result['action']['id'])
-
+          @client.wait_for_event(env, result['jobid'])
           @app.call(env)
         end
       end

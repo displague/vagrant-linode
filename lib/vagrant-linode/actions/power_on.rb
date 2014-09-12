@@ -21,7 +21,7 @@ module VagrantPlugins
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_linode.info.powering_on') 
-          @client.wait_for_event(env, result['JobID'])
+          wait_for_event(env, result['jobid'])
 
           # refresh linode state with provider
           Provider.linode(@machine, :refresh => true)
