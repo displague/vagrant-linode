@@ -2,6 +2,7 @@ module VagrantPlugins
   module Linode
     class Config < Vagrant.plugin('2', :config)
       attr_accessor :token
+      attr_accessor :api_url
       attr_accessor :distribution
       attr_accessor :datacenter
       attr_accessor :plan
@@ -15,6 +16,7 @@ module VagrantPlugins
 
       def initialize
         @token              = UNSET_VALUE
+        @api_url            = UNSET_VALUE
         @distribution       = UNSET_VALUE
         @datacenter         = UNSET_VALUE
         @plan               = UNSET_VALUE
@@ -27,6 +29,7 @@ module VagrantPlugins
 
       def finalize!
         @token              = ENV['LINODE_TOKEN'] if @token == UNSET_VALUE
+        @api_url            = ENV['LINODE_URL'] if @api_url == UNSET_VALUE
         @distribution       = 'Ubuntu 14.04 LTS' if @distribution == UNSET_VALUE
         @datacenter         = 'dallas' if @datacenter == UNSET_VALUE
         @plan               = 'Linode 1024' if @plan == UNSET_VALUE
