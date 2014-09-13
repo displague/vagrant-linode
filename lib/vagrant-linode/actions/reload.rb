@@ -19,7 +19,7 @@ module VagrantPlugins
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_linode.info.reloading')
-          @client.wait_for_event(env, result['jobid'])
+          wait_for_event(env, result['jobid'])
           @app.call(env)
         end
       end
