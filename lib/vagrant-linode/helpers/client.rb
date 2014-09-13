@@ -12,7 +12,8 @@ module VagrantPlugins
             # stop waiting if interrupted
             next if env[:interrupted]
             # check action status
-            result = @client.linode.job.list( :jobid => id, :linodeid => env[:machine].id )[0]
+            result = @client.linode.job.list( :jobid => id, :linodeid => env[:machine].id )
+            result = result[0] if result.is_a?(Array)
 	
             yield result if block_given?
             raise 'not ready' if result['host_finish_dt'] > ''
