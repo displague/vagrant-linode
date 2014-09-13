@@ -15,14 +15,14 @@ module VagrantPlugins
         end
 
         def call(env)
+	  # @todo find a convenient way to send provider_config back to the create action, reusing the diskid or configid
+          raise 'not implemented'
           # look up image id
           image_id = @client
             .request('/v2/images')
             .find_id(:images, :name => @machine.provider_config.image)
 
           # submit rebuild request
-	  # @todo find a convenient way to send provider_config back to the create action, reusing the diskid or configid
-          raise 'not implemented'
 	  result = @client.post("/v2/linodes/#{@machine.id}/actions", {
             :type => 'rebuild',
             :image => image_id
