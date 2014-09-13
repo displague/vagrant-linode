@@ -15,7 +15,13 @@ module VagrantPlugins
         end
 
         def call(env)
-          ssh_key_id = [env[:ssh_key_id]]
+          ssh_key_id = env[:machine].config.ssh.private_key_path
+          ssh_key_id = ssh_key_id[0] if ssh_key_id.is_a?(Array)
+
+          if ssh_key_id
+            pubkey = File.read( File.expand_path( "#{ssh_key_id}.pub" ) )
+          end
+
           if @machine.provider_config.root_pass
             root_pass = @machine.provider_config.root_pass
 	  else
@@ -67,7 +73,7 @@ module VagrantPlugins
               :label => 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
               :type => 'ext4',
               :size => 1024,
-              :rootSSHKey => ssh_key_id,
+              :rootSSHKey => pubkey,
 	      :rootPass => root_pass
             )
           elsif image_id
@@ -75,7 +81,7 @@ module VagrantPlugins
               :linodeid => result['linodeid'],
               :imageid => image_id,
               :size => 1024,
-              :rootSSHKey => ssh_key_id,
+              :rootSSHKey => pubkey,
 	      :rootPass => root_pass
             )
           end
