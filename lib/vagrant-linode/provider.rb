@@ -75,7 +75,7 @@ module VagrantPlugins
       # `ssh` prompt with a password, whereas we can pass a private key
       # via commandline.
       def ssh_info
-        linode = Provider.linode(@machine)
+        linode = Provider.linode(@machine, :refresh => true)
 
         return nil if linode['status'] < 1
 
@@ -85,7 +85,7 @@ module VagrantPlugins
           :host => public_network['ipaddress'],
           :port => '22',
           :username => 'root',
-          :private_key_path => nil
+          :private_key_path => @machine.config.ssh.private_key_path 
         }
       end
 

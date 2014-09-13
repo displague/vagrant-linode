@@ -133,7 +133,7 @@ module VagrantPlugins
             @machine.config.ssh.password = root_pass
           end
 
-	  retryable(:tries => 1, :sleep => 10) do # @todo bump tries when this is solid
+	  retryable(:tries => 25, :sleep => 10) do # @todo bump tries when this is solid
             next if env[:interrupted]
             raise 'not ready' if !@machine.communicate.ready?
           end
