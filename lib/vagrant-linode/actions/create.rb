@@ -56,7 +56,9 @@ module VagrantPlugins
           );
           env[:ui].info I18n.t('vagrant_linode.info.created', { :linodeid => result['linodeid'] })
 
-	  print YAML::dump @client.linode.job.list(:linodeid => result['linodeid'], :pendingonly => 1)
+	  #@client.linode.job.list(:linodeid => result['linodeid'], :pendingonly => 1)
+	  # assign the machine id for reference in other commands
+          @machine.id = result['linodeid'].to_s
 
           if distribution_id
             disk = @client.linode.disk.createfromdistribution(
@@ -100,10 +102,9 @@ module VagrantPlugins
 
 
           bootjob = @client.linode.boot :linodeid => result['linodeid']
-	  sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => bootjob['jobid'], :pendingonly => 1).length
-
-          # assign the machine id for reference in other commands
-          @machine.id = result['linodeid'].to_s
+	  #sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => bootjob['jobid'], :pendingonly => 1).length
+          print YAML::dump bootjob
+	  wait_for_event(env, bootjob['jobid'])
 
           # refresh linode state with provider and output ip address
           linode = Provider.linode(@machine, :refresh => true)
