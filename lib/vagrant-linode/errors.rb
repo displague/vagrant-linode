@@ -2,7 +2,7 @@ module VagrantPlugins
   module Linode
     module Errors
       class LinodeError < Vagrant::Errors::VagrantError
-        error_namespace("vagrant_linode.errors")
+        error_namespace('vagrant_linode.errors')
       end
 
       class APIStatusError < LinodeError

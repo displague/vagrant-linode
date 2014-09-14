@@ -7,27 +7,23 @@ module VagrantPlugins
     module Helpers
       module Client
         def client
-        def wait_for_event(env, id)
-          retryable(:tries => 120, :sleep => 10) do
-            # stop waiting if interrupted
-            next if env[:interrupted]
-            # check action status
-            result = @client.linode.job.list( :jobid => id, :linodeid => env[:machine].id )
-            result = result[0] if result.is_a?(Array)
-	
-            yield result if block_given?
-            raise 'not ready' if result['host_finish_dt'] > ''
-          end
-        end
-	    linodeapi = ::Linode.new({
-	      :api_key => @machine.provider_config.token,
-	      :api_url => @machine.provider_config.api_url || nil
-	    })
-	    #linodeapi.wait_for_event = wait_for_event
-	    #linodeapi.extend wait_for_event
-        end
+          def wait_for_event(env, id)
+            retryable(tries: 120, sleep: 10) do
+              # stop waiting if interrupted
+              next if env[:interrupted]
+              # check action status
+              result = @client.linode.job.list(jobid: id, linodeid: env[:machine].id)
+              result = result[0] if result.is_a?(Array)
 
-	
+              yield result if block_given?
+              fail 'not ready' if result['host_finish_dt'] > ''
+            end
+          end
+          linodeapi = ::Linode.new(api_key: @machine.provider_config.token,
+                                   api_url: @machine.provider_config.api_url || nil)
+          # linodeapi.wait_for_event = wait_for_event
+          # linodeapi.extend wait_for_event
+        end
       end
 
       class ApiClient
@@ -36,21 +32,17 @@ module VagrantPlugins
         def initialize(machine)
           @logger = Log4r::Logger.new('vagrant::linode::apiclient')
           @config = machine.provider_config
-          @client = ::Linode.new({
-            :api_key => @config.token
-          })
+          @client = ::Linode.new(api_key: @config.token)
         end
 
-	def client
-	   @client
-	end
+        attr_reader :client
 
-        def delete(path, params = {}, method = :delete)
+        def delete(path, params = {}, _method = :delete)
           @client.request :url_encoded
           request(path, params, :delete)
         end
 
-        def post(path, params = {}, method = :post)
+        def post(path, params = {}, _method = :post)
           @client.headers['Content-Type'] = 'application/json'
           request(path, params, :post)
         end
@@ -77,46 +69,42 @@ module VagrantPlugins
             begin
               body = JSON.parse(result.body)
               @logger.info "Response: #{body}"
-              next_page = body["links"]["pages"]["next"] rescue nil
+              next_page = body['links']['pages']['next'] rescue nil
               unless next_page.nil?
                 uri = URI.parse(next_page)
-                new_path = path.split("?")[0]
-                next_result = self.request("#{new_path}?#{uri.query}")
-                req_target = new_path.split("/")[-1]
+                new_path = path.split('?')[0]
+                next_result = request("#{new_path}?#{uri.query}")
+                req_target = new_path.split('/')[-1]
                 body["#{req_target}"].concat(next_result["#{req_target}"])
               end
             rescue JSON::ParserError => e
-              raise(Errors::JSONError, {
-                :message => e.message,
-                :path => path,
-                :params => params,
-                :response => result.body
-              })
+              raise(Errors::JSONError, message: e.message,
+                                       path: path,
+                                       params: params,
+                                       response: result.body)
             end
           end
 
           unless /^2\d\d$/ =~ result.status.to_s
-            raise(Errors::APIStatusError, {
-              :path => path,
-              :params => params,
-              :status => result.status,
-              :response => body.inspect
-            })
+            fail(Errors::APIStatusError, path: path,
+                                         params: params,
+                                         status: result.status,
+                                         response: body.inspect)
           end
 
           Result.new(body)
         end
 
         def wait_for_event(env, id)
-          retryable(:tries => 120, :sleep => 10) do
+          retryable(tries: 120, sleep: 10) do
             # stop waiting if interrupted
             next if env[:interrupted]
 
             # check action status
-            result = @client.linode.job.list( :jobid => id, :linodeid => env[:machine].id )
+            result = @client.linode.job.list(jobid: id, linodeid: env[:machine].id)
 
             yield result if block_given?
-            raise 'not ready' if result['host_finish_dt'] > ''
+            fail 'not ready' if result['host_finish_dt'] > ''
           end
         end
       end

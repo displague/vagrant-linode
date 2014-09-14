@@ -3,7 +3,6 @@ require 'vagrant-linode/actions'
 module VagrantPlugins
   module Linode
     class Provider < Vagrant.plugin('2', :provider)
-
       # This class method caches status for all linodes within
       # the Linode account. A specific linode's status
       # may be refreshed by passing :refresh => true as an option.
@@ -11,15 +10,15 @@ module VagrantPlugins
         client = Helpers::ApiClient.new(machine).client
 
         # load status of linodes if it has not been done before
-        if !@linodes
-          @linodes = client.linode.list.each { |l| l.network = client.linode.ip.list :linodeid => l.linodeid }
-	end
+        unless @linodes
+          @linodes = client.linode.list.each { |l| l.network = client.linode.ip.list linodeid: l.linodeid }
+  end
 
         if opts[:refresh] && machine.id
           # refresh the linode status for the given machine
           @linodes.delete_if { |d| d['linodeid'].to_s == machine.id }
-          linode = client.linode.list(:linodeid => machine.id).first
-	  linode.network = client.linode.ip.list :linodeid => linode['linodeid']
+          linode = client.linode.list(linodeid: machine.id).first
+          linode.network = client.linode.ip.list linodeid: linode['linodeid']
           @linodes << linode
         else
           # lookup linode status for the given machine
@@ -29,13 +28,13 @@ module VagrantPlugins
         # if lookup by id failed, check for a linode with a matching name
         # and set the id to ensure vagrant stores locally
         # TODO allow the user to configure this behavior
-        if !linode
+        unless linode
           name = machine.config.vm.hostname || machine.name
           linode = @linodes.find { |d| d['label'] == name.to_s }
           machine.id = linode['linodeid'].to_s if linode
         end
 
-        linode ||= {'status' => 0 }
+        linode ||= { 'status' => 0 }
       end
 
       def initialize(machine)
@@ -75,17 +74,17 @@ module VagrantPlugins
       # `ssh` prompt with a password, whereas we can pass a private key
       # via commandline.
       def ssh_info
-        linode = Provider.linode(@machine, :refresh => true)
+        linode = Provider.linode(@machine, refresh: true)
 
         return nil if linode['status'] < 1
 
         public_network = linode.network.find { |network| network['ispublic'] == 1 }
 
-        return {
-          :host => public_network['ipaddress'],
-          :port => '22',
-          :username => 'root',
-          :private_key_path => @machine.config.ssh.private_key_path 
+        {
+          host: public_network['ipaddress'],
+          port: '22',
+          username: 'root',
+          private_key_path: @machine.config.ssh.private_key_path
         }
       end
 

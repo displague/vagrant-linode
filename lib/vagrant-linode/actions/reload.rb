@@ -15,7 +15,7 @@ module VagrantPlugins
 
         def call(env)
           # submit reboot linode request
-          result = @client.linode.reboot( :linodeid => @machine.id )
+          result = @client.linode.reboot(linodeid: @machine.id)
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_linode.info.reloading')
@@ -26,5 +26,3 @@ module VagrantPlugins
     end
   end
 end
-
-

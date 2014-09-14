@@ -17,7 +17,7 @@ module VagrantPlugins
       include Vagrant::Action::Builtin
 
       def self.destroy
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]
@@ -36,7 +36,7 @@ module VagrantPlugins
       end
 
       def self.ssh
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]
@@ -52,7 +52,7 @@ module VagrantPlugins
       end
 
       def self.ssh_run
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]
@@ -68,7 +68,7 @@ module VagrantPlugins
       end
 
       def self.provision
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]
@@ -86,10 +86,10 @@ module VagrantPlugins
       end
 
       def self.up
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
-	  case env[:machine_state]
+            case env[:machine_state]
             when :active
               env[:ui].info I18n.t('vagrant_linode.info.already_active')
             when :off
@@ -107,7 +107,7 @@ module VagrantPlugins
       end
 
       def self.halt
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]
@@ -123,7 +123,7 @@ module VagrantPlugins
       end
 
       def self.reload
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]
@@ -140,7 +140,7 @@ module VagrantPlugins
       end
 
       def self.rebuild
-        return Vagrant::Action::Builder.new.tap do |builder|
+        Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
             case env[:machine_state]

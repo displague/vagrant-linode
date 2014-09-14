@@ -14,15 +14,15 @@ module VagrantPlugins
         def call(env)
           ssh_info = @machine.ssh_info
 
-          @machine.config.vm.synced_folders.each do |id, data|
+          @machine.config.vm.synced_folders.each do |_id, data|
             next if data[:disabled]
 
             if @machine.guest.capability?(:rsync_installed)
               installed = @machine.guest.capability(:rsync_installed)
-              if !installed
+              unless installed
                 can_install = @machine.guest.capability?(:rsync_install)
-                raise Vagrant::Errors::RSyncNotInstalledInGuest if !can_install
-                @machine.ui.info I18n.t("vagrant.rsync_installing")
+                fail Vagrant::Errors::RSyncNotInstalledInGuest unless can_install
+                @machine.ui.info I18n.t('vagrant.rsync_installing')
                 @machine.guest.capability(:rsync_install)
               end
             end
@@ -36,13 +36,11 @@ module VagrantPlugins
 
             # on windows rsync.exe requires cygdrive-style paths
             if Vagrant::Util::Platform.windows?
-              hostpath = hostpath.gsub(/^(\w):/) { "/cygdrive/#{$1}" }
+              hostpath = hostpath.gsub(/^(\w):/) { "/cygdrive/#{Regexp.last_match[1]}" }
             end
 
-            env[:ui].info I18n.t('vagrant_linode.info.rsyncing', {
-              :hostpath => hostpath,
-              :guestpath => guestpath
-            })
+            env[:ui].info I18n.t('vagrant_linode.info.rsyncing', hostpath: hostpath,
+                                                                 guestpath: guestpath)
 
             # create the guest path
             @machine.communicate.sudo("mkdir -p #{guestpath}")
@@ -54,23 +52,23 @@ module VagrantPlugins
 
             # rsync over to the guest path using the ssh info
             command = [
-              "rsync", "--verbose", "--archive", "-z", "--delete",
-              "-e", "ssh -p #{ssh_info[:port]} -o StrictHostKeyChecking=no -i '#{key}'",
+              'rsync', '--verbose', '--archive', '-z', '--delete',
+              '-e', "ssh -p #{ssh_info[:port]} -o StrictHostKeyChecking=no -i '#{key}'",
               hostpath,
               "#{ssh_info[:username]}@#{ssh_info[:host]}:#{guestpath}"]
 
             # we need to fix permissions when using rsync.exe on windows, see
             # http://stackoverflow.com/questions/5798807/rsync-permission-denied-created-directories-have-no-permissions
             if Vagrant::Util::Platform.windows?
-              command.insert(1, "--chmod", "ugo=rwX")
+              command.insert(1, '--chmod', 'ugo=rwX')
             end
 
             r = Vagrant::Util::Subprocess.execute(*command)
             if r.exit_code != 0
-              raise Errors::RsyncError,
-                :guestpath => guestpath,
-                :hostpath => hostpath,
-                :stderr => r.stderr
+              fail Errors::RsyncError,
+                   guestpath: guestpath,
+                   hostpath: hostpath,
+                   stderr: r.stderr
             end
           end
 

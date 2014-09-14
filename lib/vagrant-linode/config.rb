@@ -42,16 +42,14 @@ module VagrantPlugins
 
       def validate(machine)
         errors = []
-        errors << I18n.t('vagrant_linode.config.token') if !@token
+        errors << I18n.t('vagrant_linode.config.token') unless @token
 
         key = machine.config.ssh.private_key_path
         key = key[0] if key.is_a?(Array)
         if !key
           errors << I18n.t('vagrant_linode.config.private_key')
         elsif !File.file?(File.expand_path("#{key}.pub", machine.env.root_path))
-          errors << I18n.t('vagrant_linode.config.public_key', {
-            :key => "#{key}.pub"
-          })
+          errors << I18n.t('vagrant_linode.config.public_key', key: "#{key}.pub")
         end
 
         { 'Linode Provider' => errors }

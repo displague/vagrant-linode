@@ -15,7 +15,7 @@ module VagrantPlugins
 
         def call(env)
           # submit destroy linode request
-          @client.linode.delete( :linodeid => @machine.id, :skipchecks => true )
+          @client.linode.delete(linodeid: @machine.id, skipchecks: true)
 
           env[:ui].info I18n.t('vagrant_linode.info.destroying')
 

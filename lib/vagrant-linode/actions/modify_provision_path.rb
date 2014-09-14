@@ -12,10 +12,10 @@ module VagrantPlugins
         def call(env)
           # check if provisioning is enabled
           enabled = true
-          enabled = env[:provision_enabled] if env.has_key?(:provision_enabled)
-          return @app.call(env) if !enabled
+          enabled = env[:provision_enabled] if env.key?(:provision_enabled)
+          return @app.call(env) unless enabled
 
-          username = @machine.ssh_info()[:username]
+          username = @machine.ssh_info[:username]
 
           # change ownership of the provisioning path recursively to the
           # ssh user
@@ -27,7 +27,7 @@ module VagrantPlugins
             path = cfg.upload_path if cfg.respond_to? :upload_path
             path = cfg.provisioning_path if cfg.respond_to? :provisioning_path
             @machine.communicate.sudo("chown -R #{username} #{path}",
-              :error_check => false)
+                                      error_check: false)
           end
 
           @app.call(env)

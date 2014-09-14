@@ -7,11 +7,11 @@ Vagrant.configure('2') do |config|
   config.ssh.username = 'tester'
   config.ssh.private_key_path = './test_id_rsa'
 
-  config.vm.synced_folder '.', '/vagrant', :disabled => true
+  config.vm.synced_folder '.', '/vagrant', disabled: true
 
   config.vm.provider :linode do |provider, override|
     override.vm.box = 'linode'
-    override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
+    override.vm.box_url = 'https://github.com/displague/vagrant-linode/raw/master/box/linode.box'
     provider.token = ENV['LINODE_TOKEN']
     provider.ssh_key_name = 'Test Key'
     provider.image = 'Ubuntu 14.04 x64'
@@ -19,7 +19,7 @@ Vagrant.configure('2') do |config|
     provider.plan = '1024'
   end
 
-  config.vm.provision :shell, :path => 'scripts/provision.sh'
+  config.vm.provision :shell, path: 'scripts/provision.sh'
 
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = 'cookbooks'

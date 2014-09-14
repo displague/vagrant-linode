@@ -21,11 +21,9 @@ module VagrantPlugins
             # assigns existing ssh key id to env for use by other commands
             env[:ssh_key_id] = @client
               .request('/v2/account/keys')
-              .find_id(:ssh_keys, :name => ssh_key_name)
+              .find_id(:ssh_keys, name: ssh_key_name)
 
-            env[:ui].info I18n.t('vagrant_linode.info.using_key', {
-              :name => ssh_key_name
-            })
+            env[:ui].info I18n.t('vagrant_linode.info.using_key', name: ssh_key_name)
           rescue Errors::ResultMatchError
             env[:ssh_key_id] = create_ssh_key(ssh_key_name, env)
           end
@@ -42,14 +40,10 @@ module VagrantPlugins
           path = File.expand_path(path, @machine.env.root_path)
           pub_key = Linode.public_key(path)
 
-          env[:ui].info I18n.t('vagrant_linode.info.creating_key', {
-            :name => name
-          }) 
+          env[:ui].info I18n.t('vagrant_linode.info.creating_key', name: name)
 
-          result = @client.post('/v2/account/keys', {
-            :name => name,
-            :public_key => pub_key
-          })
+          result = @client.post('/v2/account/keys', name: name,
+                                                    public_key: pub_key)
           result['ssh_key']['id']
         end
       end

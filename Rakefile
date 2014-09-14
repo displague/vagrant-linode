@@ -16,7 +16,7 @@ task :test do
 end
 
 def env
-  ['LINODE_CLIENT_ID', 'LINODE_API_KEY', 'VAGRANT_LOG'].inject('') do |acc, key|
+  %w(LINODE_CLIENT_ID LINODE_API_KEY VAGRANT_LOG).reduce('') do |acc, key|
     acc += "#{key}=#{ENV[key] || 'error'} "
   end
 end
