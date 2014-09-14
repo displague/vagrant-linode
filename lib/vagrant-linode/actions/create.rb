@@ -114,14 +114,14 @@ module VagrantPlugins
 
           # refresh linode state with provider and output ip address
           linode = Provider.linode(@machine, :refresh => true)
-          public_network = linode.networks.find { |network| network['ispublic'] == '1' }
+          public_network = linode.network.find { |network| network['ispublic'] == 1 }
           # private_network = linode.networks.find { |network| network['ispublic'] == '0' }
           env[:ui].info I18n.t('vagrant_linode.info.linode_ip', {
-            :ip => public_network['ip_address']
+            :ip => public_network['ipaddress']
           })
           if private_network
             env[:ui].info I18n.t('vagrant_linode.info.linode_private_ip', {
-              :ip => private_network['ip_address']
+              :ip => private_network['ipaddress']
             })
           end
 
@@ -133,7 +133,7 @@ module VagrantPlugins
             @machine.config.ssh.password = root_pass
           end
 
-	  retryable(:tries => 1, :sleep => 10) do # @todo bump tries when this is solid
+	  retryable(:tries => 25, :sleep => 10) do # @todo bump tries when this is solid
             next if env[:interrupted]
             raise 'not ready' if !@machine.communicate.ready?
           end
