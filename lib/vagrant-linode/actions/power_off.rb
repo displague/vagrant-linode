@@ -15,7 +15,7 @@ module VagrantPlugins
 
         def call(env)
           # submit power off linode request
-          result = @client.linode.shutdown(linodeid: machine.id)
+          result = @client.linode.shutdown(linodeid: @machine.id)
 
           # wait for request to complete
           env[:ui].info I18n.t('vagrant_linode.info.powering_off')

@@ -12,7 +12,7 @@ module VagrantPlugins
         # load status of linodes if it has not been done before
         unless @linodes
           @linodes = client.linode.list.each { |l| l.network = client.linode.ip.list linodeid: l.linodeid }
-  end
+        end
 
         if opts[:refresh] && machine.id
           # refresh the linode status for the given machine
@@ -34,7 +34,7 @@ module VagrantPlugins
           machine.id = linode['linodeid'].to_s if linode
         end
 
-        linode ||= { 'status' => 0 }
+        linode ||= { status: :not_created }
       end
 
       def initialize(machine)
@@ -76,7 +76,7 @@ module VagrantPlugins
       def ssh_info
         linode = Provider.linode(@machine, refresh: true)
 
-        return nil if linode['status'] < 1
+        return nil if linode['status'] != :active
 
         public_network = linode.network.find { |network| network['ispublic'] == 1 }
 
@@ -92,9 +92,18 @@ module VagrantPlugins
       # The state must be an instance of {MachineState}. Please read the
       # documentation of that class for more information.
       def state
-        state = Provider.linode(@machine)['status']
-        long = short = state.to_s
-        Vagrant::MachineState.new(state, short, long)
+        status = Provider.linode(@machine)['status']
+        states = {
+		    nil  => :not_created,
+		    '-2' => :boot_failed,
+		    '-1' => :being_created,
+	            '0' => :brand_new, # brand new
+	            '1' => :active, # running
+	            '2' => :off, # powered off
+		    '3' => :shutting_down
+                 }
+        id = long = short = states[status.to_s]
+        Vagrant::MachineState.new(id, short, long)
       end
     end
   end

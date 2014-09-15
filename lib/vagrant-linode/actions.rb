@@ -95,7 +95,7 @@ module VagrantPlugins
             when :off
               b.use PowerOn
               b.use provision
-            when 0
+            when :not_created
               # b.use SetupKey # no access to ssh keys in linode api
               b.use Create
               b.use SetupSudo
