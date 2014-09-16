@@ -106,7 +106,6 @@ module VagrantPlugins
 
           bootjob = @client.linode.boot linodeid: result['linodeid']
           # sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => bootjob['jobid'], :pendingonly => 1).length
-          print YAML.dump bootjob
           wait_for_event(env, bootjob['jobid'])
 
           # refresh linode state with provider and output ip address
