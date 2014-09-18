@@ -17,8 +17,8 @@ Current features include:
 - setup a SSH public key for authentication
 - create a new user account during linode creation
 
-The provider has been tested with Vagrant 1.1.5+ using Ubuntu 12.04 and
-CentOS 6.3 guest operating systems.
+The provider has been tested with Vagrant 1.1.5+ using Ubuntu 14.04 LTS and
+Debian 7.5 guest operating systems.
 
 Install
 -------
@@ -30,7 +30,7 @@ Installation of the provider requires two steps:
 
 
 **NOTE:** If you are using a Mac, and this plugin would not work caused by SSL certificate problem,
-You may need to specify certificate path explicitly.  
+You may need to specify certificate path explicitly.
 You can verify actual certificate path by running:
 
 ```bash
@@ -87,8 +87,8 @@ Please note the following:
 
 The following attributes are available to further configure the provider:
 - `provider.image` - A string representing the image to use when creating a
-   new linode (e.g. `Debian 6.0 x64`). The available options may
-   be found on Linode's new linode [form](https://cloud.linode.com/linodes/new).
+   new linode (e.g. `Debian 7.5`). The available options may
+   be found on Linode's new linode [form](https://www.linode.com/distributions).
    It defaults to `Ubuntu 14.04 LTS`.
 - `provider.datacenter` - A string representing the region to create the new
    linode in. It defaults to `newark`.
@@ -133,9 +133,9 @@ curl -X POST "https://api.linode.com/?api_action=avail.plans" \
 
 More detail: [Linode API - Plans](https://www.linode.com/api/utility/avail.plans)
 
-### provider.datacenter 
+### provider.datacenter
 
-Each region has been specified with a Data Center ID.  
+Each region has been specified with a Data Center ID.
 Current Region-ID table is:
 
 | DatacenterID | Datacenter | Location            |
