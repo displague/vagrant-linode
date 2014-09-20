@@ -85,3 +85,6 @@ en:
         certs.
       local_ip: |-
         The Linode provider was unable to determine the host's IP.
+      distro_match: !-
+        The provider does not support your configurations chosen Distribution %{distro}.
+        Supported distributions can be found at the following url - https://www.linode.com/distributions
