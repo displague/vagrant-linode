@@ -1,4 +1,5 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/errors'
 
 module VagrantPlugins
   module Linode
@@ -52,6 +53,20 @@ module VagrantPlugins
             plan_id = @machine.provider_config.planid
           end
 
+          ### Disk Images
+          xvda_size, swap_size, disk_sanity = @machine.provider_config.xvda_size, @machine.provider_config.swap_size, true
+
+          # Sanity checks for disk size
+          if xvda_size != true 
+            disk_sanity = false if ( xvda_size.to_i + swap_size.to_i ) > ( plan['disk'].to_i * 1024 )
+          end
+
+          # @todo throw if bad disk sizes are too large 
+          if xvda_size == true || disk_sanity == false 
+              env[:ui].info I18n.t('vagrant_linode.config.disk_too_large' ) if disk_sanity == false
+              xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i )
+          end
+
           env[:ui].info I18n.t('vagrant_linode.info.creating')
 
           # submit new linode request
@@ -65,11 +80,6 @@ module VagrantPlugins
           # @client.linode.job.list(:linodeid => result['linodeid'], :pendingonly => 1)
           # assign the machine id for reference in other commands
           @machine.id = result['linodeid'].to_s
-
-          # @todo sanity check values against @client.avail.linodeplans
-          xvda_size, swap_size = @machine.provider_config.xvda_size, @machine.provider_config.swap_size
-
-          xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i ) if xvda_size == true
 
           if distribution_id
             swap = @client.linode.disk.create(
@@ -92,7 +102,7 @@ module VagrantPlugins
             disk = @client.linode.disk.createfromimage(
               linodeid: result['linodeid'],
               imageid: image_id,
-              size: 1024,
+              size: xvda_size,
               rootSSHKey: pubkey,
               rootPass: root_pass
             )
