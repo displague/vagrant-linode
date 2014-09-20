@@ -122,6 +122,7 @@ module VagrantPlugins
             kernelid: 138 # default - newest @todo make this part of config..
           )
 
+          # @todo: allow provisioning to set static configuration for networking
           if @machine.provider_config.private_networking
             private_network = @client.linode.ip.addprivate linodeid: result['linodeid']
           end
@@ -140,8 +141,8 @@ module VagrantPlugins
           # refresh linode state with provider and output ip address
           linode = Provider.linode(@machine, refresh: true)
           public_network = linode.network.find { |network| network['ispublic'] == 1 }
-          # private_network = linode.networks.find { |network| network['ispublic'] == '0' }
           env[:ui].info I18n.t('vagrant_linode.info.linode_ip', ip: public_network['ipaddress'])
+
           if private_network
             env[:ui].info I18n.t('vagrant_linode.info.linode_private_ip', ip: private_network['ipaddress'])
           end

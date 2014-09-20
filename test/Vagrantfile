@@ -27,6 +27,12 @@ Vagrant.configure('2') do |config|
       # Swap Image Size
       # [str] 256 if nil
       provider.swap_size = '256'
+
+    # Networking (Optional Configuration)
+    
+      # Enable private networking
+      # [boolean] disabled if nil 
+      #provider.private_networking = true
   end
 
   config.vm.provision :shell, path: 'scripts/provision.sh'
