@@ -66,13 +66,25 @@ module VagrantPlugins
           # assign the machine id for reference in other commands
           @machine.id = result['linodeid'].to_s
 
+          # @todo sanity check values against @client.avail.linodeplans
+          xvda_size, swap_size = @machine.provider_config.xvda_size, @machine.provider_config.swap_size
+
+          xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i ) if xvda_size == true
+
           if distribution_id
+            swap = @client.linode.disk.create(
+              linodeid: result['linodeid'],
+              label: 'Vagrant swap',
+              type: 'swap',
+              size: swap_size
+            )
+
             disk = @client.linode.disk.createfromdistribution(
               linodeid: result['linodeid'],
               distributionid: distribution_id,
               label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
               type: 'ext4',
-              size: 1024,
+              size: xvda_size, 
               rootSSHKey: pubkey,
               rootPass: root_pass
             )
@@ -84,12 +96,19 @@ module VagrantPlugins
               rootSSHKey: pubkey,
               rootPass: root_pass
             )
+
+            swap = @client.linode.disk.create(
+              linodeid: result['linodeid'],
+              label: 'Vagrant swap',
+              type: 'swap',
+              size: swap_size
+            )
           end
 
           config = @client.linode.config.create(
             linodeid: result['linodeid'],
-            label: 'Config',
-            disklist: "#{disk['diskid']}",
+            label: 'Vagrant Config',
+            disklist: "#{disk['diskid']},#{swap['diskid']}",
             kernelid: 138 # default - newest @todo make this part of config..
           )
 
