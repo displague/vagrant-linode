@@ -17,6 +17,15 @@ Vagrant.configure('2') do |config|
     provider.image = 'Ubuntu 14.04 x64'
     provider.datacenter = 'newark'
     provider.plan = '1024'
+
+    # Disk Image Sizes (Optional configuration)
+
+      # Main Disk Image Size
+      # [str] ( Full Allocation - Swap ) if nil
+      provider.xvda_size = '1024'
+      
+      # Swap Image Size
+      provider.swap_size = '256'
   end
 
   config.vm.provision :shell, path: 'scripts/provision.sh'
