@@ -41,6 +41,9 @@ module VagrantPlugins
         @machine = machine
       end
 
+      # Attempt to get the action method from the Action class if it
+      # exists, otherwise return nil to show that we don't support the
+      # given action.
       def action(name)
         return Actions.send(name) if Actions.respond_to?(name)
         nil
@@ -104,6 +107,10 @@ module VagrantPlugins
                  }
         id = long = short = states[status.to_s]
         Vagrant::MachineState.new(id, short, long)
+      end
+
+      def to_s
+	"Linode"
       end
     end
   end

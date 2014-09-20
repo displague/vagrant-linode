@@ -9,6 +9,10 @@ module VagrantPlugins
         error_key(:api_status)
       end
 
+      class DistroMatch < LinodeError
+        error_key(:distro_match)
+      end
+
       class JSONError < LinodeError
         error_key(:json)
       end
