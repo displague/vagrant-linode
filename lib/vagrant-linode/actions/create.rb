@@ -31,7 +31,7 @@ module VagrantPlugins
 
           if @machine.provider_config.distribution
             distributions = @client.avail.distributions
-            distribution = distributions.find { |d| d.label == @machine.provider_config.distribution }
+            distribution = distributions.find { |d| d.label.downcase.include? @machine.provider_config.distribution.downcase }
             distribution_id = distribution.distributionid || nil # @todo throw if not found
           else
             distribution_id = @machine.provider_config.distributionid
