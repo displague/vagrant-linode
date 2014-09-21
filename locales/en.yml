@@ -88,3 +88,6 @@ en:
       distro_match: !-
         The provider does not support your configurations chosen Distribution %{distro}.
         Supported distributions can be found at the following url - https://www.linode.com/distributions
+      disk_size: !-
+        The space which you have specified for your Disk Images is too large for your
+        plans allocations. Current = %{current}MB, Max = %{max}
