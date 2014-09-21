@@ -14,7 +14,7 @@ Vagrant.configure('2') do |config|
     override.vm.box_url = 'https://github.com/displague/vagrant-linode/raw/master/box/linode.box'
     provider.token = ENV['LINODE_TOKEN']
     provider.ssh_key_name = 'Test Key'
-    provider.image = 'Ubuntu 14.04 x64'
+    provider.distribution = 'Ubuntu 14.04 LTS'
     provider.datacenter = 'newark'
     provider.plan = '1024'
   end
@@ -28,13 +28,13 @@ Vagrant.configure('2') do |config|
 
   config.vm.define :ubuntu do |ubuntu|
     ubuntu.vm.provider :linode do |provider|
-      provider.image = 'Ubuntu 14.04 x64'
+      provider.distribution = 'Ubuntu 14.04 LTS'
     end
   end
 
   config.vm.define :centos do |centos|
     centos.vm.provider :linode do |provider|
-      provider.image = 'CentOS 7'
+      provider.distribution = 'CentOS 7'
     end
   end
 end
