@@ -49,7 +49,8 @@ module VagrantPlugins
           if @machine.provider_config.plan
             plans = @client.avail.linodeplans
             plan = plans.find { |p| p.label.include? @machine.provider_config.plan }
-            plan_id = plan.planid || nil # @todo throw if not found
+            raise Errors::PlanID, plan: @machine.provider_config.plan if plan == nil
+            plan_id = plan.planid || nil 
           else
             plan_id = @machine.provider_config.planid
           end

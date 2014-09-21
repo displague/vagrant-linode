@@ -33,6 +33,10 @@ module VagrantPlugins
         error_key(:local_ip)
       end
 
+      class PlanID < LinodeError
+        error_key(:plan_id)
+      end
+
       class PublicKeyError < LinodeError
         error_key(:public_key)
       end
