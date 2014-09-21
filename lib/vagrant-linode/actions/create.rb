@@ -1,4 +1,5 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/errors'
 
 module VagrantPlugins
   module Linode
@@ -30,8 +31,9 @@ module VagrantPlugins
 
           if @machine.provider_config.distribution
             distributions = @client.avail.distributions
-            distribution = distributions.find { |d| d.label == @machine.provider_config.distribution }
-            distribution_id = distribution.distributionid || nil # @todo throw if not found
+            distribution = distributions.find { |d| d.label.downcase.include? @machine.provider_config.distribution.downcase }
+            raise( Errors::DistroMatch, distro: @machine.provider_config.distribution.to_s ) if distribution == nil
+            distribution_id = distribution.distributionid || nil
           else
             distribution_id = @machine.provider_config.distributionid
           end
@@ -52,6 +54,20 @@ module VagrantPlugins
             plan_id = @machine.provider_config.planid
           end
 
+          ### Disk Images
+          xvda_size, swap_size, disk_sanity = @machine.provider_config.xvda_size, @machine.provider_config.swap_size, true
+
+          # Sanity checks for disk size
+          if xvda_size != true
+            disk_sanity = false if ( xvda_size.to_i + swap_size.to_i ) > ( plan['disk'].to_i * 1024 )
+          end
+
+          # @todo throw if bad disk sizes are too large
+          if xvda_size == true || disk_sanity == false
+              env[:ui].info I18n.t('vagrant_linode.config.disk_too_large' ) if disk_sanity == false
+              xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i )
+          end
+
           env[:ui].info I18n.t('vagrant_linode.info.creating')
 
           # submit new linode request
@@ -67,12 +83,19 @@ module VagrantPlugins
           @machine.id = result['linodeid'].to_s
 
           if distribution_id
+            swap = @client.linode.disk.create(
+              linodeid: result['linodeid'],
+              label: 'Vagrant swap',
+              type: 'swap',
+              size: swap_size
+            )
+
             disk = @client.linode.disk.createfromdistribution(
               linodeid: result['linodeid'],
               distributionid: distribution_id,
               label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
               type: 'ext4',
-              size: 1024,
+              size: xvda_size,
               rootSSHKey: pubkey,
               rootPass: root_pass
             )
@@ -80,19 +103,27 @@ module VagrantPlugins
             disk = @client.linode.disk.createfromimage(
               linodeid: result['linodeid'],
               imageid: image_id,
-              size: 1024,
+              size: xvda_size,
               rootSSHKey: pubkey,
               rootPass: root_pass
+            )
+
+            swap = @client.linode.disk.create(
+              linodeid: result['linodeid'],
+              label: 'Vagrant swap',
+              type: 'swap',
+              size: swap_size
             )
           end
 
           config = @client.linode.config.create(
             linodeid: result['linodeid'],
-            label: 'Config',
-            disklist: "#{disk['diskid']}",
+            label: 'Vagrant Config',
+            disklist: "#{disk['diskid']},#{swap['diskid']}",
             kernelid: 138 # default - newest @todo make this part of config..
           )
 
+          # @todo: allow provisioning to set static configuration for networking
           if @machine.provider_config.private_networking
             private_network = @client.linode.ip.addprivate linodeid: result['linodeid']
           end
@@ -111,8 +142,8 @@ module VagrantPlugins
           # refresh linode state with provider and output ip address
           linode = Provider.linode(@machine, refresh: true)
           public_network = linode.network.find { |network| network['ispublic'] == 1 }
-          # private_network = linode.networks.find { |network| network['ispublic'] == '0' }
           env[:ui].info I18n.t('vagrant_linode.info.linode_ip', ip: public_network['ipaddress'])
+
           if private_network
             env[:ui].info I18n.t('vagrant_linode.info.linode_private_ip', ip: private_network['ipaddress'])
           end
