@@ -1,7 +1,7 @@
 require 'vagrant-linode/helpers/result'
 require 'linode'
 require 'json'
-require 'retryable'
+require 'vagrant/util/retryable'
 
 module VagrantPlugins
   module Linode
