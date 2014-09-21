@@ -43,7 +43,7 @@ module VagrantPlugins
         @ssh_key_name       = 'Vagrant' if @ssh_key_name == UNSET_VALUE
         @setup              = true if @setup == UNSET_VALUE
         @xvda_size          = true if @xvda_size == UNSET_VALUE
-        @swap_size          = '256' if @swap_size == UNSET_VALUE 
+        @swap_size          = '256' if @swap_size == UNSET_VALUE
       end
 
       def validate(machine)

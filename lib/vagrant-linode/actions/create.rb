@@ -33,7 +33,7 @@ module VagrantPlugins
             distributions = @client.avail.distributions
             distribution = distributions.find { |d| d.label.downcase.include? @machine.provider_config.distribution.downcase }
             raise( Errors::DistroMatch, distro: @machine.provider_config.distribution.to_s ) if distribution == nil
-            distribution_id = distribution.distributionid || nil 
+            distribution_id = distribution.distributionid || nil
           else
             distribution_id = @machine.provider_config.distributionid
           end
@@ -58,12 +58,12 @@ module VagrantPlugins
           xvda_size, swap_size, disk_sanity = @machine.provider_config.xvda_size, @machine.provider_config.swap_size, true
 
           # Sanity checks for disk size
-          if xvda_size != true 
+          if xvda_size != true
             disk_sanity = false if ( xvda_size.to_i + swap_size.to_i ) > ( plan['disk'].to_i * 1024 )
           end
 
-          # @todo throw if bad disk sizes are too large 
-          if xvda_size == true || disk_sanity == false 
+          # @todo throw if bad disk sizes are too large
+          if xvda_size == true || disk_sanity == false
               env[:ui].info I18n.t('vagrant_linode.config.disk_too_large' ) if disk_sanity == false
               xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i )
           end
@@ -95,7 +95,7 @@ module VagrantPlugins
               distributionid: distribution_id,
               label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
               type: 'ext4',
-              size: xvda_size, 
+              size: xvda_size,
               rootSSHKey: pubkey,
               rootPass: root_pass
             )
