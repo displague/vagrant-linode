@@ -1,3 +1,6 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 Vagrant.require_plugin('vagrant-linode')
 Vagrant.require_plugin('vagrant-omnibus')
 
