@@ -49,7 +49,8 @@ module VagrantPlugins
           if @machine.provider_config.plan
             plans = @client.avail.linodeplans
             plan = plans.find { |p| p.label.include? @machine.provider_config.plan }
-            plan_id = plan.planid || nil # @todo throw if not found
+            raise Errors::PlanID, plan: @machine.provider_config.plan if plan == nil
+            plan_id = plan.planid || nil 
           else
             plan_id = @machine.provider_config.planid
           end
@@ -62,10 +63,11 @@ module VagrantPlugins
             disk_sanity = false if ( xvda_size.to_i + swap_size.to_i ) > ( plan['disk'].to_i * 1024 )
           end
 
-          # @todo throw if bad disk sizes are too large
-          if xvda_size == true || disk_sanity == false
-              env[:ui].info I18n.t('vagrant_linode.config.disk_too_large' ) if disk_sanity == false
-              xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i )
+          # throw if disk sizes are too large
+          if xvda_size == true
+            xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i )
+          elsif disk_sanity == false
+            raise Errors::DiskSize, current: (xvda_size.to_i + swap_size.to_i), max: ( plan['disk'].to_i * 1024 )
           end
 
           env[:ui].info I18n.t('vagrant_linode.info.creating')

@@ -9,6 +9,10 @@ module VagrantPlugins
         error_key(:api_status)
       end
 
+      class DiskSize < LinodeError
+        error_key(:disk_size)
+      end
+
       class DistroMatch < LinodeError
         error_key(:distro_match)
       end
@@ -27,6 +31,10 @@ module VagrantPlugins
 
       class LocalIPError < LinodeError
         error_key(:local_ip)
+      end
+
+      class PlanID < LinodeError
+        error_key(:plan_id)
       end
 
       class PublicKeyError < LinodeError
