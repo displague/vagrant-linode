@@ -1,5 +1,6 @@
 Linode Vagrant Provider
 ==============================
+
 `vagrant-linode` is a provider plugin for Vagrant that supports the
 management of [Linode](https://www.linode.com/) linodes
 (instances).
@@ -199,3 +200,6 @@ To run the provider's tests:
 You can now make modifications. Running `vagrant` within the Bundler
 environment will ensure that plugins installed in your Vagrant
 environment are not loaded.
+
+[![Code Climate](https://codeclimate.com/github/displague/vagrant-linode/badges/gpa.svg)](https://codeclimate.com/github/displague/vagrant-linode)
+[![Test Coverage](https://codeclimate.com/github/displague/vagrant-linode/badges/coverage.svg)](https://codeclimate.com/github/displague/vagrant-linode)
