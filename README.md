@@ -203,3 +203,4 @@ environment are not loaded.
 
 [![Code Climate](https://codeclimate.com/github/displague/vagrant-linode/badges/gpa.svg)](https://codeclimate.com/github/displague/vagrant-linode)
 [![Test Coverage](https://codeclimate.com/github/displague/vagrant-linode/badges/coverage.svg)](https://codeclimate.com/github/displague/vagrant-linode)
+[![Gem Version](https://badge.fury.io/rb/vagrant-linode.svg)](http://badge.fury.io/rb/vagrant-linode)
