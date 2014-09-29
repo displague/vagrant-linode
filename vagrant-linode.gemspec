@@ -6,6 +6,7 @@ require 'vagrant-linode/version'
 Gem::Specification.new do |gem|
   gem.name          = 'vagrant-linode'
   gem.version       = VagrantPlugins::Linode::VERSION
+  gem.licenses      = ['MIT']
   gem.authors       = ['Marques Johansson', 'Jonathan Leal']
   gem.email         = ['marques@linode.com', 'jleal@linode.com']
   gem.description   = 'Enables Vagrant to manage Linode linodes'
