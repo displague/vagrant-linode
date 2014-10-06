@@ -1,23 +1,13 @@
-require 'vagrant-linode/actions/check_state'
-require 'vagrant-linode/actions/create'
-require 'vagrant-linode/actions/destroy'
-require 'vagrant-linode/actions/power_off'
-require 'vagrant-linode/actions/power_on'
-require 'vagrant-linode/actions/rebuild'
-require 'vagrant-linode/actions/reload'
-require 'vagrant-linode/actions/setup_hostname'
-require 'vagrant-linode/actions/setup_user'
-require 'vagrant-linode/actions/setup_sudo'
-require 'vagrant-linode/actions/setup_key'
-require 'vagrant-linode/actions/sync_folders'
-require 'vagrant-linode/actions/modify_provision_path'
+require 'pathname'
+
+require 'vagrant/action/builder'
 
 module VagrantPlugins
   module Linode
     module Actions
       include Vagrant::Action::Builtin
 
-      def self.destroy
+      def self.action_destroy
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
@@ -36,7 +26,7 @@ module VagrantPlugins
         end
       end
 
-      def self.ssh
+      def self.action_ssh
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
@@ -52,7 +42,7 @@ module VagrantPlugins
         end
       end
 
-      def self.ssh_run
+      def self.action_ssh_run
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
@@ -68,7 +58,7 @@ module VagrantPlugins
         end
       end
 
-      def self.provision
+      def self.action_provision
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
@@ -86,7 +76,7 @@ module VagrantPlugins
         end
       end
 
-      def self.up
+      def self.action_up
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
@@ -108,7 +98,7 @@ module VagrantPlugins
         end
       end
 
-      def self.halt
+      def self.action_halt
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
@@ -124,7 +114,7 @@ module VagrantPlugins
         end
       end
 
-      def self.reload
+      def self.action_reload
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
@@ -141,7 +131,7 @@ module VagrantPlugins
         end
       end
 
-      def self.rebuild
+      def self.action_rebuild
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, CheckState do |env, b|
@@ -158,6 +148,41 @@ module VagrantPlugins
           end
         end
       end
+
+      # Extended actions
+      def self.action_list_images
+	      Vagrant::Action::Builder.new.tap do |b|
+		      # b.use ConfigValidate # is this per machine?
+		      b.use ListImages
+	      end
+      end
+
+      def self.action_list_plans
+	      Vagrant::Action::Builder.new.tap do |b|
+		      # b.use ConfigValidate # is this per machine?
+		      b.use ListPlans
+	      end
+      end
+
+
+      action_root = Pathname.new(File.expand_path('../actions', __FILE__))
+      autoload :CheckState, action_root.join('check_state')
+      autoload :Create, action_root.join('create')
+      autoload :Destroy, action_root.join('destroy')
+      autoload :ModifyProvisionPath, action_root.join('modify_provision_path')
+      autoload :PowerOff, action_root.join('power_off')
+      autoload :PowerOn, action_root.join('power_on')
+      autoload :Destroy, action_root.join('destroy')
+      autoload :Reload, action_root.join('reload')
+      autoload :Rebuild, action_root.join('rebuild')
+      autoload :SetupHostname, action_root.join('setup_hostname')
+      autoload :SetupKey, action_root.join('setup_key')
+      autoload :SetupUser, action_root.join('setup_user')
+      autoload :SetupSudo, action_root.join('setup_sudo')
+      autoload :SyncFolders, action_root.join('sync_folders')
+      autoload :ListImages, action_root.join('list_images')
+      autoload :ListPlans, action_root.join('list_plans')
+
     end
   end
 end
