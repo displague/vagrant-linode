@@ -9,7 +9,7 @@ Vagrant.configure('2') do |config|
   config.vm.provider :linode do |provider, override|
     override.vm.box = 'linode'
     override.vm.box_url = 'https://github.com/displague/vagrant-linode/raw/master/box/linode.box'
-    provider.token = ENV['LINODE_TOKEN']
+    provider.api_key = ENV['LINODE_API_KEY']
     provider.ssh_key_name = 'Test Key'
     provider.distribution = 'Debian 8'
     provider.datacenter = 'newark'

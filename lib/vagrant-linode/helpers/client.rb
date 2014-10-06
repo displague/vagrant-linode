@@ -22,7 +22,7 @@ module VagrantPlugins
               fail 'not ready' if result['host_finish_dt'] > ''
             end
           end
-          linodeapi = ::LinodeAPI::Raw.new(apikey: @machine.provider_config.token,
+          linodeapi = ::LinodeAPI::Raw.new(apikey: @machine.provider_config.api_key,
 				      endpoint: @machine.provider_config.api_url || nil)
           # linodeapi.wait_for_event = wait_for_event
           # linodeapi.extend wait_for_event
@@ -35,7 +35,7 @@ module VagrantPlugins
         def initialize(machine)
           @logger = Log4r::Logger.new('vagrant::linode::apiclient')
           @config = machine.provider_config
-	  @client = ::LinodeAPI::Raw.new(apikey: @config.token, endpoint: @config.api_url || nil)
+	  @client = ::LinodeAPI::Raw.new(apikey: @config.api_key, endpoint: @config.api_url || nil)
         end
 
         attr_reader :client
@@ -55,7 +55,7 @@ module VagrantPlugins
             @logger.info "Request: #{path}"
             result = @client.send(method) do |req|
               req.url path, params
-              req.headers['Authorization'] = "Bearer #{@config.token}"
+              req.headers['Authorization'] = "Bearer #{@config.api_key}"
             end
           rescue Faraday::Error::ConnectionFailed => e
             # TODO this is suspect but because farady wraps the exception
