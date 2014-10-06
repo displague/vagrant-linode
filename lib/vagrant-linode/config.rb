@@ -13,6 +13,7 @@ module VagrantPlugins
       attr_accessor :setup
       attr_accessor :xvda_size
       attr_accessor :swap_size
+      attr_accessor :label
 
       alias_method :setup?, :setup
 
@@ -29,6 +30,7 @@ module VagrantPlugins
         @setup              = UNSET_VALUE
         @xvda_size          = UNSET_VALUE
         @swap_size          = UNSET_VALUE
+        @label              = UNSET_VALUE
       end
 
       def finalize!
@@ -44,6 +46,7 @@ module VagrantPlugins
         @setup              = true if @setup == UNSET_VALUE
         @xvda_size          = true if @xvda_size == UNSET_VALUE
         @swap_size          = '256' if @swap_size == UNSET_VALUE
+        @label              = false if @label == UNSET_VALUE
       end
 
       def validate(machine)

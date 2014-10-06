@@ -132,7 +132,7 @@ module VagrantPlugins
 
           result = @client.linode.update(
             linodeid: result['linodeid'],
-            label: @machine.config.vm.hostname || @machine.name
+            label: @machine.provider_config.label || @machine.name
           )
 
           env[:ui].info I18n.t('vagrant_linode.info.booting', linodeid: result['linodeid'])
