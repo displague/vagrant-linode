@@ -1,23 +1,21 @@
 require 'spec_helper'
-require "vagrant-linode/action/list_distributions"
+require 'vagrant-linode/action/list_distributions'
 
 describe VagrantPlugins::Linode::Action::ListImages do
-  let(:app) { lambda { |env| } }
+  let(:app) { lambda { |_env| } }
   let(:ui) { Vagrant::UI::Silent.new }
-  let(:distributions) {
+  let(:distributions) do
     Fog.mock!
-    Fog::Compute.new({
-      :provider => :linode,
-      :linode_region => :dfw,
-      :linode_api_key => 'anything',
-      :linode_username => 'anything',
-    }).distributions
-  }
+    Fog::Compute.new(provider: :linode,
+                     linode_region: :dfw,
+                     linode_api_key: 'anything',
+                     linode_username: 'anything').distributions
+  end
   let(:compute_connection) { double('fog connection') }
   let(:env) do
     {
-      :linode_compute => compute_connection,
-      :ui => ui
+      linode_compute: compute_connection,
+      ui: ui
     }
   end
 

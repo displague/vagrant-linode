@@ -1,23 +1,21 @@
 require 'spec_helper'
-require "vagrant-linode/action/list_plans"
+require 'vagrant-linode/action/list_plans'
 
 describe VagrantPlugins::Linode::Action::ListPlans do
-  let(:app) { lambda { |env| } }
+  let(:app) { lambda { |_env| } }
   let(:ui) { Vagrant::UI::Silent.new }
-  let(:plans) {
+  let(:plans) do
     Fog.mock!
-    Fog::Compute.new({
-      :provider => :linode,
-      :linode_datacenter => :dallas,
-      :linode_api_key => 'anything',
-      :linode_username => 'anything',
-    }).plans
-  }
+    Fog::Compute.new(provider: :linode,
+                     linode_datacenter: :dallas,
+                     linode_api_key: 'anything',
+                     linode_username: 'anything').plans
+  end
   let(:compute_connection) { double('fog connection') }
   let(:env) do
     {
-      :linode_compute => compute_connection,
-      :ui => ui
+      linode_compute: compute_connection,
+      ui: ui
     }
   end
 

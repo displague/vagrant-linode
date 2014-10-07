@@ -11,7 +11,7 @@ if ENV['COVERAGE'] != 'false'
   # is missing from the report.  This ensures they show up so we can
   # see uncovered methods.
   require 'vagrant'
-  Dir["lib/**/*.rb"].each do|file|
+  Dir['lib/**/*.rb'].each do|file|
     require_string = file.match(/lib\/(.*)\.rb/)[1]
     require require_string
   end

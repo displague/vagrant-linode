@@ -1,13 +1,13 @@
 begin
-  require "vagrant"
+  require 'vagrant'
 rescue LoadError
-  raise "The Linode provider must be run within Vagrant."
+  raise 'The Linode provider must be run within Vagrant.'
 end
 
 # This is a sanity check to make sure no one is attempting to install
 # this into an early Vagrant version.
-if Vagrant::VERSION < "1.1.0"
-  raise "Linode provider is only compatible with Vagrant 1.1+"
+if Vagrant::VERSION < '1.1.0'
+  fail 'Linode provider is only compatible with Vagrant 1.1+'
 end
 
 module VagrantPlugins

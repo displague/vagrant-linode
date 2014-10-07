@@ -79,7 +79,7 @@ module VagrantPlugins
       def ssh_info
         linode = Provider.linode(@machine, refresh: true)
 
-        return nil if self.state.id != :active
+        return nil if state.id != :active
 
         public_network = linode.network.find { |network| network['ispublic'] == 1 }
 
@@ -97,20 +97,20 @@ module VagrantPlugins
       def state
         status = Provider.linode(@machine)['status']
         states = {
-		    ""  => :not_created,
-		    '-2' => :boot_failed,
-		    '-1' => :being_created,
-	            '0' => :brand_new, # brand new
-	            '1' => :active, # running
-	            '2' => :off, # powered off
-		    '3' => :shutting_down
-                 }
+          ''  => :not_created,
+          '-2' => :boot_failed,
+          '-1' => :being_created,
+          '0' => :brand_new, # brand new
+          '1' => :active, # running
+          '2' => :off, # powered off
+          '3' => :shutting_down
+        }
         id = long = short = states[status.to_s]
         Vagrant::MachineState.new(id, short, long)
       end
 
       def to_s
-	"Linode"
+        'Linode'
       end
     end
   end

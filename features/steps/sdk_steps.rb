@@ -3,11 +3,11 @@ Given(/^I have Rackspace credentials available$/) do
 end
 
 Given(/^I have a "fog_mock.rb" file$/) do
-  script = File.open("features/support/fog_mock.rb").read
-  steps %Q{
+  script = File.open('features/support/fog_mock.rb').read
+  steps %(
     Given a file named "fog_mock.rb" with:
     """
     #{script}
     """
-  }
+    )
 end

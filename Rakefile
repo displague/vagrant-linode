@@ -8,7 +8,7 @@ $stdout.sync = true
 $stderr.sync = true
 
 # Change to the directory of this file.
-Dir.chdir(File.expand_path("../", __FILE__))
+Dir.chdir(File.expand_path('../', __FILE__))
 
 # This installs the tasks that help with gem creation and
 # publishing.
@@ -20,11 +20,9 @@ end
 RSpec::Core::RakeTask.new
 
 # Default task is to run the unit tests
-task :default => "spec"
+task default: 'spec'
 
-
-#require 'bundler/gem_helper'
-
+# require 'bundler/gem_helper'
 
 task :test do
   result = sh 'bash test/test.sh'

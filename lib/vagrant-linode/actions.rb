@@ -151,19 +151,18 @@ module VagrantPlugins
 
       # Extended actions
       def self.action_list_images
-	      Vagrant::Action::Builder.new.tap do |b|
-		      # b.use ConfigValidate # is this per machine?
-		      b.use ListImages
-	      end
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ListImages
+        end
       end
 
       def self.action_list_plans
-	      Vagrant::Action::Builder.new.tap do |b|
-		      # b.use ConfigValidate # is this per machine?
-		      b.use ListPlans
-	      end
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ListPlans
+        end
       end
-
 
       action_root = Pathname.new(File.expand_path('../actions', __FILE__))
       autoload :CheckState, action_root.join('check_state')
@@ -182,7 +181,6 @@ module VagrantPlugins
       autoload :SyncFolders, action_root.join('sync_folders')
       autoload :ListImages, action_root.join('list_images')
       autoload :ListPlans, action_root.join('list_plans')
-
     end
   end
 end

@@ -32,7 +32,7 @@ module VagrantPlugins
           if @machine.provider_config.distribution
             distributions = @client.avail.distributions
             distribution = distributions.find { |d| d.label.downcase.include? @machine.provider_config.distribution.downcase }
-            raise( Errors::DistroMatch, distro: @machine.provider_config.distribution.to_s ) if distribution == nil
+            fail(Errors::DistroMatch, distro: @machine.provider_config.distribution.to_s) if distribution.nil?
             distribution_id = distribution.distributionid || nil
           else
             distribution_id = @machine.provider_config.distributionid
@@ -58,8 +58,8 @@ module VagrantPlugins
           if @machine.provider_config.plan
             plans = @client.avail.linodeplans
             plan = plans.find { |p| p.label.include? @machine.provider_config.plan }
-            raise Errors::PlanID, plan: @machine.provider_config.plan if plan == nil
-            plan_id = plan.planid || nil 
+            fail Errors::PlanID, plan: @machine.provider_config.plan if plan.nil?
+            plan_id = plan.planid || nil
           else
             plan_id = @machine.provider_config.planid
           end
@@ -69,14 +69,14 @@ module VagrantPlugins
 
           # Sanity checks for disk size
           if xvda_size != true
-            disk_sanity = false if ( xvda_size.to_i + swap_size.to_i ) > ( plan['disk'].to_i * 1024 )
+            disk_sanity = false if ( xvda_size.to_i + swap_size.to_i) > ( plan['disk'].to_i * 1024)
           end
 
           # throw if disk sizes are too large
           if xvda_size == true
-            xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i )
+            xvda_size = ( ( plan['disk'].to_i * 1024) - swap_size.to_i)
           elsif disk_sanity == false
-            raise Errors::DiskSize, current: (xvda_size.to_i + swap_size.to_i), max: ( plan['disk'].to_i * 1024 )
+            fail Errors::DiskSize, current: (xvda_size.to_i + swap_size.to_i), max: ( plan['disk'].to_i * 1024)
           end
 
           env[:ui].info I18n.t('vagrant_linode.info.creating')

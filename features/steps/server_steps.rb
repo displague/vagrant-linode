@@ -15,11 +15,11 @@ Then(/^the server should be active$/) do
 end
 
 Then(/^the server "(.+)" should be active$/) do |server_name|
-  server = @compute.servers.all.find{|s| s.name == server_name}
+  server = @compute.servers.all.find { |s| s.name == server_name }
   assert_active server.id
 end
 
-def assert_active server_id
+def assert_active(server_id)
   server = @compute.servers.get server_id
   server.state.should == 'ACTIVE'
 end
