@@ -45,7 +45,8 @@ module VagrantPlugins
       # exists, otherwise return nil to show that we don't support the
       # given action.
       def action(name)
-        return Actions.send(name) if Actions.respond_to?(name)
+	action_method = "action_#{name}"
+        return Actions.send(action_method) if Actions.respond_to?(action_method)
         nil
       end
 
@@ -77,18 +78,8 @@ module VagrantPlugins
       # `ssh` prompt with a password, whereas we can pass a private key
       # via commandline.
       def ssh_info
-        linode = Provider.linode(@machine, refresh: true)
-
-        return nil if state.id != :active
-
-        public_network = linode.network.find { |network| network['ispublic'] == 1 }
-
-        {
-          host: public_network['ipaddress'],
-          port: '22',
-          username: 'root',
-          private_key_path: @machine.config.ssh.private_key_path
-        }
+	env = @machine.action('read_ssh_info')
+	env[:machine_ssh_info]
       end
 
       # This should return the state of the machine within this provider.
