@@ -1,13 +1,22 @@
+require 'vagrant-linode/helpers/client'
 require 'vagrant-linode/actions'
 
 module VagrantPlugins
   module Linode
     class Provider < Vagrant.plugin('2', :provider)
+      def initialize(machine)
+        @machine = machine
+      end
+
       # This class method caches status for all linodes within
       # the Linode account. A specific linode's status
       # may be refreshed by passing :refresh => true as an option.
       def self.linode(machine, opts = {})
         client = Helpers::ApiClient.new(machine).client
+
+        # @todo how do I reuse VagrantPlugins::Linode::Actions::ConnectLinode ?
+        # ..and nuke the helper
+        # client = env[:linode_api]
 
         # load status of linodes if it has not been done before
         unless @linodes
@@ -37,15 +46,11 @@ module VagrantPlugins
         linode ||= { status: :not_created }
       end
 
-      def initialize(machine)
-        @machine = machine
-      end
-
       # Attempt to get the action method from the Action class if it
       # exists, otherwise return nil to show that we don't support the
       # given action.
       def action(name)
-	action_method = "action_#{name}"
+        action_method = "action_#{name}"
         return Actions.send(action_method) if Actions.respond_to?(action_method)
         nil
       end
@@ -57,6 +62,7 @@ module VagrantPlugins
       # is simply the machine instance given to this object. And no
       # return value is necessary.
       def machine_id_changed
+        linode(@machine, refresh: true)
       end
 
       # This should return a hash of information that explains how to
@@ -78,30 +84,26 @@ module VagrantPlugins
       # `ssh` prompt with a password, whereas we can pass a private key
       # via commandline.
       def ssh_info
-	env = @machine.action('read_ssh_info')
-	env[:machine_ssh_info]
+        env = @machine.action('read_ssh_info')
+        env[:machine_ssh_info]
       end
 
       # This should return the state of the machine within this provider.
       # The state must be an instance of {MachineState}. Please read the
       # documentation of that class for more information.
       def state
-        status = Provider.linode(@machine)['status']
-        states = {
-          ''  => :not_created,
-          '-2' => :boot_failed,
-          '-1' => :being_created,
-          '0' => :brand_new, # brand new
-          '1' => :active, # running
-          '2' => :off, # powered off
-          '3' => :shutting_down
-        }
-        id = long = short = states[status.to_s]
-        Vagrant::MachineState.new(id, short, long)
+        env = @machine.action('read_state')
+        state_id = env[:machine_state_id]
+
+        short = I18n.t("vagrant_linode.states.short_#{state_id}")
+        long = I18n.t("vagrant_linode.states.long_#{state_id}")
+
+        Vagrant::MachineState.new(state_id, short, long)
       end
 
       def to_s
-        'Linode'
+        id = @machine.id.nil? ? 'new' : @machine.id
+        "Linode (#{id})"
       end
     end
   end
