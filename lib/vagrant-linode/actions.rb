@@ -172,6 +172,14 @@ module VagrantPlugins
         end
       end
 
+      def self.action_list_servers
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListServers
+        end
+      end
+
       def self.action_list_plans
         Vagrant::Action::Builder.new.tap do |b|
           # b.use ConfigValidate # is this per machine?
@@ -213,6 +221,7 @@ module VagrantPlugins
       autoload :SetupUser, action_root.join('setup_user')
       autoload :SetupSudo, action_root.join('setup_sudo')
       autoload :SyncFolders, action_root.join('sync_folders')
+      autoload :ListServers, action_root.join('list_servers')
       autoload :ListImages, action_root.join('list_images')
       autoload :ListPlans, action_root.join('list_plans')
       autoload :ListDistributions, action_root.join('list_distributions')
