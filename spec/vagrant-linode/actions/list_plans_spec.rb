@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'vagrant-linode/action/list_plans'
+require 'vagrant-linode/actions/list_plans'
 
-describe VagrantPlugins::Linode::Action::ListPlans do
+describe VagrantPlugins::Linode::Actions::ListPlans do
   let(:app) { lambda { |_env| } }
   let(:ui) { Vagrant::UI::Silent.new }
   let(:plans) do

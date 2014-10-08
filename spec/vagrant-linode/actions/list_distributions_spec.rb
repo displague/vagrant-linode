@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'vagrant-linode/action/list_distributions'
+require 'vagrant-linode/actions/list_distributions'
 
-describe VagrantPlugins::Linode::Action::ListImages do
+describe VagrantPlugins::Linode::Actions::ListImages do
   let(:app) { lambda { |_env| } }
   let(:ui) { Vagrant::UI::Silent.new }
   let(:distributions) do
