@@ -10,13 +10,14 @@ module VagrantPlugins
       def self.action_destroy
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
+          builder.use Call, IsCreated do |env, b|
             case env[:machine_state]
             when :not_created
               env[:ui].info I18n.t('vagrant_linode.info.not_created')
             else
               b.use Call, DestroyConfirm do |env2, b2|
-                if env2[:result]
+                if env2[:machine_state]
+                  b2.use ConnectLinode
                   b2.use Destroy
                   b2.use ProvisionerCleanup if defined?(ProvisionerCleanup)
                 end
@@ -26,10 +27,18 @@ module VagrantPlugins
         end
       end
 
+      def self.action_read_state
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use ConnectLinode
+          b.use ReadState
+        end
+      end
+
       def self.action_ssh
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
+          builder.use Call, IsCreated do |env, b|
             case env[:machine_state]
             when :active
               b.use SSHExec
@@ -45,7 +54,7 @@ module VagrantPlugins
       def self.action_ssh_run
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
+          builder.use Call, IsCreated do |env, b|
             case env[:machine_state]
             when :active
               b.use SSHRun
@@ -61,7 +70,7 @@ module VagrantPlugins
       def self.action_provision
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
+          builder.use Call, IsCreated do |env, b|
             case env[:machine_state]
             when :active
               b.use Provision
@@ -79,15 +88,17 @@ module VagrantPlugins
       def self.action_up
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
+          builder.use Call, IsCreated do |env, b|
             case env[:machine_state]
             when :active
               env[:ui].info I18n.t('vagrant_linode.info.already_active')
             when :off
+              b.use ConnectLinode
               b.use PowerOn
-              b.use provision
+              b.use Provision
             when :not_created
               # b.use SetupKey # no access to ssh keys in linode api
+              b.use ConnectLinode
               b.use Create
               b.use SetupSudo
               b.use SetupUser
@@ -101,9 +112,10 @@ module VagrantPlugins
       def self.action_halt
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
+          builder.use Call, IsCreated do |env, b|
             case env[:machine_state]
             when :active
+              b.use ConnectLinode
               b.use PowerOff
             when :off
               env[:ui].info I18n.t('vagrant_linode.info.already_off')
@@ -117,11 +129,12 @@ module VagrantPlugins
       def self.action_reload
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
+          builder.use Call, IsCreated do |env, b|
             case env[:machine_state]
             when :active
+              b.use ConnectLinode
               b.use Reload
-              b.use provision
+              b.use Provision
             when :off
               env[:ui].info I18n.t('vagrant_linode.info.off')
             when :not_created
@@ -134,9 +147,10 @@ module VagrantPlugins
       def self.action_rebuild
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
+          builder.use Call, IsCreated do |env, b|
             case env[:machine_state]
             when :active, :off
+              b.use ConnectLinode
               b.use Rebuild
               b.use SetupSudo
               b.use SetupUser
@@ -153,6 +167,7 @@ module VagrantPlugins
       def self.action_list_images
         Vagrant::Action::Builder.new.tap do |b|
           # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
           b.use ListImages
         end
       end
@@ -160,14 +175,33 @@ module VagrantPlugins
       def self.action_list_plans
         Vagrant::Action::Builder.new.tap do |b|
           # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
           b.use ListPlans
         end
       end
 
+      def self.action_list_datacenters
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListDatacenters
+        end
+      end
+
+      def self.action_list_distributions
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListDistributions
+        end
+      end
+
       action_root = Pathname.new(File.expand_path('../actions', __FILE__))
-      autoload :CheckState, action_root.join('check_state')
+      autoload :ConnectLinode, action_root.join('connect_linode')
+      autoload :ReadState, action_root.join('read_state')
       autoload :Create, action_root.join('create')
       autoload :Destroy, action_root.join('destroy')
+      autoload :IsCreated, action_root.join('is_created')
       autoload :ModifyProvisionPath, action_root.join('modify_provision_path')
       autoload :PowerOff, action_root.join('power_off')
       autoload :PowerOn, action_root.join('power_on')
@@ -181,6 +215,8 @@ module VagrantPlugins
       autoload :SyncFolders, action_root.join('sync_folders')
       autoload :ListImages, action_root.join('list_images')
       autoload :ListPlans, action_root.join('list_plans')
+      autoload :ListDistributions, action_root.join('list_distributions')
+      autoload :ListDatacenters, action_root.join('list_datacenters')
     end
   end
 end
