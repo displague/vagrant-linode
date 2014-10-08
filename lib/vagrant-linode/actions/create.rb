@@ -5,13 +5,12 @@ module VagrantPlugins
   module Linode
     module Actions
       class Create
-        include Helpers::Client
         include Vagrant::Util::Retryable
 
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = client
+          @client = env[:linode_api]
           @logger = Log4r::Logger.new('vagrant::linode::create')
         end
 

@@ -2,7 +2,7 @@ require 'log4r'
 
 module VagrantPlugins
   module Linode
-    module Action
+    module Actions
       # This action reads the SSH info for the machine and puts it into the
       # `:machine_ssh_info` key in the environment.
       class ReadSSHInfo
@@ -12,7 +12,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:machine_ssh_info] = read_ssh_info(env[:rackspace_compute], env[:machine])
+          env[:machine_ssh_info] = read_ssh_info(env[:linode_api], env[:machine])
 
           @app.call(env)
         end

@@ -4,12 +4,10 @@ module VagrantPlugins
   module Linode
     module Actions
       class Reload
-        include Helpers::Client
-
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = client
+          @client = env[:linode_api]
           @logger = Log4r::Logger.new('vagrant::linode::reload')
         end
 
