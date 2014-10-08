@@ -20,6 +20,14 @@ module VagrantPlugins
             require File.expand_path('../plans', __FILE__)
             Plans
           end
+          @subcommands.register(:distributions) do
+            require File.expand_path('../distributions', __FILE__)
+            Distributions
+          end
+          @subcommands.register(:datacenters) do
+            require File.expand_path('../datacenters', __FILE__)
+            Datacenters
+          end
           @subcommands.register(:keypairs) do
             require File.expand_path('../keypairs', __FILE__)
             KeyPairs
