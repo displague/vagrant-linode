@@ -19,6 +19,7 @@ module VagrantPlugins
           server = Provider.linode(machine)
           return :not_created if server.nil?
 	  status = server['status']
+          return :not_created if status.nil?
           states = {
             ''  => :not_created,
             '-2' => :boot_failed,

@@ -62,7 +62,7 @@ module VagrantPlugins
       # is simply the machine instance given to this object. And no
       # return value is necessary.
       def machine_id_changed
-        linode(@machine, refresh: true)
+        Provider.linode(@machine, refresh: true)
       end
 
       # This should return a hash of information that explains how to
@@ -93,7 +93,7 @@ module VagrantPlugins
       # documentation of that class for more information.
       def state
         env = @machine.action('read_state')
-        state_id = env[:machine_state_id]
+        state_id = env[:machine_state]
 
         short = I18n.t("vagrant_linode.states.short_#{state_id}")
         long = I18n.t("vagrant_linode.states.long_#{state_id}")
