@@ -1,11 +1,3 @@
 {
-  "name": "linode",
-  "description": "This box creates a Linode",
-  "versions": [{
-    "version": "0.2.0",
-    "providers": [{
-      "name": "linode",
-      "url": "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
-    }]
-  }]
+  provider: 'linode'
 }
