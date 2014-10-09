@@ -132,7 +132,7 @@ module VagrantPlugins
 
           result = @client.linode.update(
             linodeid: result['linodeid'],
-            label: @machine.provider_config.label || @machine.name
+            label: @machine.provider_config.label || @machine.name if @machine.name != 'default' || get_server_name
           )
 
           env[:ui].info I18n.t('vagrant_linode.info.booting', linodeid: result['linodeid'])
@@ -177,6 +177,11 @@ module VagrantPlugins
         #    terminate(env)
         #  end
         # end
+
+        # generate a random name if server name is empty
+        def get_server_name
+          server_name = "vagrant_linode-#{rand.to_s.split('.')[1]}"
+        end
 
         def terminate(env)
           destroy_env = env.dup
