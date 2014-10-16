@@ -118,11 +118,14 @@ module VagrantPlugins
             )
           end
 
+	  # kernel id
+	  kernel_id = @machine.provider_config.kernel_id
+
           config = @client.linode.config.create(
             linodeid: result['linodeid'],
             label: 'Vagrant Config',
             disklist: "#{disk['diskid']},#{swap['diskid']}",
-            kernelid: 138 # default - newest @todo make this part of config..
+            kernelid: kernel_id
           )
 
           # @todo: allow provisioning to set static configuration for networking
