@@ -12,7 +12,7 @@ module VagrantPlugins
       # the Linode account. A specific linode's status
       # may be refreshed by passing :refresh => true as an option.
       def self.linode(machine, opts = {})
-        client = Helpers::ApiClient.new(machine).client
+	client = Helpers::ApiClient.new(machine).client
 
         # @todo how do I reuse VagrantPlugins::Linode::Actions::ConnectLinode ?
         # ..and nuke the helper
@@ -29,7 +29,7 @@ module VagrantPlugins
           linode = client.linode.list(linodeid: machine.id).first
           linode.network = client.linode.ip.list linodeid: linode['linodeid']
           @linodes << linode
-        else
+	elsif machine.id
           # lookup linode status for the given machine
           linode = @linodes.find { |d| d['linodeid'].to_s == machine.id }
         end
@@ -62,7 +62,9 @@ module VagrantPlugins
       # is simply the machine instance given to this object. And no
       # return value is necessary.
       def machine_id_changed
-        Provider.linode(@machine, refresh: true)
+        if @machine.id
+          Provider.linode(@machine, refresh: true)
+	end
       end
 
       # This should return a hash of information that explains how to
