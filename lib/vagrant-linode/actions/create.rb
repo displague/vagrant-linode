@@ -133,9 +133,13 @@ module VagrantPlugins
             private_network = @client.linode.ip.addprivate linodeid: result['linodeid']
           end
 
+          label = @machine.provider_config.label
+          label = label || @machine.name if @machine.name != 'default'
+          label = label || get_server_name
+
           result = @client.linode.update(
             linodeid: result['linodeid'],
-            label: @machine.provider_config.label || @machine.name if @machine.name != 'default' || get_server_name
+            label: label
           )
 
           env[:ui].info I18n.t('vagrant_linode.info.booting', linodeid: result['linodeid'])
