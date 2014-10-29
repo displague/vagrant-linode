@@ -23,19 +23,23 @@ Vagrant.configure('2') do |config|
 
     # Disk Image Sizes (Optional configuration)
 
-      # Main Disk Image Size
-      # [str] ( Full Allocation - Swap ) if nil
-      provider.xvda_size = '1024'
+    # Main Disk Image Size
+    # [str] ( Full Allocation - Swap ) if nil
+    provider.xvda_size = '1024'
 
-      # Swap Image Size
-      # [str] 256 if nil
-      provider.swap_size = '256'
+    # Swap Image Size
+    # [str] 256 if nil
+    provider.swap_size = '256'
+
+    # Kernel Image ID
+    # [str] 138 if nil
+    provider.kernel_id = '138'
 
     # Networking (Optional Configuration)
 
-      # Enable private networking
-      # [boolean] disabled if nil
-      #provider.private_networking = true
+    # Enable private networking
+    # [boolean] disabled if nil
+    #provider.private_networking = true
   end
 
   config.vm.provision :shell, path: 'scripts/provision.sh'
