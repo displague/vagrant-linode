@@ -18,7 +18,7 @@ Current features include:
 - setup a SSH public key for authentication
 - create a new user account during linode creation
 
-The provider has been tested with Vagrant 1.1.5+ using Ubuntu 14.04 LTS and
+The provider has been tested with Vagrant 1.6.3+ using Ubuntu 14.04 LTS and
 Debian 7.5 guest operating systems.
 
 Install
