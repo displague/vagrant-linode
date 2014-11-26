@@ -7,11 +7,11 @@ module VagrantPlugins
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = env[:linode_api]
           @logger = Log4r::Logger.new('vagrant::linode::power_off')
         end
 
         def call(env)
+          @client = env[:linode_api]
           # submit power off linode request
           result = @client.linode.shutdown(linodeid: @machine.id)
 

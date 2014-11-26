@@ -7,11 +7,11 @@ module VagrantPlugins
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = env[:linode_api]
           @logger = Log4r::Logger.new('vagrant::linode::reload')
         end
 
         def call(env)
+          @client = env[:linode_api]
           # submit reboot linode request
           result = @client.linode.reboot(linodeid: @machine.id)
 

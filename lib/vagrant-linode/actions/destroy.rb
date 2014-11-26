@@ -7,11 +7,11 @@ module VagrantPlugins
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = env[:linode_api]
           @logger = Log4r::Logger.new('vagrant::linode::destroy')
         end
 
         def call(env)
+          @client = env[:linode_api]
           # submit destroy linode request
           @client.linode.delete(linodeid: @machine.id, skipchecks: true)
 

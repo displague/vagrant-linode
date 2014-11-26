@@ -1,4 +1,5 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/helpers/waiter'
 require 'vagrant-linode/errors'
 
 module VagrantPlugins
@@ -6,18 +7,18 @@ module VagrantPlugins
     module Actions
       class Create
         include Vagrant::Util::Retryable
+        include VagrantPlugins::Linode::Helpers::Waiter
 
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = env[:linode_api]
           @logger = Log4r::Logger.new('vagrant::linode::create')
         end
 
         def call(env)
+	  @client = env[:linode_api]
           ssh_key_id = env[:machine].config.ssh.private_key_path
           ssh_key_id = ssh_key_id[0] if ssh_key_id.is_a?(Array)
-
           if ssh_key_id
             pubkey = File.read(File.expand_path("#{ssh_key_id}.pub"))
           end
