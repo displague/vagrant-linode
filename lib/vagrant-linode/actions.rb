@@ -27,6 +27,17 @@ module VagrantPlugins
         end
       end
 
+      # This action is called to read the SSH info of the machine. The
+      # resulting state is expected to be put into the `:machine_ssh_info`
+      # key.
+      def self.action_read_ssh_info
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use ConnectLinode
+          b.use ReadSSHInfo
+        end
+      end
+
       def self.action_read_state
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
@@ -224,6 +235,7 @@ module VagrantPlugins
       autoload :SetupHostname, action_root.join('setup_hostname')
       autoload :SetupUser, action_root.join('setup_user')
       autoload :SetupSudo, action_root.join('setup_sudo')
+      autoload :ReadSSHInfo, action_root.join("read_ssh_info")
       autoload :SyncFolders, action_root.join('sync_folders')
       autoload :ListServers, action_root.join('list_servers')
       autoload :ListImages, action_root.join('list_images')
