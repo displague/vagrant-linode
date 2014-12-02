@@ -180,6 +180,14 @@ module VagrantPlugins
       end
 
       # Extended actions
+      def self.action_create_image
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use CreateImage
+        end
+      end
+
       def self.action_list_images
         Vagrant::Action::Builder.new.tap do |b|
           # b.use ConfigValidate # is this per machine?
@@ -238,6 +246,7 @@ module VagrantPlugins
       autoload :ReadSSHInfo, action_root.join("read_ssh_info")
       autoload :SyncFolders, action_root.join('sync_folders')
       autoload :ListServers, action_root.join('list_servers')
+      autoload :CreateImage, action_root.join('create_image')
       autoload :ListImages, action_root.join('list_images')
       autoload :ListPlans, action_root.join('list_plans')
       autoload :ListDistributions, action_root.join('list_distributions')
