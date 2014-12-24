@@ -1,5 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+
 Vagrant.configure('2') do |config|
   config.ssh.username = 'tester'
   config.ssh.private_key_path = './test_id_rsa'
