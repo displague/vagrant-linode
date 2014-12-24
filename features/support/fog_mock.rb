@@ -9,8 +9,7 @@ if ENV['LINODE_MOCK'] == 'true'
     provider: 'linode',
     linode_username: ENV['LINODE_USERNAME'],
     linode_api_key: ENV['LINODE_API_KEY'],
-    version: :v2, # Use Next Gen Cloud Servers
-    linode_region: :ord # Use Chicago Region
+    linode_region: :newark
   }
   connect_options.merge!(proxy_options) unless ENV['https_proxy'].nil?
   compute = Fog::Compute.new(connect_options)
