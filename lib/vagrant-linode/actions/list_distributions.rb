@@ -8,9 +8,9 @@ module VagrantPlugins
 
         def call(env)
           linode_api = env[:linode_api]
-          env[:ui].info ('%-36s %s' % ['Distribution ID', 'Distribution Name'])
+          env[:ui].info ('%-4s %-6s %s' % ['ID', 'Size', 'Distribution Name'])
           linode_api.avail.distributions.sort_by(&:distributionid).each do |dist|
-            env[:ui].info ('%-36s %s' % [dist.distributionid, dist.label])
+            env[:ui].info ('%-4s %-6s %s' % [dist.distributionid, dist.minimagesize, dist.label])
           end
           @app.call(env)
         end
