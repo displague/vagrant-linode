@@ -3,6 +3,8 @@ require 'linodeapi'
 require 'json'
 require 'vagrant/util/retryable'
 
+include Vagrant::Util::Retryable
+
 module VagrantPlugins
   module Linode
     module Helpers
