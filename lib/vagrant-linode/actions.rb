@@ -5,6 +5,7 @@ require 'vagrant-linode/actions/power_off'
 require 'vagrant-linode/actions/power_on'
 require 'vagrant-linode/actions/rebuild'
 require 'vagrant-linode/actions/reload'
+require 'vagrant-linode/actions/setup_hostname'
 require 'vagrant-linode/actions/setup_user'
 require 'vagrant-linode/actions/setup_sudo'
 require 'vagrant-linode/actions/setup_key'
@@ -100,6 +101,7 @@ module VagrantPlugins
               b.use Create
               b.use SetupSudo
               b.use SetupUser
+              b.use SetupHostname
               b.use provision
             end
           end
@@ -148,6 +150,7 @@ module VagrantPlugins
               b.use Rebuild
               b.use SetupSudo
               b.use SetupUser
+              b.use SetupHostname
               b.use provision
             when :not_created
               env[:ui].info I18n.t('vagrant_linode.info.not_created')
