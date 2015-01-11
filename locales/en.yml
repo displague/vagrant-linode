@@ -17,6 +17,7 @@ en:
       reloading: "Rebooting the linode..."
       creating_user: "Creating user account: %{user}..."
       modifying_sudo: "Modifying sudoers file to remove tty requirement..."
+      modifying_host: "Modifying hostname: %{name}..."
       using_key: "Using existing SSH key: %{name}"
       creating_key: "Creating new SSH key: %{name}..."
       trying_rsync_install: "Rsync not found, attempting to install with yum..."
