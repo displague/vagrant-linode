@@ -38,6 +38,15 @@ module VagrantPlugins
             distribution_id = @machine.provider_config.distributionid
           end
 
+          if @machine.provider_config.kernel
+            kernels = @client.avail.kernels
+            kernel = kernels.find { |k| k.label.downcase.include? @machine.provider_config.kernel.downcase }
+            raise( Errors::KernelMatch, kernel: @machine.provider_config.kernel.to_s ) if kernel == nil
+            kernel_id = kernel.kernelid || nil
+          else
+            kernel_id = @machine.provider_config.kernelid
+          end
+
           if @machine.provider_config.datacenter
             datacenters = @client.avail.datacenters
             datacenter = datacenters.find { |d| d.abbr == @machine.provider_config.datacenter }
