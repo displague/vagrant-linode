@@ -1,5 +1,5 @@
 require 'vagrant-linode/helpers/result'
-require 'linode'
+require 'linodeapi'
 require 'json'
 require 'vagrant/util/retryable'
 
@@ -20,8 +20,8 @@ module VagrantPlugins
               fail 'not ready' if result['host_finish_dt'] > ''
             end
           end
-          linodeapi = ::Linode.new(api_key: @machine.provider_config.token,
-                                   api_url: @machine.provider_config.api_url || nil)
+          linodeapi = ::LinodeAPI::Raw.new(apikey: @machine.provider_config.token,
+				      endpoint: @machine.provider_config.api_url || nil)
           # linodeapi.wait_for_event = wait_for_event
           # linodeapi.extend wait_for_event
         end
@@ -33,7 +33,7 @@ module VagrantPlugins
         def initialize(machine)
           @logger = Log4r::Logger.new('vagrant::linode::apiclient')
           @config = machine.provider_config
-          @client = ::Linode.new(api_key: @config.token)
+	  @client = ::LinodeAPI::Raw.new(apikey: @config.token, endpoint: @config.api_url || nil)
         end
 
         attr_reader :client
