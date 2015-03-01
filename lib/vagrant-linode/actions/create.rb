@@ -98,16 +98,16 @@ module VagrantPlugins
               label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
               type: 'ext4',
               size: xvda_size,
-              rootSSHKey: pubkey,
-              rootPass: root_pass
+              rootsshkey: pubkey,
+              rootpass: root_pass
             )
           elsif image_id
             disk = @client.linode.disk.createfromimage(
               linodeid: result['linodeid'],
               imageid: image_id,
               size: xvda_size,
-              rootSSHKey: pubkey,
-              rootPass: root_pass
+              rootsshkey: pubkey,
+              rootpass: root_pass
             )
 
             swap = @client.linode.disk.create(

@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'https://www.github.com/displague/vagrant-linode'
   gem.summary       = gem.description
 
-  gem.add_runtime_dependency 'linode'
+  gem.add_runtime_dependency 'linodeapi'
   gem.add_runtime_dependency 'json'
   gem.add_runtime_dependency 'log4r'
 
