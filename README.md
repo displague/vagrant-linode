@@ -171,6 +171,8 @@ command:
 This command will create a new linode, setup your SSH key for authentication,
 create a new user account, and run the provisioners you have configured.
 
+The  environment variable `VAGRANT_DEFAULT_PROVIDER` can be set to `linode` to avoid sending `--provider=linode` on each `vagrant up`. 
+
 **Supported Commands**
 
 The provider supports the following Vagrant sub-commands:
