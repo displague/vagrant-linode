@@ -147,6 +147,7 @@ Current Region-ID table is:
 |   7          | london     | London, England, UK |
 |   6          | newark     | Newark, NJ, USA     |
 |   8          | tokyo      | Tokyo, JP           |
+|   9          | singapore  | Singapore, SGP      |
 
 You can find latest datacenter ID number using Linode API call.
 
