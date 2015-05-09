@@ -87,8 +87,8 @@ Please note the following:
 **Supported Configuration Attributes**
 
 The following attributes are available to further configure the provider:
-- `provider.distribution` - A string representing the image to use when creating a
-   new linode (e.g. `Debian 7.5`). The available options may
+- `provider.distribution` - A string representing the distribution to use when
+   creating a new linode (e.g. `Debian 7.5`). The available options may
    be found on Linode's new linode [form](https://www.linode.com/distributions).
    It defaults to `Ubuntu 14.04 LTS`.
 - `provider.datacenter` - A string representing the region to create the new
