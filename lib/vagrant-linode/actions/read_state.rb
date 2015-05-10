@@ -17,19 +17,20 @@ module VagrantPlugins
         def read_state(_linode, machine)
           return :not_created if machine.id.nil?
           server = Provider.linode(machine)
+
           return :not_created if server.nil?
-	  status = server['status']
+	  status = server.status
           return :not_created if status.nil?
           states = {
             ''  => :not_created,
             '-2' => :boot_failed,
             '-1' => :being_created,
-            '0' => :brand_new, # brand new
+            '0' => :brand_new,
             '1' => :active, # running
             '2' => :off, # powered off
             '3' => :shutting_down
           }
-          states[status]
+          states[status.to_s]
         end
       end
     end
