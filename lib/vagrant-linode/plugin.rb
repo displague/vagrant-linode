@@ -25,6 +25,9 @@ module VagrantPlugins
       end
 
       provider(:linode, parallel: true) do
+        Linode.init_i18n
+        Linode.init_logging
+
         require_relative 'provider'
         Provider
       end
