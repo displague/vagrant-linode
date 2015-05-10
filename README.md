@@ -104,6 +104,8 @@ The following attributes are available to further configure the provider:
   account and modify sudo to disable tty requirement. It defaults to `true`.
   If you are using a tool like [packer](https://packer.io) to create
   reusable snapshots with user accounts already provisioned, set to `false`.
+- `provider.label` - A string representing the Linode label to assign when
+  creating a new linode
 
 The provider will create a new user account with the specified SSH key for
 authorization if `config.ssh.username` is set and the `provider.setup`
