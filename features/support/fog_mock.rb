@@ -7,9 +7,7 @@ if ENV['LINODE_MOCK'] == 'true'
   end
   connect_options = {
     provider: 'linode',
-    linode_username: ENV['LINODE_USERNAME'],
     linode_api_key: ENV['LINODE_API_KEY'],
-    linode_region: :newark
   }
   connect_options.merge!(proxy_options) unless ENV['https_proxy'].nil?
   compute = Fog::Compute.new(connect_options)
