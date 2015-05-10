@@ -1,5 +1,5 @@
-Given(/^I have Rackspace credentials available$/) do
-  fail unless ENV['RAX_USERNAME'] && ENV['RAX_API_KEY']
+Given(/^I have Linode credentials available$/) do
+  fail unless ENV['LINODE_API_KEY']
 end
 
 Given(/^I have a "fog_mock.rb" file$/) do
