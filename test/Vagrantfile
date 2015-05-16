@@ -2,13 +2,11 @@
 # vi: set ft=ruby :
 
 Vagrant.require_plugin('vagrant-linode')
-Vagrant.require_plugin('vagrant-omnibus')
 
 Vagrant.configure('2') do |config|
-  config.omnibus.chef_version = :latest
 
-  config.ssh.username = 'tester'
-  config.ssh.private_key_path = './test_id_rsa'
+  config.ssh.username = 'rawrus'
+  config.ssh.private_key_path = '~/.ssh/draugr'
 
   config.vm.synced_folder '.', '/vagrant', disabled: true
 
@@ -16,9 +14,9 @@ Vagrant.configure('2') do |config|
     override.vm.box = 'linode'
     override.vm.box_url = 'https://github.com/displague/vagrant-linode/raw/master/box/linode.box'
     provider.token = ENV['LINODE_TOKEN']
-    provider.ssh_key_name = 'Test Key'
+
     provider.distribution = 'Ubuntu 14.04 LTS'
-    provider.datacenter = 'newark'
+    provider.ssh_key_name = 'Test Key'
     provider.plan = '1024'
     provider.label = 'vagrant-'+Time.new.strftime("%F%T").gsub(/[^0-9]/,'')
 
@@ -35,34 +33,82 @@ Vagrant.configure('2') do |config|
     # Kernel Image ID
     # [str] 138 if nil
     provider.kernel_id = '138'
-
-    # Networking (Optional Configuration)
-
-    # Enable private networking
-    # [boolean] disabled if nil
-    #provider.private_networking = true
   end
+  
 
-  config.vm.provision :shell, path: 'scripts/provision.sh'
-
-  config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = 'cookbooks'
-    chef.add_recipe 'test'
-  end
 
   # Linode Specific Configurations
-  config.vm.define :ubuntu do |ubuntu|
-    ubuntu.vm.provider :linode do |provider|
-      provider.distribution = 'Ubuntu 14.04 LTS'
 
-      # Optional Settings
-      provider.label = 'Vagrant-Ubuntu'
+  ## Each facility gets three different machines - each of them will correspond to a 
+  ## specific set of machines.
+  ## - Hosts
+  ## - Backup Boxes
+  ## - Linode's Linodes
+
+  # Atlanta
+  config.vm.define :atlanta do |atlanta|
+    atlanta.vm.provider :linode do |provider|
+      provider.label = 'Atlanta-host-audit'
+      provider.group = 'Internal-Audit'
+      provider.datacenter = 'atlanta'
     end
   end
 
-  config.vm.define :centos do |centos|
-    centos.vm.provider :linode do |provider|
-      provider.distribution = 'CentOS 7'
+  # Dallas
+  config.vm.define :dallas do |dallas|
+    dallas.vm.provider :linode do |provider|
+      provider.label = 'Dallas-Host-Audit'
+      provider.group = 'Internal-Audit'
+      provider.datacenter = 'dallas'
     end
   end
+  
+  # Fremont
+  config.vm.define :fremont do |fremont|
+    fremont.vm.provider :linode do |provider|
+      provider.label = 'Fremont-Host-Audit'
+      provider.group = 'Internal-Audit'
+      provider.datacenter = 'fremont'
+    end
+  end
+  
+  # London
+  config.vm.define :london do |london|
+    london.vm.provider :linode do |provider|
+      provider.label = 'London-Host-Audit'
+      provider.group = 'Internal-Audit'
+      provider.datacenter = 'london'
+    end
+  end
+  
+  # Newark
+  config.vm.define :newark do |newark|
+    newark.vm.provider :linode do |provider|
+      provider.label = 'Newark-Host-Audit'
+      provider.group = 'Internal-Audit'
+      provider.datacenter = 'newark'
+    end
+  end
+  
+  # Singapore
+  config.vm.define :singapore do |singapore|
+    singapore.vm.provider :linode do |provider|
+      provider.label = 'Singapore-Host-Audit'
+      provider.group = 'Internal-Audit'
+      provider.datacenter = 'singapore'
+    end
+  end
+  
+  # Tokyo
+  config.vm.define :tokyo do |tokyo|
+    tokyo.vm.provider :linode do |provider|
+      provider.label = 'Tokyo-Host-Audit'
+      provider.group = 'Internal-Audit'
+      provider.datacenter = 'tokyo'
+    end
+  end
+  
+  ### Quick Provisioning via shell script
+  config.vm.provision :shell, path: 'scripts/provision.sh'
+
 end
