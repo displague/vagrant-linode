@@ -137,9 +137,13 @@ module VagrantPlugins
           label = label || @machine.name if @machine.name != 'default'
           label = label || get_server_name
 
+          group = @machine.provider_config.group
+          group = "" if @machine.provider_config.group == false
+
           result = @client.linode.update(
             linodeid: result['linodeid'],
-            label: label
+            label: label,
+            lpm_displaygroup: group
           )
 
           env[:ui].info I18n.t('vagrant_linode.info.booting', linodeid: result['linodeid'])
