@@ -106,6 +106,8 @@ The following attributes are available to further configure the provider:
   reusable snapshots with user accounts already provisioned, set to `false`.
 - `provider.label` - A string representing the Linode label to assign when
   creating a new linode
+- `provider.group` - A string representing the Linode's Display group to assign
+  when creating a new linode
 
 The provider will create a new user account with the specified SSH key for
 authorization if `config.ssh.username` is set and the `provider.setup`

@@ -15,6 +15,7 @@ module VagrantPlugins
       attr_accessor :swap_size
       attr_accessor :kernel_id
       attr_accessor :label
+      attr_accessor :group
 
       alias_method :setup?, :setup
 
@@ -33,6 +34,7 @@ module VagrantPlugins
         @swap_size          = UNSET_VALUE
         @kernel_id          = UNSET_VALUE
         @label              = UNSET_VALUE
+        @group              = UNSET_VALUE
       end
 
       def finalize!
@@ -50,6 +52,7 @@ module VagrantPlugins
         @swap_size          = '256' if @swap_size == UNSET_VALUE
         @kernel_id          = '138' if @kernel_id == UNSET_VALUE
         @label              = false if @label == UNSET_VALUE
+        @group              = false if @group == UNSET_VALUE
       end
 
       def validate(machine)
