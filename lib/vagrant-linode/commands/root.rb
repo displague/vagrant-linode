@@ -28,10 +28,6 @@ module VagrantPlugins
             require File.expand_path('../datacenters', __FILE__)
             Datacenters
           end
-          @subcommands.register(:keypairs) do
-            require File.expand_path('../keypairs', __FILE__)
-            KeyPairs
-          end
           @subcommands.register(:networks) do
             require File.expand_path('../networks', __FILE__)
             Networks

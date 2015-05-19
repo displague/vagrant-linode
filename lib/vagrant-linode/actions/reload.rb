@@ -1,9 +1,12 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/helpers/waiter'
 
 module VagrantPlugins
   module Linode
     module Actions
       class Reload
+        include Helpers::Waiter
+
         def initialize(app, env)
           @app = app
           @machine = env[:machine]

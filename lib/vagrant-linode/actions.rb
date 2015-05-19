@@ -11,12 +11,11 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, IsCreated do |env, b|
-            case env[:machine_state]
-            when :not_created, false
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+            if !env[:result]
+              b.use MessageNotCreated
             else
               b.use Call, DestroyConfirm do |env2, b2|
-                if env2[:machine_state]
+                if env2[:result]
                   b2.use ConnectLinode
                   b2.use Destroy
                   b2.use ProvisionerCleanup if defined?(ProvisionerCleanup)
@@ -50,13 +49,16 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, IsCreated do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use SSHExec
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.off')
-            when :not_created, false
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                else
+                  b2.use SSHExec
+                end
+              end
+            else
+              b.use MessageNotCreated
             end
           end
         end
@@ -66,13 +68,16 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, IsCreated do |env, b|
-            case env[:machine_state]
-            when :active
+            if env[:result]
               b.use SSHRun
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.off')
-            when :not_created, false
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+            else
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                else
+                  b2.use MessageNotCreated
+                end
+              end
             end
           end
         end
@@ -82,15 +87,18 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, IsCreated do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use Provision
-              b.use ModifyProvisionPath
-              b.use SyncFolders
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.off')
-            when :not_created, false
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                else
+                  b2.use Provision
+                  b2.use ModifyProvisionPath
+                  b2.use SyncFolders
+                end
+              end
+            else
+              b.use MessageNotCreated
             end
           end
         end
@@ -100,24 +108,25 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, IsCreated do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use Message, I18n.t("vagrant_linode.info.already_active")
-	      next
-            when :off
-              b.use Message, I18n.t("vagrant_linode.info.off")
-              b.use ConnectLinode
-              b.use PowerOn
-              b.use Provision
-            when :not_created, false
-              b.use Message, I18n.t("vagrant_linode.info.not_created")
-              # b.use SetupKey # no access to ssh keys in linode api
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                  b2.use ConnectLinode
+                  b2.use PowerOn
+                  b2.use Provision
+                else
+                  b2.use MessageAlreadyActive
+                end
+              end
+            else
+              b.use MessageNotCreated
               b.use ConnectLinode
               b.use Create
               b.use SetupSudo
               b.use SetupUser
               b.use SetupHostname
-              b.use provision
+              b.use Provision
             end
           end
         end
@@ -126,15 +135,18 @@ module VagrantPlugins
       def self.action_halt
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, IsCreated do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use ConnectLinode
-              b.use PowerOff
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.already_off')
-            when :not_created, false
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+          builder.use Call, IsCreated do |env, b1|
+            if env[:result]
+              b1.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageAlreadyOff
+                else
+                  b2.use ConnectLinode
+                  b2.use PowerOff
+                end
+              end
+            else
+              b1.use MessageNotCreated
             end
           end
         end
@@ -144,15 +156,18 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, IsCreated do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use ConnectLinode
-              b.use Reload
-              b.use Provision
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.off')
-            when :not_created, false
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                else
+                  b2.use ConnectLinode
+                  b2.use Reload
+                  b2.use Provision
+                end
+              end
+            else
+              b.use MessageNotCreated
             end
           end
         end
@@ -162,18 +177,19 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
           builder.use Call, IsCreated do |env, b|
-            case env[:machine_state]
-            when :active, :off
-              b.use ConnectLinode
-              b.use Rebuild
-              b.use SetupSudo
-              b.use SetupUser
-              b.use SetupHostname
-              b.use provision
-            when :not_created
-              b.use Provision
-            when :not_created, false
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use ConnectLinode
+                  b2.use Rebuild
+                  b2.use SetupSudo
+                  b2.use SetupUser
+                  b2.use SetupHostname
+                  b2.use Provision
+                end
+              end
+            else
+              b2.use MessageNotCreated
             end
           end
         end
@@ -234,6 +250,11 @@ module VagrantPlugins
       autoload :Create, action_root.join('create')
       autoload :Destroy, action_root.join('destroy')
       autoload :IsCreated, action_root.join('is_created')
+      autoload :IsStopped, action_root.join('is_stopped')
+      autoload :MessageAlreadyActive, action_root.join('message_already_active')
+      autoload :MessageAlreadyOff, action_root.join('message_already_off')
+      autoload :MessageNotCreated, action_root.join('message_not_created')
+      autoload :MessageOff, action_root.join('message_off')
       autoload :ModifyProvisionPath, action_root.join('modify_provision_path')
       autoload :PowerOff, action_root.join('power_off')
       autoload :PowerOn, action_root.join('power_on')

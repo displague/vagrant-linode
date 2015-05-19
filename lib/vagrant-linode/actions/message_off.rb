@@ -1,13 +1,13 @@
 module VagrantPlugins
   module Linode
     module Actions
-      class IsCreated
-        def initialize(app, _env)
+      class MessageOff
+        def initialize(app, env)
           @app = app
         end
 
         def call(env)
-          env[:result] = env[:machine].state.id != :not_created
+          env[:ui].info(I18n.t("vagrant_linode.info.off", :status => :off))
           @app.call(env)
         end
       end
