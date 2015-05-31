@@ -1,6 +1,8 @@
 Linode Vagrant Provider
 ==============================
 
+[![Join the chat at https://gitter.im/displague/vagrant-linode](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/displague/vagrant-linode?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 `vagrant-linode` is a provider plugin for Vagrant that supports the
 management of [Linode](https://www.linode.com/) linodes
 (instances).
