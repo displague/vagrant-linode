@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Vagrant-linode by displague</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Vagrant-linode</h1>
+      <h2 class="project-tagline">A Vagrant plugin that adds a Linode provider to Vagrant, allowing Vagrant to control and provision Linodes.</h2>
+      <a href="https://github.com/displague/vagrant-linode" class="btn">View on GitHub</a>
+      <a href="https://github.com/displague/vagrant-linode/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/displague/vagrant-linode/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="linode-vagrant-provider" class="anchor" href="#linode-vagrant-provider" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linode Vagrant Provider</h1>
+
+<p><code>vagrant-linode</code> is a provider plugin for Vagrant that supports the
+management of <a href="https://www.linode.com/">Linode</a> linodes
+(instances).</p>
+
+<p><strong>NOTE:</strong> The Chef provisioner is no longer supported by default (as of 0.2.0).
+Please use the <code>vagrant-omnibus</code> plugin to install Chef on Vagrant-managed
+machines. This plugin provides control over the specific version of Chef
+to install.</p>
+
+<p>Current features include:</p>
+
+<ul>
+<li>create and destroy linodes</li>
+<li>power on and off linodes</li>
+<li>rebuild a linode</li>
+<li>provision a linode with the shell or Chef provisioners</li>
+<li>setup a SSH public key for authentication</li>
+<li>create a new user account during linode creation</li>
+</ul>
+
+<p>The provider has been tested with Vagrant 1.6.3+ using Ubuntu 14.04 LTS and
+Debian 7.5 guest operating systems.</p>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<p>Installation of the provider requires two steps:</p>
+
+<ol>
+<li>
+<p>Install the provider plugin using the Vagrant command-line interface:</p>
+
+<pre><code>$ vagrant plugin install vagrant-linode
+</code></pre>
+</li>
+</ol>
+
+<p><strong>NOTE:</strong> If you are using a Mac, and this plugin would not work caused by SSL certificate problem,
+You may need to specify certificate path explicitly.
+You can verify actual certificate path by running:</p>
+
+<div class="highlight highlight-bash"><pre>ruby -ropenssl -e <span class="pl-s"><span class="pl-pds">"</span>p OpenSSL::X509::DEFAULT_CERT_FILE<span class="pl-pds">"</span></span></pre></div>
+
+<p>Then, add the following environment variable to your
+<code>.bash_profile</code> script and <code>source</code> it:</p>
+
+<div class="highlight highlight-bash"><pre><span class="pl-k">export</span> SSL_CERT_FILE=/usr/local/etc/openssl/cert.pem</pre></div>
+
+<h2>
+<a id="configure" class="anchor" href="#configure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configure</h2>
+
+<p>Once the provider has been installed, you will need to configure your project
+to use it. The most basic <code>Vagrantfile</code> to create a linode on Linode
+is shown below:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="pl-c1">Vagrant</span>.configure(<span class="pl-s"><span class="pl-pds">'</span>2<span class="pl-pds">'</span></span>) <span class="pl-k">do </span>|<span class="pl-smi">config</span>|
+
+  config.vm.provider <span class="pl-c1">:linode</span> <span class="pl-k">do </span>|<span class="pl-smi">provider</span>, <span class="pl-smi">override</span>|
+    override.ssh.private_key_path <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>~/.ssh/id_rsa<span class="pl-pds">'</span></span>
+    override.vm.box <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>linode<span class="pl-pds">'</span></span>
+    override.vm.box_url <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>https://github.com/displague/vagrant-linode/raw/master/box/linode.box<span class="pl-pds">"</span></span>
+
+    provider.token <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>API_KEY<span class="pl-pds">'</span></span>
+    provider.distribution <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Ubuntu 14.04 LTS<span class="pl-pds">'</span></span>
+    provider.datacenter <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>newark<span class="pl-pds">'</span></span>
+    provider.plan <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Linode 1024<span class="pl-pds">'</span></span>
+    <span class="pl-c"># provider.planid = &lt;int&gt;</span>
+    <span class="pl-c"># provider.paymentterm = &lt;*1*,12,24&gt;</span>
+    <span class="pl-c"># provider.datacenterid = &lt;int&gt;</span>
+    <span class="pl-c"># provider.image = &lt;string&gt;</span>
+    <span class="pl-c"># provider.imageid = &lt;int&gt;</span>
+    <span class="pl-c"># provider.private_networking = &lt;boolean&gt;</span>
+    <span class="pl-c"># provider.stackscript = &lt;string&gt;</span>
+    <span class="pl-c"># provider.stackscriptid = &lt;int&gt;</span>
+    <span class="pl-c"># provider.distributionid = &lt;int&gt;</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
+
+<p>Please note the following:</p>
+
+<ul>
+<li>You <em>must</em> specify the <code>override.ssh.private_key_path</code> to enable authentication
+with the linode. The provider will create a new Linode SSH key using
+your public key which is assumed to be the <code>private_key_path</code> with a <em>.pub</em>
+extension.</li>
+<li>You <em>must</em> specify your Linode Personal Access Token. This may be
+found on the control panel within the <em>Apps &amp; API</em> section.</li>
+</ul>
+
+<p><strong>Supported Configuration Attributes</strong></p>
+
+<p>The following attributes are available to further configure the provider:</p>
+
+<ul>
+<li>
+<code>provider.distribution</code> - A string representing the distribution to use when
+creating a new linode (e.g. <code>Debian 7.5</code>). The available options may
+be found on Linode's new linode <a href="https://www.linode.com/distributions">form</a>.
+It defaults to <code>Ubuntu 14.04 LTS</code>.</li>
+<li>
+<code>provider.datacenter</code> - A string representing the region to create the new
+linode in. It defaults to <code>newark</code>.</li>
+<li>
+<code>provider.plan</code> - A string representing the size to use when creating a
+new linode (e.g. <code>Linode 2048</code>). It defaults to <code>Linode 1024</code>.</li>
+<li>
+<code>provider.private_networking</code> - A boolean flag indicating whether to enable
+a private network interface (if the region supports private networking). It
+defaults to <code>false</code>.</li>
+<li>
+<code>provider.ssh_key_name</code> - A string representing the name to use when creating
+a Linode SSH key for linode authentication. It defaults to <code>Vagrant</code>.</li>
+<li>
+<code>provider.setup</code> - A boolean flag indicating whether to setup a new user
+account and modify sudo to disable tty requirement. It defaults to <code>true</code>.
+If you are using a tool like <a href="https://packer.io">packer</a> to create
+reusable snapshots with user accounts already provisioned, set to <code>false</code>.</li>
+<li>
+<code>provider.label</code> - A string representing the Linode label to assign when
+creating a new linode</li>
+<li>
+<code>provider.group</code> - A string representing the Linode's Display group to assign
+when creating a new linode</li>
+</ul>
+
+<p>The provider will create a new user account with the specified SSH key for
+authorization if <code>config.ssh.username</code> is set and the <code>provider.setup</code>
+attribute is <code>true</code>.</p>
+
+<h3>
+<a id="providerplan" class="anchor" href="#providerplan" aria-hidden="true"><span class="octicon octicon-link"></span></a>provider.plan</h3>
+
+<p>Each Linode Tier has been assigned a Plan Identifcation Number.
+Current Plan-ID table follows:</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">PlanID</th>
+<th align="left">Plan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">1</td>
+<td align="left">1GB Plan (Linode 1024)</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">2GB Plan (Linode 2048)</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">4GB Plan (Linode 4096)</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">8GB Plan (Linode 8192)</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">16GB Plan (Linode 16384)</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">32GB Plan (Linode 32768)</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">48GB Plan (Linode 49152)</td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="left">64GB Plan (Linode 65536)</td>
+</tr>
+<tr>
+<td align="left">12</td>
+<td align="left">96GB Plan (Linode 98304)</td>
+</tr>
+</tbody>
+</table>
+
+<pre><code>curl -X POST "https://api.linode.com/?api_action=avail.plans" \
+     --data-ascii api_key="$LINODE_API_KEY" \
+     2&gt;/dev/null | jq '.DATA [] | .PLANID,.LABEL'
+</code></pre>
+
+<p>More detail: <a href="https://www.linode.com/api/utility/avail.plans">Linode API - Plans</a></p>
+
+<h3>
+<a id="providerdatacenter" class="anchor" href="#providerdatacenter" aria-hidden="true"><span class="octicon octicon-link"></span></a>provider.datacenter</h3>
+
+<p>Each region has been specified with a Data Center ID.
+Current Region-ID table is:</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">DatacenterID</th>
+<th align="left">Datacenter</th>
+<th align="left">Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">4</td>
+<td align="left">atlanta</td>
+<td align="left">Atlanta, GA, USA</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">dallas</td>
+<td align="left">Dallas, TX, USA</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">fremont</td>
+<td align="left">Fremont, CA, USA</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">london</td>
+<td align="left">London, England, UK</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">newark</td>
+<td align="left">Newark, NJ, USA</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">tokyo</td>
+<td align="left">Tokyo, JP</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">singapore</td>
+<td align="left">Singapore, SGP</td>
+</tr>
+</tbody>
+</table>
+
+<p>You can find latest datacenter ID number using Linode API call.</p>
+
+<ul>
+<li>example call.</li>
+</ul>
+
+<pre><code>curl -X POST "https://api.linode.com/?api_action=avail.datacenters" \
+     --data-ascii api_key="$LINODE_API_KEY" \
+     2&gt;/dev/null | jq '.DATA [] | .DATACENTERID,.ABBR,.LOCATION'
+</code></pre>
+
+<p>More detail: <a href="https://www.linode.com/api/utility/avail.datacenters">Linode API - Datacenters</a></p>
+
+<h2>
+<a id="run" class="anchor" href="#run" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run</h2>
+
+<p>After creating your project's <code>Vagrantfile</code> with the required configuration
+attributes described above, you may create a new linode with the following
+command:</p>
+
+<pre><code>$ vagrant up --provider=linode
+</code></pre>
+
+<p>This command will create a new linode, setup your SSH key for authentication,
+create a new user account, and run the provisioners you have configured.</p>
+
+<p>The  environment variable <code>VAGRANT_DEFAULT_PROVIDER</code> can be set to <code>linode</code> to avoid sending <code>--provider=linode</code> on each <code>vagrant up</code>. </p>
+
+<p><strong>Supported Commands</strong></p>
+
+<p>The provider supports the following Vagrant sub-commands:</p>
+
+<ul>
+<li>
+<code>vagrant destroy</code> - Destroys the linode instance.</li>
+<li>
+<code>vagrant ssh</code> - Logs into the linode instance using the configured user
+account.</li>
+<li>
+<code>vagrant halt</code> - Powers off the linode instance.</li>
+<li>
+<code>vagrant provision</code> - Runs the configured provisioners and rsyncs any
+specified <code>config.vm.synced_folder</code>.</li>
+<li>
+<code>vagrant reload</code> - Reboots the linode instance.</li>
+<li>
+<code>vagrant rebuild</code> - Destroys the linode instance and recreates it with the
+same IP address which was previously assigned.</li>
+<li>
+<code>vagrant status</code> - Outputs the status (active, off, not created) for the
+linode instance.</li>
+</ul>
+
+<h2>
+<a id="contribute" class="anchor" href="#contribute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contribute</h2>
+
+<p>To contribute, clone the repository, and use <a href="http://gembundler.com">Bundler</a>
+to install dependencies:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>To run the provider's tests:</p>
+
+<pre><code>$ bundle exec rake test
+</code></pre>
+
+<p>You can now make modifications. Running <code>vagrant</code> within the Bundler
+environment will ensure that plugins installed in your Vagrant
+environment are not loaded.</p>
+
+<p><a href="https://gitter.im/displague/vagrant-linode?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/displague/vagrant-linode"></a>
+<a href="https://codeclimate.com/github/displague/vagrant-linode"><img src="https://codeclimate.com/github/displague/vagrant-linode/badges/gpa.svg" alt="Code Climate"></a>
+<a href="https://codeclimate.com/github/displague/vagrant-linode"><img src="https://codeclimate.com/github/displague/vagrant-linode/badges/coverage.svg" alt="Test Coverage"></a>
+<a href="http://badge.fury.io/rb/vagrant-linode"><img src="https://badge.fury.io/rb/vagrant-linode.svg" alt="Gem Version"></a>
+<a href="https://gemnasium.com/displague/vagrant-linode"><img src="https://gemnasium.com/displague/vagrant-linode.svg" alt="Dependency Status"></a>
+<a href="https://tldrlegal.com/license/mit-license"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT Licensed"></a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/displague/vagrant-linode">Vagrant-linode</a> is maintained by <a href="https://github.com/displague">displague</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
