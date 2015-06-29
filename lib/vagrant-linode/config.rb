@@ -52,7 +52,7 @@ module VagrantPlugins
         @setup              = true if @setup == UNSET_VALUE
         @xvda_size          = true if @xvda_size == UNSET_VALUE
         @swap_size          = '256' if @swap_size == UNSET_VALUE
-        @kernel             = 'Latest 64 bit' if @kernel_id == UNSET_VALUE
+        @kernel             = 'Latest 64 bit' if @kernel == UNSET_VALUE and @kernel_id == UNSET_VALUE
         @label              = false if @label == UNSET_VALUE
         @group              = false if @group == UNSET_VALUE
       end
