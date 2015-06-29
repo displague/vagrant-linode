@@ -5,21 +5,17 @@ Linode Vagrant Provider
 management of [Linode](https://www.linode.com/) linodes
 (instances).
 
-**NOTE:** The Chef provisioner is no longer supported by default (as of 0.2.0).
-Please use the `vagrant-omnibus` plugin to install Chef on Vagrant-managed
-machines. This plugin provides control over the specific version of Chef
-to install.
-
 Current features include:
 - create and destroy linodes
 - power on and off linodes
 - rebuild a linode
-- provision a linode with the shell or Chef provisioners
+- provision a linode with the shell or other provisioners
 - setup a SSH public key for authentication
 - create a new user account during linode creation
+- setup hostname during creation
 
 The provider has been tested with Vagrant 1.6.3+ using Ubuntu 14.04 LTS and
-Debian 7.5 guest operating systems.
+Debian 7.5+ guest operating systems.
 
 Install
 -------
@@ -68,6 +64,8 @@ Vagrant.configure('2') do |config|
     # provider.datacenterid = <int>
     # provider.image = <string>
     # provider.imageid = <int>
+    # provider.kernel = <string>
+    # provider.kernelid = <int>
     # provider.private_networking = <boolean>
     # provider.stackscript = <string>
     # provider.stackscriptid = <int>
@@ -82,7 +80,7 @@ Please note the following:
   your public key which is assumed to be the `private_key_path` with a *.pub*
   extension.
 - You *must* specify your Linode Personal Access Token. This may be
-  found on the control panel within the *Apps &amp; API* section.
+  found on the control panel within the *my profile* &gt; *API Keys* section.
 
 **Supported Configuration Attributes**
 
@@ -165,6 +163,20 @@ curl -X POST "https://api.linode.com/?api_action=avail.datacenters" \
 
 More detail: [Linode API - Datacenters](https://www.linode.com/api/utility/avail.datacenters)
 
+### provider.kernel
+
+The kernel can be specified using the *kernelid* provider parameter, or with *kernel* which
+will use a partial text match.
+
+```
+curl -X POST "https://api.linode.com/?api_action=avail.kernels" \
+     --data-ascii api_key="$LINODE_API_KEY" \
+     2>/dev/null | jq '.DATA [] | .KERNELID,.LABEL'
+```
+
+More detail: [Linode API - Kernels](https://www.linode.com/api/utility/avail.kernels)
+
+
 Run
 ---
 After creating your project's `Vagrantfile` with the required configuration
@@ -192,6 +204,12 @@ The provider supports the following Vagrant sub-commands:
   same IP address which was previously assigned.
 - `vagrant status` - Outputs the status (active, off, not created) for the
   linode instance.
+
+
+More Docs and Tools
+-------------------
+[Linode Guides and Tutorials - Using Vagrant to Manage Linode Environments](https://linode.com/docs/applications/configuration-management/vagrant-linode-environments)
+[Puphpet - Online Vagrantfile Generator](https://puphpet.com/#vagrantfile-linode)
 
 Contribute
 ----------
