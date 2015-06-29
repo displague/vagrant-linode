@@ -127,9 +127,6 @@ module VagrantPlugins
             )
           end
 
-	  # kernel id
-	  kernel_id = @machine.provider_config.kernel_id
-
           config = @client.linode.config.create(
             linodeid: result['linodeid'],
             label: 'Vagrant Config',
