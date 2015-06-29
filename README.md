@@ -86,11 +86,11 @@ Please note the following:
 
 The following attributes are available to further configure the provider:
 - `provider.distribution` - A string representing the distribution to use when
-   creating a new linode (e.g. `Debian 7.5`). The available options may
-   be found on Linode's new linode [form](https://www.linode.com/distributions).
+   creating a new linode (e.g. `Debian 8.1`). The available options may
+   be found on [Linode's Supported Distributions](https://www.linode.com/distributions) page.
    It defaults to `Ubuntu 14.04 LTS`.
 - `provider.datacenter` - A string representing the region to create the new
-   linode in. It defaults to `newark`.
+   linode in. It defaults to `dallas`.
 - `provider.plan` - A string representing the size to use when creating a
   new linode (e.g. `Linode 2048`). It defaults to `Linode 1024`.
 - `provider.private_networking` - A boolean flag indicating whether to enable
