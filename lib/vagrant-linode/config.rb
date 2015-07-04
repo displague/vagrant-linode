@@ -1,6 +1,7 @@
 module VagrantPlugins
   module Linode
     class Config < Vagrant.plugin('2', :config)
+      attr_accessor :token # deprecated
       attr_accessor :api_key
       attr_accessor :api_url
       attr_accessor :distribution
@@ -21,7 +22,10 @@ module VagrantPlugins
       alias_method :setup?, :setup
 
       def initialize
-        @api_key              = UNSET_VALUE
+        # @logger  = Log4r::Logger.new('vagrant::linode::config')
+
+        @token              = UNSET_VALUE
+        @api_key            = UNSET_VALUE
         @api_url            = UNSET_VALUE
         @distribution       = UNSET_VALUE
         @datacenter         = UNSET_VALUE
@@ -40,7 +44,9 @@ module VagrantPlugins
       end
 
       def finalize!
-        @api_key              = ENV['LINODE_API_KEY'] if @api_key == UNSET_VALUE
+        @api_key            = ENV['LINODE_API_KEY'] if @api_key == UNSET_VALUE
+        @token              = ENV['LINODE_TOKEN'] if @token == UNSET_VALUE
+        @api_key            = @token if ((@api_key == nil) and (@token != nil))
         @api_url            = ENV['LINODE_URL'] if @api_url == UNSET_VALUE
         @distribution       = 'Ubuntu 14.04 LTS' if @distribution == UNSET_VALUE
         @datacenter         = 'dallas' if @datacenter == UNSET_VALUE
@@ -60,7 +66,9 @@ module VagrantPlugins
       def validate(machine)
         errors = []
         errors << I18n.t('vagrant_linode.config.api_key') unless @api_key
-
+        # Log4r::Logger.new('vagrant_linode.config.token') if @token
+        # env[:ui].info I18n.t('vagrant_linode.config.token') if @token
+        # errors << I18n.t('vagrant_linode.config.token') if @token
         key = machine.config.ssh.private_key_path
         key = key[0] if key.is_a?(Array)
         if !key
