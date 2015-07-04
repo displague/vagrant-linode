@@ -89,13 +89,12 @@ The following attributes are available to further configure the provider:
    creating a new linode (e.g. `Debian 8.1`). The available options may
    be found on [Linode's Supported Distributions](https://www.linode.com/distributions) page.
    It defaults to `Ubuntu 14.04 LTS`.
-- `provider.datacenter` - A string representing the region to create the new
+- `provider.datacenter` - A string representing the datacenter to create the new
    linode in. It defaults to `dallas`.
 - `provider.plan` - A string representing the size to use when creating a
   new linode (e.g. `Linode 2048`). It defaults to `Linode 1024`.
 - `provider.private_networking` - A boolean flag indicating whether to enable
-  a private network interface (if the region supports private networking). It
-  defaults to `false`.
+  a private network interface. It defaults to `false`.
 - `provider.ssh_key_name` - A string representing the name to use when creating
   a Linode SSH key for linode authentication. It defaults to `Vagrant`.
 - `provider.setup` - A boolean flag indicating whether to setup a new user
