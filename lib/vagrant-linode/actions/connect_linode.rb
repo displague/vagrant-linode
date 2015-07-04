@@ -1,4 +1,3 @@
-require 'linode'
 require 'log4r'
 
 module VagrantPlugins
@@ -20,13 +19,13 @@ module VagrantPlugins
           api_url  = config.api_url
 
           params = {
-            api_key: api_key,
-            api_url: api_url
+            apikey: api_key,
+            endpoint: api_url
           }
 
           @logger.info('Connecting to Linode api_url...')
 
-          linode = ::Linode.new params
+          linode = ::LinodeAPI::Raw.new params
           env[:linode_api] = linode
 
           @app.call(env)
