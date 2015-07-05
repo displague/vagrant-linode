@@ -1,19 +1,20 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/helpers/waiter'
 # TODO: --force
 module VagrantPlugins
   module Linode
     module Actions
-      class PowerOff
-        include Helpers::Client
 
+      class PowerOff
+        include Helpers::Waiter
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = client
           @logger = Log4r::Logger.new('vagrant::linode::power_off')
         end
 
         def call(env)
+          @client = env[:linode_api]
           # submit power off linode request
           result = @client.linode.shutdown(linodeid: @machine.id)
 

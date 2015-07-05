@@ -1,32 +1,22 @@
-require 'vagrant-linode/actions/check_state'
-require 'vagrant-linode/actions/create'
-require 'vagrant-linode/actions/destroy'
-require 'vagrant-linode/actions/power_off'
-require 'vagrant-linode/actions/power_on'
-require 'vagrant-linode/actions/rebuild'
-require 'vagrant-linode/actions/reload'
-require 'vagrant-linode/actions/setup_hostname'
-require 'vagrant-linode/actions/setup_user'
-require 'vagrant-linode/actions/setup_sudo'
-require 'vagrant-linode/actions/setup_key'
-require 'vagrant-linode/actions/sync_folders'
-require 'vagrant-linode/actions/modify_provision_path'
+require 'pathname'
+
+require 'vagrant/action/builder'
 
 module VagrantPlugins
   module Linode
     module Actions
       include Vagrant::Action::Builtin
 
-      def self.destroy
+      def self.action_destroy
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
-            when :not_created
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+          builder.use Call, IsCreated do |env, b|
+            if !env[:result]
+              b.use MessageNotCreated
             else
               b.use Call, DestroyConfirm do |env2, b2|
                 if env2[:result]
+                  b2.use ConnectLinode
                   b2.use Destroy
                   b2.use ProvisionerCleanup if defined?(ProvisionerCleanup)
                 end
@@ -36,128 +26,252 @@ module VagrantPlugins
         end
       end
 
-      def self.ssh
+      # This action is called to read the SSH info of the machine. The
+      # resulting state is expected to be put into the `:machine_ssh_info`
+      # key.
+      def self.action_read_ssh_info
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use ConnectLinode
+          b.use ReadSSHInfo
+        end
+      end
+
+      def self.action_read_state
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use ConnectLinode
+          b.use ReadState
+        end
+      end
+
+      def self.action_ssh
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use SSHExec
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.off')
-            when :not_created
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+          builder.use Call, IsCreated do |env, b|
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                else
+                  b2.use SSHExec
+                end
+              end
+            else
+              b.use MessageNotCreated
             end
           end
         end
       end
 
-      def self.ssh_run
+      def self.action_ssh_run
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
-            when :active
+          builder.use Call, IsCreated do |env, b|
+            if env[:result]
               b.use SSHRun
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.off')
-            when :not_created
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+            else
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                else
+                  b2.use MessageNotCreated
+                end
+              end
             end
           end
         end
       end
 
-      def self.provision
+      def self.action_provision
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use Provision
-              b.use ModifyProvisionPath
-              b.use SyncFolders
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.off')
-            when :not_created
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+          builder.use Call, IsCreated do |env, b|
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                else
+                  b2.use Provision
+                  b2.use ModifyProvisionPath
+                  b2.use SyncFolders
+                end
+              end
+            else
+              b.use MessageNotCreated
             end
           end
         end
       end
 
-      def self.up
+      def self.action_up
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
-            when :active
-              env[:ui].info I18n.t('vagrant_linode.info.already_active')
-            when :off
-              b.use PowerOn
-              b.use provision
-            when :not_created
-              # b.use SetupKey # no access to ssh keys in linode api
+          builder.use Call, IsCreated do |env, b|
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                  b2.use ConnectLinode
+                  b2.use PowerOn
+                  b2.use Provision
+                else
+                  b2.use MessageAlreadyActive
+                end
+              end
+            else
+              b.use MessageNotCreated
+              b.use ConnectLinode
               b.use Create
               b.use SetupSudo
               b.use SetupUser
               b.use SetupHostname
-              b.use provision
+              b.use Provision
             end
           end
         end
       end
 
-      def self.halt
+      def self.action_halt
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use PowerOff
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.already_off')
-            when :not_created
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+          builder.use Call, IsCreated do |env, b1|
+            if env[:result]
+              b1.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageAlreadyOff
+                else
+                  b2.use ConnectLinode
+                  b2.use PowerOff
+                end
+              end
+            else
+              b1.use MessageNotCreated
             end
           end
         end
       end
 
-      def self.reload
+      def self.action_reload
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
-            when :active
-              b.use Reload
-              b.use provision
-            when :off
-              env[:ui].info I18n.t('vagrant_linode.info.off')
-            when :not_created
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+          builder.use Call, IsCreated do |env, b|
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use MessageOff
+                else
+                  b2.use ConnectLinode
+                  b2.use Reload
+                  b2.use Provision
+                end
+              end
+            else
+              b.use MessageNotCreated
             end
           end
         end
       end
 
-      def self.rebuild
+      def self.action_rebuild
         Vagrant::Action::Builder.new.tap do |builder|
           builder.use ConfigValidate
-          builder.use Call, CheckState do |env, b|
-            case env[:machine_state]
-            when :active, :off
-              b.use Rebuild
-              b.use SetupSudo
-              b.use SetupUser
-              b.use SetupHostname
-              b.use provision
-            when :not_created
-              env[:ui].info I18n.t('vagrant_linode.info.not_created')
+          builder.use Call, IsCreated do |env, b|
+            if env[:result]
+              b.use Call, IsStopped do |env2, b2|
+                if env2[:result]
+                  b2.use ConnectLinode
+                  b2.use Rebuild
+                  b2.use SetupSudo
+                  b2.use SetupUser
+                  b2.use SetupHostname
+                  b2.use Provision
+                end
+              end
+            else
+              b2.use MessageNotCreated
             end
           end
         end
       end
+
+      # Extended actions
+      def self.action_create_image
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use CreateImage
+        end
+      end
+
+      def self.action_list_images
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListImages
+        end
+      end
+
+      def self.action_list_servers
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListServers
+        end
+      end
+
+      def self.action_list_plans
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListPlans
+        end
+      end
+
+      def self.action_list_datacenters
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListDatacenters
+        end
+      end
+
+      def self.action_list_distributions
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListDistributions
+        end
+      end
+
+      action_root = Pathname.new(File.expand_path('../actions', __FILE__))
+      autoload :ConnectLinode, action_root.join('connect_linode')
+      autoload :ReadState, action_root.join('read_state')
+      autoload :Create, action_root.join('create')
+      autoload :Destroy, action_root.join('destroy')
+      autoload :IsCreated, action_root.join('is_created')
+      autoload :IsStopped, action_root.join('is_stopped')
+      autoload :MessageAlreadyActive, action_root.join('message_already_active')
+      autoload :MessageAlreadyOff, action_root.join('message_already_off')
+      autoload :MessageNotCreated, action_root.join('message_not_created')
+      autoload :MessageOff, action_root.join('message_off')
+      autoload :ModifyProvisionPath, action_root.join('modify_provision_path')
+      autoload :PowerOff, action_root.join('power_off')
+      autoload :PowerOn, action_root.join('power_on')
+      autoload :Destroy, action_root.join('destroy')
+      autoload :Reload, action_root.join('reload')
+      autoload :Rebuild, action_root.join('rebuild')
+      autoload :SetupHostname, action_root.join('setup_hostname')
+      autoload :SetupUser, action_root.join('setup_user')
+      autoload :SetupSudo, action_root.join('setup_sudo')
+      autoload :ReadSSHInfo, action_root.join("read_ssh_info")
+      autoload :SyncFolders, action_root.join('sync_folders')
+      autoload :ListServers, action_root.join('list_servers')
+      autoload :CreateImage, action_root.join('create_image')
+      autoload :ListImages, action_root.join('list_images')
+      autoload :ListPlans, action_root.join('list_plans')
+      autoload :ListDistributions, action_root.join('list_distributions')
+      autoload :ListDatacenters, action_root.join('list_datacenters')
     end
   end
 end

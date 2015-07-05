@@ -1,19 +1,20 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/helpers/waiter'
 
 module VagrantPlugins
   module Linode
     module Actions
       class PowerOn
-        include Helpers::Client
+        include Helpers::Waiter
 
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = client
           @logger = Log4r::Logger.new('vagrant::linode::power_on')
         end
 
         def call(env)
+          @client = env[:linode_api]
           # submit power on linode request
           result = @client.linode.boot(linodeid: @machine.id)
 

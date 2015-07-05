@@ -1,0 +1,18 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+DATACENTERS = [:newark, :dallas, :atlanta]
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  Vagrant.require_plugin "vagrant-linode"
+
+  DATACENTERS.each do |datacenter|
+    config.vm.define datacenter do |machine|
+      machine.vm.provider :linode do |provider|
+        provider.api_key  = ENV['LINODE_API_KEY']
+      end
+    end
+  end
+end

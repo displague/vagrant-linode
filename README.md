@@ -55,7 +55,7 @@ Vagrant.configure('2') do |config|
     override.vm.box = 'linode'
     override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
 
-    provider.token = 'API_KEY'
+    provider.api_key = 'API_KEY'
     provider.distribution = 'Ubuntu 14.04 LTS'
     provider.datacenter = 'newark'
     provider.plan = 'Linode 1024'
@@ -89,13 +89,12 @@ The following attributes are available to further configure the provider:
    creating a new linode (e.g. `Debian 8.1`). The available options may
    be found on [Linode's Supported Distributions](https://www.linode.com/distributions) page.
    It defaults to `Ubuntu 14.04 LTS`.
-- `provider.datacenter` - A string representing the region to create the new
+- `provider.datacenter` - A string representing the datacenter to create the new
    linode in. It defaults to `dallas`.
 - `provider.plan` - A string representing the size to use when creating a
   new linode (e.g. `Linode 2048`). It defaults to `Linode 1024`.
 - `provider.private_networking` - A boolean flag indicating whether to enable
-  a private network interface (if the region supports private networking). It
-  defaults to `false`.
+  a private network interface. It defaults to `false`.
 - `provider.ssh_key_name` - A string representing the name to use when creating
   a Linode SSH key for linode authentication. It defaults to `Vagrant`.
 - `provider.setup` - A boolean flag indicating whether to setup a new user
@@ -128,6 +127,12 @@ Current Plan-ID table follows:
 |   10    | 64GB Plan (Linode 65536)  |
 |   12    | 96GB Plan (Linode 98304)  |
 
+This can be obtained through vagrant with:
+```
+vagrant linode datacenters
+```
+
+Or using curl:
 ```
 curl -X POST "https://api.linode.com/?api_action=avail.plans" \
      --data-ascii api_key="$LINODE_API_KEY" \
@@ -151,9 +156,14 @@ Current Region-ID table is:
 |   8          | tokyo      | Tokyo, JP           |
 |   9          | singapore  | Singapore, SGP      |
 
-You can find latest datacenter ID number using Linode API call.
+You can find latest datacenter ID number using Vagrant subcommands:
 
-- example call.
+```
+vagrant linode datacenters
+```
+
+Or directly through the API:
+
 
 ```
 curl -X POST "https://api.linode.com/?api_action=avail.datacenters" \
@@ -204,6 +214,8 @@ The provider supports the following Vagrant sub-commands:
   same IP address which was previously assigned.
 - `vagrant status` - Outputs the status (active, off, not created) for the
   linode instance.
+- `vagrant linode` - Offers Linode resource listing options for datacenters,
+  distributions, images, networks, plans, and servers
 
 
 More Docs and Tools

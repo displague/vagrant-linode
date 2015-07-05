@@ -1,24 +1,24 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/helpers/waiter'
 require 'vagrant-linode/errors'
 
 module VagrantPlugins
   module Linode
     module Actions
       class Create
-        include Helpers::Client
         include Vagrant::Util::Retryable
+        include VagrantPlugins::Linode::Helpers::Waiter
 
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = client
           @logger = Log4r::Logger.new('vagrant::linode::create')
         end
 
         def call(env)
+	  @client = env[:linode_api]
           ssh_key_id = env[:machine].config.ssh.private_key_path
           ssh_key_id = ssh_key_id[0] if ssh_key_id.is_a?(Array)
-
           if ssh_key_id
             pubkey = File.read(File.expand_path("#{ssh_key_id}.pub"))
           end
@@ -32,7 +32,7 @@ module VagrantPlugins
           if @machine.provider_config.distribution
             distributions = @client.avail.distributions
             distribution = distributions.find { |d| d.label.downcase.include? @machine.provider_config.distribution.downcase }
-            raise( Errors::DistroMatch, distro: @machine.provider_config.distribution.to_s ) if distribution == nil
+            fail(Errors::DistroMatch, distro: @machine.provider_config.distribution.to_s) if distribution.nil?
             distribution_id = distribution.distributionid || nil
           else
             distribution_id = @machine.provider_config.distributionid
@@ -58,8 +58,8 @@ module VagrantPlugins
           if @machine.provider_config.plan
             plans = @client.avail.linodeplans
             plan = plans.find { |p| p.label.include? @machine.provider_config.plan }
-            raise Errors::PlanID, plan: @machine.provider_config.plan if plan == nil
-            plan_id = plan.planid || nil 
+            fail Errors::PlanID, plan: @machine.provider_config.plan if plan.nil?
+            plan_id = plan.planid || nil
           else
             plan_id = @machine.provider_config.planid
           end
@@ -69,14 +69,14 @@ module VagrantPlugins
 
           # Sanity checks for disk size
           if xvda_size != true
-            disk_sanity = false if ( xvda_size.to_i + swap_size.to_i ) > ( plan['disk'].to_i * 1024 )
+            disk_sanity = false if ( xvda_size.to_i + swap_size.to_i) > ( plan['disk'].to_i * 1024)
           end
 
           # throw if disk sizes are too large
           if xvda_size == true
-            xvda_size = ( ( plan['disk'].to_i * 1024 ) - swap_size.to_i )
+            xvda_size = ( ( plan['disk'].to_i * 1024) - swap_size.to_i)
           elsif disk_sanity == false
-            raise Errors::DiskSize, current: (xvda_size.to_i + swap_size.to_i), max: ( plan['disk'].to_i * 1024 )
+            fail Errors::DiskSize, current: (xvda_size.to_i + swap_size.to_i), max: ( plan['disk'].to_i * 1024)
           end
 
           env[:ui].info I18n.t('vagrant_linode.info.creating')

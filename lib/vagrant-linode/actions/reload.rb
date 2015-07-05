@@ -1,19 +1,20 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/helpers/waiter'
 
 module VagrantPlugins
   module Linode
     module Actions
       class Reload
-        include Helpers::Client
+        include Helpers::Waiter
 
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
-          @client = client
           @logger = Log4r::Logger.new('vagrant::linode::reload')
         end
 
         def call(env)
+          @client = env[:linode_api]
           # submit reboot linode request
           result = @client.linode.reboot(linodeid: @machine.id)
 
