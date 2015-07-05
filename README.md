@@ -127,6 +127,12 @@ Current Plan-ID table follows:
 |   10    | 64GB Plan (Linode 65536)  |
 |   12    | 96GB Plan (Linode 98304)  |
 
+This can be obtained through vagrant with:
+```
+vagrant linode datacenters
+```
+
+Or using curl:
 ```
 curl -X POST "https://api.linode.com/?api_action=avail.plans" \
      --data-ascii api_key="$LINODE_API_KEY" \
@@ -150,9 +156,14 @@ Current Region-ID table is:
 |   8          | tokyo      | Tokyo, JP           |
 |   9          | singapore  | Singapore, SGP      |
 
-You can find latest datacenter ID number using Linode API call.
+You can find latest datacenter ID number using Vagrant subcommands:
 
-- example call.
+```
+vagrant linode datacenters
+```
+
+Or directly through the API:
+
 
 ```
 curl -X POST "https://api.linode.com/?api_action=avail.datacenters" \
@@ -203,6 +214,8 @@ The provider supports the following Vagrant sub-commands:
   same IP address which was previously assigned.
 - `vagrant status` - Outputs the status (active, off, not created) for the
   linode instance.
+- `vagrant linode` - Offers Linode resource listing options for datacenters,
+  distributions, images, networks, plans, and servers
 
 
 More Docs and Tools
