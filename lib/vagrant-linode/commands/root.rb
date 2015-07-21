@@ -24,6 +24,10 @@ module VagrantPlugins
             require File.expand_path('../distributions', __FILE__)
             Distributions
           end
+          @subcommands.register(:kernels) do
+            require File.expand_path('../kernels', __FILE__)
+            Kernels
+          end
           @subcommands.register(:datacenters) do
             require File.expand_path('../datacenters', __FILE__)
             Datacenters
