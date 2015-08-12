@@ -1,7 +1,7 @@
 module VagrantPlugins
   module Linode
     module Commands
-      class Kernels < Vagrant.plugin('2', :command)
+      class Jobs < Vagrant.plugin('2', :command)
         def execute
           options = {}
           opts = OptionParser.new do |o|
