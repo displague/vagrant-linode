@@ -19,26 +19,10 @@ Debian 7.5+ guest operating systems.
 
 Install
 -------
-Installation of the provider requires two steps:
-
-1. Install the provider plugin using the Vagrant command-line interface:
-
-        $ vagrant plugin install vagrant-linode
-
-
-**NOTE:** If you are using a Mac, and this plugin would not work caused by SSL certificate problem,
-You may need to specify certificate path explicitly.
-You can verify actual certificate path by running:
+Installation of the provider couldn't be easier:
 
 ```bash
-ruby -ropenssl -e "p OpenSSL::X509::DEFAULT_CERT_FILE"
-```
-
-Then, add the following environment variable to your
-`.bash_profile` script and `source` it:
-
-```bash
-export SSL_CERT_FILE=/usr/local/etc/openssl/cert.pem
+vagrant plugin install vagrant-linode
 ```
 
 Configure
