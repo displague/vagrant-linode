@@ -94,7 +94,7 @@ module VagrantPlugins
                 else
                   b2.use Provision
                   b2.use ModifyProvisionPath
-                  b2.use SyncFolders
+                  b2.use SyncedFolders
                 end
               end
             else
@@ -273,7 +273,6 @@ module VagrantPlugins
       autoload :SetupUser, action_root.join('setup_user')
       autoload :SetupSudo, action_root.join('setup_sudo')
       autoload :ReadSSHInfo, action_root.join("read_ssh_info")
-      autoload :SyncFolders, action_root.join('sync_folders')
       autoload :ListServers, action_root.join('list_servers')
       autoload :CreateImage, action_root.join('create_image')
       autoload :ListImages, action_root.join('list_images')

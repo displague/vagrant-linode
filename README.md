@@ -192,7 +192,7 @@ The provider supports the following Vagrant sub-commands:
   account.
 - `vagrant halt` - Powers off the linode instance.
 - `vagrant provision` - Runs the configured provisioners and rsyncs any
-  specified `config.vm.synced_folder`.
+  specified `config.vm.synced_folder`. (see https://docs.vagrantup.com/v2/synced-folders/rsync.html)
 - `vagrant reload` - Reboots the linode instance.
 - `vagrant rebuild` - Destroys the linode instance and recreates it with the
   same IP address which was previously assigned.
