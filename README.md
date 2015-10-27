@@ -123,7 +123,7 @@ curl -X POST "https://api.linode.com/?api_action=avail.linodeplans" \
      2>/dev/null | jq '.DATA [] | .PLANID,.LABEL'
 ```
 
-More detail: [Linode API - Plans](https://www.linode.com/api/utility/avail.plans)
+More detail: [Linode API - Plans](https://www.linode.com/api/utility/avail.linodeplans)
 
 ### provider.datacenter
 
