@@ -38,6 +38,14 @@ module VagrantPlugins
             distribution_id = @machine.provider_config.distributionid
           end
 
+          if @machine.provider_config.image_id
+            distribution_id = nil
+            images = @client.image.list
+            image = images.find { |i| i.imageid == @machine.provider_config.image_id }
+            fail(Errors::ImageMatch, distro: @machine.provider_config.image_id.to_s) if image.nil?
+            image_id = image.imageid || nil
+          end
+
           if @machine.provider_config.kernel
             kernels = @client.avail.kernels
             kernel = kernels.find { |k| k.label.downcase.include? @machine.provider_config.kernel.downcase }
@@ -114,6 +122,7 @@ module VagrantPlugins
             disk = @client.linode.disk.createfromimage(
               linodeid: result['linodeid'],
               imageid: image_id,
+              label: 'Vagrant Disk Image (' + image_id + ') for ' + result['linodeid'].to_s,
               size: xvda_size,
               rootsshkey: pubkey,
               rootpass: root_pass

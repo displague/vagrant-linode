@@ -5,6 +5,7 @@ module VagrantPlugins
       attr_accessor :api_key
       attr_accessor :api_url
       attr_accessor :distribution
+      attr_accessor :image_id
       attr_accessor :datacenter
       attr_accessor :plan
       attr_accessor :paymentterm
@@ -28,6 +29,7 @@ module VagrantPlugins
         @api_key            = UNSET_VALUE
         @api_url            = UNSET_VALUE
         @distribution       = UNSET_VALUE
+        @image_id           = UNSET_VALUE
         @datacenter         = UNSET_VALUE
         @plan               = UNSET_VALUE
         @paymentterm        = UNSET_VALUE
@@ -49,6 +51,7 @@ module VagrantPlugins
         @api_key            = @token if ((@api_key == nil) and (@token != nil))
         @api_url            = ENV['LINODE_URL'] if @api_url == UNSET_VALUE
         @distribution       = 'Ubuntu 14.04 LTS' if @distribution == UNSET_VALUE
+        @image_id           = nil if @image_id == UNSET_VALUE
         @datacenter         = 'dallas' if @datacenter == UNSET_VALUE
         @plan               = 'Linode 1024' if @plan == UNSET_VALUE
         @paymentterm        = '1' if @paymentterm == UNSET_VALUE
