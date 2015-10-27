@@ -118,12 +118,12 @@ vagrant linode datacenters
 
 Or using curl:
 ```
-curl -X POST "https://api.linode.com/?api_action=avail.plans" \
+curl -X POST "https://api.linode.com/?api_action=avail.linodeplans" \
      --data-ascii api_key="$LINODE_API_KEY" \
      2>/dev/null | jq '.DATA [] | .PLANID,.LABEL'
 ```
 
-More detail: [Linode API - Plans](https://www.linode.com/api/utility/avail.plans)
+More detail: [Linode API - Plans](https://www.linode.com/api/utility/avail.linodeplans)
 
 ### provider.datacenter
 
