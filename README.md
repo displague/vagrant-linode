@@ -47,7 +47,7 @@ Vagrant.configure('2') do |config|
     # provider.paymentterm = <*1*,12,24>
     # provider.datacenterid = <int>
     # provider.image = <string>
-    # provider.imageid = <int>
+    # provider.image_id = <int>
     # provider.kernel = <string>
     # provider.kernelid = <int>
     # provider.private_networking = <boolean>
