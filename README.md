@@ -29,7 +29,7 @@ Configure
 ---------
 Once the provider has been installed, you will need to configure your project
 to use it. The most basic `Vagrantfile` to create a linode on Linode
-is shown below:
+is shown below (with most of the available options included but commented out):
 
 ```ruby
 Vagrant.configure('2') do |config|
@@ -47,12 +47,12 @@ Vagrant.configure('2') do |config|
     # provider.paymentterm = <*1*,12,24>
     # provider.datacenterid = <int>
     # provider.image = <string>
-    # provider.image_id = <int>
+    # provider.imageid = <int>
     # provider.kernel = <string>
     # provider.kernelid = <int>
     # provider.private_networking = <boolean>
-    # provider.stackscript = <string>
-    # provider.stackscriptid = <int>
+    # provider.stackscript = <string> # Not Supported Yet
+    # provider.stackscriptid = <int> # Not Supported Yet
     # provider.distributionid = <int>
   end
 end

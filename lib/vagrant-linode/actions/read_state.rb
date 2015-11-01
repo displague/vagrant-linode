@@ -17,9 +17,8 @@ module VagrantPlugins
         def read_state(_linode, machine)
           return :not_created if machine.id.nil?
           server = Provider.linode(machine)
-
           return :not_created if server.nil?
-	  status = server.status
+          status = server[:status]
           return :not_created if status.nil?
           states = {
             ''  => :not_created,
