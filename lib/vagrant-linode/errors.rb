@@ -16,7 +16,15 @@ module VagrantPlugins
       class DistroMatch < LinodeError
         error_key(:distro_match)
       end
+
+      class DatacenterMatch < LinodeError
+        error_key(:datacenter_match)
+      end
  
+      class ImageMatch < LinodeError
+        error_key(:image_match)
+      end
+
       class KernelMatch < LinodeError
         error_key(:kernel_match)
       end

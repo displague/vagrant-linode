@@ -44,6 +44,12 @@ en:
       private_key: "SSH private key path is required"
       public_key: "SSH public key not found: %{key}"
       disk_too_large: "Disk Images use more drive space than plan allocates"
+      planid_or_plan: "Use either planid or plan, not both"
+      distributionid_or_distribution: "Use either distributionid or distribution, not both"
+      datacenterid_or_datacenter: "Use either datacenterid or datacenter, not both"
+      kernelid_or_kernel: "Use either kernelid or kernel, not both"
+      imageid_or_image: "Use either imageid or image, not both"
+      distribution_or_image: "Distribution can not be specified with Image options"
     errors:
       public_key: |-
         There was an issue reading the public key at:
@@ -102,11 +108,17 @@ en:
         certs.
       local_ip: |-
         The Linode provider was unable to determine the host's IP.
+      datacenter_match: !-
+        The provider does not support your configurations chosen Datacenter ( %{datacenter} ).
+        Supported datacenters can be found at the following url - https://www.linode.com/api/utility/avail.datacenters
       distro_match: !-
-        The provider does not support your configurations chosen Distribution %{distro}.
+        The provider does not support your configurations chosen Distribution ( %{distro} ).
         Supported distributions can be found at the following url - https://www.linode.com/distributions
+      image_match: !-
+        The provider does not support your configurations chosen Image ( %{image} ).
+        Available images can be found at https://manager.linode.com/images/ or with "vagrant linode image list"
       kernel_match: !-
-        The provider does not support your configurations chosen Kernel %{kernel}.
+        The provider does not support your configurations chosen Kernel ( %{kernel} ).
         Supported kernels can be found at the following url - https://www.linode.com/kernels
       disk_size: !-
         The space which you have specified for your Disk Images is too large for your

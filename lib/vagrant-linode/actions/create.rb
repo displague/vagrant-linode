@@ -38,13 +38,19 @@ module VagrantPlugins
             distribution_id = @machine.provider_config.distributionid
           end
 
-          if @machine.provider_config.image_id
+          if @machine.provider_config.imageid
             distribution_id = nil
             images = @client.image.list
-            image = images.find { |i| i.imageid == @machine.provider_config.image_id }
-            fail(Errors::ImageMatch, distro: @machine.provider_config.image_id.to_s) if image.nil?
+            image = images.find { |i| i.imageid == @machine.provider_config.imageid }
+            fail Errors::ImageMatch, image: @machine.provider_config.imageid.to_s  if image.nil?
             image_id = image.imageid || nil
-          end
+          elsif @machine.provider_config.image
+            distribution_id = nil
+            images = @client.image.list
+            image = images.find { |i| i.label.downcase.include? @machine.provider_config.image.downcase }
+            fail Errors::ImageMatch, image: @machine.provider_config.image.to_s  if image.nil?
+            image_id = image.imageid || nil
+	  end
 
           if @machine.provider_config.kernel
             kernels = @client.avail.kernels
@@ -58,17 +64,24 @@ module VagrantPlugins
           if @machine.provider_config.datacenter
             datacenters = @client.avail.datacenters
             datacenter = datacenters.find { |d| d.abbr == @machine.provider_config.datacenter }
-            datacenter_id = datacenter.datacenterid || nil # @todo throw if not found
+            fail Errors::DatacenterMatch, datacenter: @machine.provider_config.datacenter if datacenter.nil?
+            datacenter_id = datacenter.datacenterid
           else
-            datacenter_id = @machine.provider_config.datacenterid
+            datacenters = @client.avail.datacenters
+            datacenter = datacenters.find { |d| d.datacenterid == @machine.provider_config.datacenterid }
+            fail Errors::DatacenterMatch, datacenter: @machine.provider_config.datacenter if datacenter.nil?
+            datacenter_id = datacenter.datacenterid
           end
 
           if @machine.provider_config.plan
             plans = @client.avail.linodeplans
             plan = plans.find { |p| p.label.include? @machine.provider_config.plan }
             fail Errors::PlanID, plan: @machine.provider_config.plan if plan.nil?
-            plan_id = plan.planid || nil
+            plan_id = plan.planid
           else
+            plans = @client.avail.linodeplans
+            plan = plans.find { |p| p.planid == @machine.provider_config.planid }
+            fail Errors::PlanID, plan: @machine.provider_config.plan if plan.nil?
             plan_id = @machine.provider_config.planid
           end
 
@@ -206,7 +219,7 @@ module VagrantPlugins
 
         # generate a random name if server name is empty
         def get_server_name
-          server_name = "vagrant_linode-#{rand.to_s.split('.')[1]}"
+          "vagrant_linode-#{rand.to_s.split('.')[1]}"
         end
 
         def terminate(env)
