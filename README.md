@@ -139,6 +139,7 @@ Current Region-ID table is:
 |   6          | newark     | Newark, NJ, USA     |
 |   8          | tokyo      | Tokyo, JP           |
 |   9          | singapore  | Singapore, SGP      |
+|   10         | frankfurt  | Frankfurt, DE       |
 
 You can find latest datacenter ID number using Vagrant subcommands:
 
