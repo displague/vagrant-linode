@@ -113,7 +113,7 @@ Current Plan-ID table follows:
 
 This can be obtained through vagrant with:
 ```
-vagrant linode datacenters
+vagrant linode plans
 ```
 
 Or using curl:
