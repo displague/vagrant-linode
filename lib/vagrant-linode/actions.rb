@@ -111,22 +111,22 @@ module VagrantPlugins
             if env[:result]
               b.use Call, IsStopped do |env2, b2|
                 if env2[:result]
+                  b2.use Provision
                   b2.use MessageOff
                   b2.use ConnectLinode
                   b2.use PowerOn
-                  b2.use Provision
                 else
                   b2.use MessageAlreadyActive
                 end
               end
             else
+              b.use Provision
               b.use MessageNotCreated
               b.use ConnectLinode
               b.use Create
               b.use SetupSudo
               b.use SetupUser
               b.use SetupHostname
-              b.use Provision
             end
           end
         end
