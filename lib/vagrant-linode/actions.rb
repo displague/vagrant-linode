@@ -112,6 +112,7 @@ module VagrantPlugins
               b.use Call, IsStopped do |env2, b2|
                 if env2[:result]
                   b2.use Provision
+                  b2.use SyncedFolders
                   b2.use MessageOff
                   b2.use ConnectLinode
                   b2.use PowerOn
@@ -121,6 +122,7 @@ module VagrantPlugins
               end
             else
               b.use Provision
+              b.use SyncedFolders
               b.use MessageNotCreated
               b.use ConnectLinode
               b.use Create
