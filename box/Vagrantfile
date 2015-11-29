@@ -1,10 +1,23 @@
+# vi: set ft=ruby et ts=4 sw=4 tw=80 :
 # -*- mode: ruby -*-
-# vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.provider :linode do |linode|
-    linode.datacenter = "dallas"
-    linode.plan = "Linode 1024"
-    linode.distribution = "Ubuntu 14.04 LTS"
-  end
+    config.vm.provider :linode do |linode|
+
+        if ENV['LINODE_API_KEY']
+            override.api_key = ENV['LINODE_API_KEY']
+        end
+
+        if ENV['LINODE_SSH_KEY_LOCATION']
+            override.ssh.private_key_path = ENV['LINODE_SSH_KEY_LOCATION']
+        end
+
+        if ENV['LINODE_SSH_USER']
+            override.ssh.username = ENV['LINODE_SSH_USER']
+        end
+
+        linode.datacenter = "dallas"
+        linode.plan = "Linode 1024"
+        linode.distribution = "Ubuntu 14.04 LTS"
+    end
 end
