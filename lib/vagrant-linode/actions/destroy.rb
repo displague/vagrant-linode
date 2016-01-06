@@ -13,7 +13,11 @@ module VagrantPlugins
         def call(env)
           @client = env[:linode_api]
           # submit destroy linode request
-          @client.linode.delete(linodeid: @machine.id, skipchecks: true)
+	  begin
+            @client.linode.delete(linodeid: @machine.id, skipchecks: true)
+	  rescue RuntimeError => e
+            raise unless e.message.include? 'Object not found'
+          end
 
           env[:ui].info I18n.t('vagrant_linode.info.destroying')
 
