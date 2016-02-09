@@ -171,6 +171,11 @@ curl -X POST "https://api.linode.com/?api_action=avail.kernels" \
 
 More detail: [Linode API - Kernels](https://www.linode.com/api/utility/avail.kernels)
 
+### nfs.functional
+
+The sync provider, NFS, has been disabled to make rsync easier to use.  To enable NFS, 
+run Vagrant with an environment variable `LINODE_NFS_FUNCTIONAL=1`.  This will require
+a bit more configuration between the Linode and the Vagrant host.
 
 Run
 ---
