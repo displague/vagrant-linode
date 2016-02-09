@@ -2,7 +2,7 @@
 # -*- mode: ruby -*-
 
 Vagrant.configure("2") do |config|
-    config.vm.provider :linode do |linode|
+    config.vm.provider :linode do |linode, override|
 
         if ENV['LINODE_API_KEY']
             override.api_key = ENV['LINODE_API_KEY']
@@ -14,6 +14,10 @@ Vagrant.configure("2") do |config|
 
         if ENV['LINODE_SSH_USER']
             override.ssh.username = ENV['LINODE_SSH_USER']
+        end
+
+        if not ENV['LINODE_NFS_FUNCTIONAL']
+            override.nfs.functional = false
         end
 
         linode.datacenter = "dallas"
