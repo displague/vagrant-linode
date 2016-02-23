@@ -11,3 +11,9 @@ $ tar cvzf linode.box ./metadata.json ./Vagrantfile
 This box works by using Vagrant's built-in Vagrantfile merging to setup
 defaults for Linode. These defaults can easily be overwritten by higher-level
 Vagrantfiles (such as project root Vagrantfiles).
+
+# Test
+
+```
+vagrant box add --name linode_test linode.box
+```
