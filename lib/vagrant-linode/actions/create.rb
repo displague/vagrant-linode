@@ -16,7 +16,7 @@ module VagrantPlugins
         end
 
         def call(env)
-	  @client = env[:linode_api]
+          @client = env[:linode_api]
           ssh_key_id = env[:machine].config.ssh.private_key_path
           ssh_key_id = ssh_key_id[0] if ssh_key_id.is_a?(Array)
           if ssh_key_id
@@ -50,7 +50,7 @@ module VagrantPlugins
             image = images.find { |i| i.label.downcase.include? @machine.provider_config.image.downcase }
             fail Errors::ImageMatch, image: @machine.provider_config.image.to_s  if image.nil?
             image_id = image.imageid || nil
-	  end
+          end
 
           if @machine.provider_config.kernel
             kernels = @client.avail.kernels
