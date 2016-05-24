@@ -29,6 +29,23 @@ module VagrantPlugins
             root_pass = Digest::SHA2.new.update(@machine.provider_config.api_key).to_s
           end
 
+          if @machine.provider_config.stackscript
+            stackscripts = @client.stackscript.list + @client.avail.stackscripts
+            stackscript = stackscripts.find { |s| s.label.downcase == @machine.provider_config.stackscript.to_s.downcase }
+            fail(Errors::StackscriptMatch, stackscript: @machine.provider_config.stackscript.to_s) if stackscript.nil?
+            stackscript_id = stackscript.stackscriptid || nil
+          else
+            stackscript_id = @machine.provider_config.stackscriptid
+          end
+
+          stackscript_udf_responses = @machine.provider_config.stackscript_udf_responses
+
+          if stackscript_udf_responses and !stackscript_udf_responses.is_a?(Hash)
+            fail(Errors::StackscriptUDFFormat, format: stackscript_udf_responses.class.to_s)
+          else
+            stackscript_udf_responses = { }
+          end
+
           if @machine.provider_config.distribution
             distributions = @client.avail.distributions
             distribution = distributions.find { |d| d.label.downcase.include? @machine.provider_config.distribution.downcase }
@@ -114,7 +131,26 @@ module VagrantPlugins
           # assign the machine id for reference in other commands
           @machine.id = result['linodeid'].to_s
 
-          if distribution_id
+          if stackscript_id
+            swap = @client.linode.disk.create(
+              linodeid: result['linodeid'],
+              label: 'Vagrant swap',
+              type: 'swap',
+              size: swap_size
+            )
+
+            disk = @client.linode.disk.createfromstackscript(
+              linodeid: result['linodeid'],
+              stackscriptid: stackscript_id,
+              stackscriptudfresponses: JSON.dump(stackscript_udf_responses),
+              distributionid: distribution_id,
+              label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
+              type: 'ext4',
+              size: xvda_size,
+              rootsshkey: pubkey,
+              rootpass: root_pass
+            )
+          elsif distribution_id
             swap = @client.linode.disk.create(
               linodeid: result['linodeid'],
               label: 'Vagrant swap',

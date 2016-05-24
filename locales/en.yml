@@ -46,6 +46,7 @@ en:
       disk_too_large: "Disk Images use more drive space than plan allocates"
       planid_or_plan: "Use either planid or plan, not both"
       distributionid_or_distribution: "Use either distributionid or distribution, not both"
+      stackscriptid_or_stackscript: "Use either stackscriptid or stackscript, not both"
       datacenterid_or_datacenter: "Use either datacenterid or datacenter, not both"
       kernelid_or_kernel: "Use either kernelid or kernel, not both"
       imageid_or_image: "Use either imageid or image, not both"
@@ -126,3 +127,8 @@ en:
       plan_id: !-
         The plan which you have specified ( %{plan} ) is not available at this time,
         for more information regarding plans review the following url - https://www.linode.com/pricing
+      stackscript_match: !-
+        The provider does not have your chosen Stackscript ( %{stackscript} ).
+        Supported distributions can be found at the following url - https://manager.linode.com/stackscripts
+      stackscript_udf_responses: !-
+        The stackscript UDF responses object provided is of the wrong type. It should be a Hash.

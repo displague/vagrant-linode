@@ -17,6 +17,9 @@ module VagrantPlugins
       attr_accessor :ca_path
       attr_accessor :ssh_key_name
       attr_accessor :setup
+      attr_accessor :stackscriptid
+      attr_accessor :stackscript
+      attr_accessor :stackscript_udf_responses
       attr_accessor :xvda_size
       attr_accessor :swap_size
       attr_accessor :kernelid
@@ -34,6 +37,9 @@ module VagrantPlugins
         @api_url            = UNSET_VALUE
         @distributionid     = UNSET_VALUE
         @distribution       = UNSET_VALUE
+        @stackscriptid      = UNSET_VALUE
+        @stackscript        = UNSET_VALUE
+        @stackscript_udf_responses = UNSET_VALUE
         @imageid            = UNSET_VALUE
 	@image              = UNSET_VALUE
 	@datacenterid       = UNSET_VALUE
@@ -63,6 +69,9 @@ module VagrantPlugins
         @distributionid     = nil if @distributionid == UNSET_VALUE
 	@distribution       = nil if @distribution == UNSET_VALUE
         @distribution       = 'Ubuntu 14.04 LTS' if @distribution.nil? and @distributionid.nil? and @imageid.nil? and @image.nil?
+        @stackscriptid      = nil if @stackscriptid == UNSET_VALUE
+        @stackscript        = nil if @stackscript == UNSET_VALUE
+        @stackscript_udf_responses = nil if @stackscript_udf_responses == UNSET_VALUE
         @datacenterid       = nil if @datacenterid == UNSET_VALUE
         @datacenter         = nil if @datacenter == UNSET_VALUE
         @datacenter         = 'dallas' if @datacenter.nil? and @datacenterid.nil?
@@ -100,6 +109,10 @@ module VagrantPlugins
 	if @distributionid and @distribution
 	  errors << I18n.t('vagrant_linode.config.distributionid_or_distribution')
 	end
+
+        if @stackscriptid and @stackscript
+          errors << I18n.t('vagrant_linode.config.stackscriptid_or_stackscript')
+        end
 
 	if @datacenterid and @datacenter
 	  errors << I18n.t('vagrant_linode.config.datacenterid_or_datacenter')
