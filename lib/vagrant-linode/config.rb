@@ -41,8 +41,8 @@ module VagrantPlugins
         @stackscript        = UNSET_VALUE
         @stackscript_udf_responses = UNSET_VALUE
         @imageid            = UNSET_VALUE
-	@image              = UNSET_VALUE
-	@datacenterid       = UNSET_VALUE
+        @image              = UNSET_VALUE
+        @datacenterid       = UNSET_VALUE
         @datacenter         = UNSET_VALUE
         @planid             = UNSET_VALUE
         @plan               = UNSET_VALUE
@@ -67,7 +67,7 @@ module VagrantPlugins
         @imageid            = nil if @imageid == UNSET_VALUE
         @image              = nil if @image == UNSET_VALUE
         @distributionid     = nil if @distributionid == UNSET_VALUE
-	@distribution       = nil if @distribution == UNSET_VALUE
+        @distribution       = nil if @distribution == UNSET_VALUE
         @distribution       = 'Ubuntu 14.04 LTS' if @distribution.nil? and @distributionid.nil? and @imageid.nil? and @image.nil?
         @stackscriptid      = nil if @stackscriptid == UNSET_VALUE
         @stackscript        = nil if @stackscript == UNSET_VALUE
@@ -76,7 +76,7 @@ module VagrantPlugins
         @datacenter         = nil if @datacenter == UNSET_VALUE
         @datacenter         = 'dallas' if @datacenter.nil? and @datacenterid.nil?
         @planid             = nil if @planid == UNSET_VALUE
-	@plan               = nil if @plan == UNSET_VALUE
+        @plan               = nil if @plan == UNSET_VALUE
         @plan               = 'Linode 1024' if @plan.nil? and @planid.nil?
         @paymentterm        = '1' if @paymentterm == UNSET_VALUE
         @private_networking = false if @private_networking == UNSET_VALUE
@@ -106,33 +106,33 @@ module VagrantPlugins
           errors << I18n.t('vagrant_linode.config.public_key', key: "#{key}.pub")
         end
 
-	if @distributionid and @distribution
-	  errors << I18n.t('vagrant_linode.config.distributionid_or_distribution')
-	end
+        if @distributionid and @distribution
+          errors << I18n.t('vagrant_linode.config.distributionid_or_distribution')
+        end
 
         if @stackscriptid and @stackscript
           errors << I18n.t('vagrant_linode.config.stackscriptid_or_stackscript')
         end
 
-	if @datacenterid and @datacenter
-	  errors << I18n.t('vagrant_linode.config.datacenterid_or_datacenter')
-	end
+        if @datacenterid and @datacenter
+          errors << I18n.t('vagrant_linode.config.datacenterid_or_datacenter')
+        end
 
-	if @kernelid and @kernel
-	  errors << I18n.t('vagrant_linode.config.kernelid_or_kernel')
-	end
+        if @kernelid and @kernel
+          errors << I18n.t('vagrant_linode.config.kernelid_or_kernel')
+        end
 
-	if @planid and @plan
-	  errors << I18n.t('vagrant_linode.config.planid_or_plan')
-	end
+        if @planid and @plan
+          errors << I18n.t('vagrant_linode.config.planid_or_plan')
+        end
 
-	if @imageid and @image
-	  errors << I18n.t('vagrant_linode.config.imageid_or_image')
-	end
+        if @imageid and @image
+          errors << I18n.t('vagrant_linode.config.imageid_or_image')
+        end
 
-	if (@distribution or @distributionid) and (@imageid or @image)
-	  errors << I18n.t('vagrant_linode.config.distribution_or_image')
-	end
+        if (@distribution or @distributionid) and (@imageid or @image)
+          errors << I18n.t('vagrant_linode.config.distribution_or_image')
+        end
 
         { 'Linode Provider' => errors }
       end
