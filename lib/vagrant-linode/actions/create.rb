@@ -43,7 +43,7 @@ module VagrantPlugins
           if stackscript_udf_responses and !stackscript_udf_responses.is_a?(Hash)
             fail(Errors::StackscriptUDFFormat, format: stackscript_udf_responses.class.to_s)
           else
-            stackscript_udf_responses = { }
+            stackscript_udf_responses = @machine.provider_config.stackscript_udf_responses or {}
           end
 
           if @machine.provider_config.distribution
