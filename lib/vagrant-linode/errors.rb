@@ -56,6 +56,14 @@ module VagrantPlugins
       class RsyncError < LinodeError
         error_key(:rsync)
       end
+
+      class StackscriptMatch < LinodeError
+        error_key(:stackscript_match)
+      end
+
+      class StackscriptUDFFormat < LinodeError
+        error_key(:stackscript_udf_responses)
+      end
     end
   end
 end
