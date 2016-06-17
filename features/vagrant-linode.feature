@@ -27,7 +27,7 @@ Feature: vagrant-linode fog tests
         provider.server_name = 'vagrant-single-server'
         provider.api_key  = ENV['LINODE_API_KEY']
         linode.datacenter = ENV['LINODE_DATACENTER'].downcase.to_sym
-        linode.plan   = /Linode 1024/
+        linode.plan   = /Linode 2048/
         linode.distribution    = /Ubuntu/
         linode.public_key_path = "~/.ssh/id_rsa.pub" unless Fog.mock?
       end
@@ -56,7 +56,7 @@ Scenario: Create a single server (linode_compute_url)
         provider.server_name = 'vagrant-single-server'
         provider.api_key  = ENV['LINODE_API_KEY']
         provider.api_url = "https://api.linode.com/"
-        provider.plan   = /Linode 1024/
+        provider.plan   = /Linode 2048/
         provider.distribution    = /Ubuntu/
         provider.public_key_path = "~/.ssh/id_rsa.pub" unless Fog.mock?
       end

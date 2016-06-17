@@ -20,7 +20,7 @@ Feature: vagrant-linode fog tests
         provider.server_name = 'vagrant-provisioned-server'
         provider.api_key  = ENV['LINODE_API_KEY']
         provider.datacenter   = 'dallas'
-        provider.plan   = /Linode 1024/
+        provider.plan   = /Linode 2048/
         provider.distribution    = /Ubuntu/
         provider.public_key_path = "~/.ssh/id_rsa.pub"
       end

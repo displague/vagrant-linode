@@ -14,7 +14,7 @@ Vagrant.configure('2') do |config|
     provider.ssh_key_name = 'Test Key'
     provider.distribution = 'Debian 8'
     provider.datacenter = 'newark'
-    provider.plan = '1024'
+    provider.plan = '2048'
     provider.label = 'vagrant-'+Time.new.strftime("%F%T").gsub(/[^0-9]/,'')
 
     # Disk Image Sizes (Optional configuration)

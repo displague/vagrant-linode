@@ -97,8 +97,8 @@ module VagrantPlugins
             plan_id = plan.planid
           else
             plans = @client.avail.linodeplans
-            plan = plans.find { |p| p.planid == @machine.provider_config.planid }
-            fail Errors::PlanID, plan: @machine.provider_config.plan if plan.nil?
+            plan = plans.find { |p| p.planid.to_i == @machine.provider_config.planid.to_i }
+            fail Errors::PlanID, plan: @machine.provider_config.planid if plan.nil?
             plan_id = @machine.provider_config.planid
           end
 
@@ -125,7 +125,7 @@ module VagrantPlugins
             datacenterid: datacenter_id,
             paymentterm: @machine.provider_config.paymentterm || 1
           )
-          env[:ui].info I18n.t('vagrant_linode.info.created', linodeid: result['linodeid'])
+          env[:ui].info I18n.t('vagrant_linode.info.created', linodeid: result['linodeid'], label: (@machine.provider_config.label or "linode#{result['linodeid']}"))
 
           # @client.linode.job.list(:linodeid => result['linodeid'], :pendingonly => 1)
           # assign the machine id for reference in other commands

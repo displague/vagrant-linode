@@ -68,7 +68,7 @@ module VagrantPlugins
         @image              = nil if @image == UNSET_VALUE
         @distributionid     = nil if @distributionid == UNSET_VALUE
         @distribution       = nil if @distribution == UNSET_VALUE
-        @distribution       = 'Ubuntu 14.04 LTS' if @distribution.nil? and @distributionid.nil? and @imageid.nil? and @image.nil?
+        @distribution       = 'Ubuntu 16.04 LTS' if @distribution.nil? and @distributionid.nil? and @imageid.nil? and @image.nil?
         @stackscriptid      = nil if @stackscriptid == UNSET_VALUE
         @stackscript        = nil if @stackscript == UNSET_VALUE
         @stackscript_udf_responses = nil if @stackscript_udf_responses == UNSET_VALUE
@@ -77,7 +77,7 @@ module VagrantPlugins
         @datacenter         = 'dallas' if @datacenter.nil? and @datacenterid.nil?
         @planid             = nil if @planid == UNSET_VALUE
         @plan               = nil if @plan == UNSET_VALUE
-        @plan               = 'Linode 1024' if @plan.nil? and @planid.nil?
+        @planid             = '1' if @plan.nil? and @planid.nil?
         @paymentterm        = '1' if @paymentterm == UNSET_VALUE
         @private_networking = false if @private_networking == UNSET_VALUE
         @ca_path            = nil if @ca_path == UNSET_VALUE

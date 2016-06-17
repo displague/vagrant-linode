@@ -6,7 +6,7 @@ en:
       already_active: "Linode is already active"
       already_off: "Linode is already off"
       creating: "Creating a new linode..."
-      created: "Created a new linode... %{linodeid}"
+      created: "Created a new linode... %{linodeid}, https://manager.linode.com/linodes/dashboard/%{label}"
       booting: "Booting Linode %{linodeid} ..."
       linode_ip: "Assigned IP address: %{ip}"
       linode_private_ip: "Private IP address: %{ip}"
