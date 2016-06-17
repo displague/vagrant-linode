@@ -36,8 +36,7 @@ Vagrant.configure('2') do |config|
 
   config.vm.provider :linode do |provider, override|
     override.ssh.private_key_path = '~/.ssh/id_rsa'
-    override.vm.box = 'linode'
-    override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
+    override.vm.box = 'linode/ubuntu1404'
 
     provider.api_key = 'API_KEY'
     provider.distribution = 'Ubuntu 16.04 LTS'
