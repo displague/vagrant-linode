@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
         end
 
         linode.datacenter = "dallas"
-        linode.plan = "Linode 1024"
+        linode.plan = "Linode 2048"
         linode.distribution = "Ubuntu 14.04 LTS"
     end
 end

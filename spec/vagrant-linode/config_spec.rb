@@ -13,7 +13,7 @@ describe VagrantPlugins::Linode::Config do
     its(:api_url)  { should be_nil }
     its(:distribution) { should eq(/Ubuntu/) }
     its(:datacenter) { should eq(/dallas/) }
-    its(:plan) { should eq(/1024/) }
+    its(:plan) { should eq(/2048/) }
     its(:paymentterm)   { should eq(/1/) }
     its(:private_networking)    { should eq(/Ubuntu/) }
     its(:ca_path) { should eql(vagrant_public_key) }

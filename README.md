@@ -40,9 +40,9 @@ Vagrant.configure('2') do |config|
     override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
 
     provider.api_key = 'API_KEY'
-    provider.distribution = 'Ubuntu 14.04 LTS'
+    provider.distribution = 'Ubuntu 16.04 LTS'
     provider.datacenter = 'newark'
-    provider.plan = 'Linode 1024'
+    provider.plan = 'Linode 2048'
     # provider.planid = <int>
     # provider.paymentterm = <*1*,12,24>
     # provider.datacenterid = <int>
@@ -76,7 +76,7 @@ The following attributes are available to further configure the provider:
 - `provider.datacenter` - A string representing the datacenter to create the new
    linode in. It defaults to `dallas`.
 - `provider.plan` - A string representing the size to use when creating a
-  new linode (e.g. `Linode 2048`). It defaults to `Linode 1024`.
+  new linode (e.g. `Linode 4096`). It defaults to `Linode 2048`.
 - `provider.private_networking` - A boolean flag indicating whether to enable
   a private network interface. It defaults to `false`.
 - `provider.ssh_key_name` - A string representing the name to use when creating
@@ -99,21 +99,21 @@ attribute is `true`.
 Each Linode Tier has been assigned a Plan Identifcation Number.
 Current Plan-ID table follows:
 
-| PlanID  | Plan                      |
-|:------- |:------------------------- |
-|    1    |  1GB Plan (Linode 1024)   |
-|    2    |  2GB Plan (Linode 2048)   |
-|    4    |  4GB Plan (Linode 4096)   |
-|    6    |  8GB Plan (Linode 8192)   |
-|    7    | 16GB Plan (Linode 16384)  |
-|    8    | 32GB Plan (Linode 32768)  |
-|    9    | 48GB Plan (Linode 49152)  |
-|   10    | 64GB Plan (Linode 65536)  |
-|   12    | 96GB Plan (Linode 98304)  |
+| PlanID  | Plan                        |
+|:------- |:--------------------------- |
+|    1    |   2GB Plan (Linode 2048)    |
+|    2    |   4GB Plan (Linode 4096)    |
+|    4    |   8GB Plan (Linode 8192)    |
+|    6    |  12GB Plan (Linode 12288)   |
+|    7    |  24GB Plan (Linode 24576)   |
+|    8    |  48GB Plan (Linode 49152)   |
+|    9    |  64GB Plan (Linode 65536)   |
+|   10    |  80GB Plan (Linode 81920)   |
+|   12    | 120GB Plan (Linode 122880)  |
 
 This can be obtained through vagrant with:
 ```
-vagrant linode plans
+vagrant linode plans <machine_name>
 ```
 
 Or using curl:
