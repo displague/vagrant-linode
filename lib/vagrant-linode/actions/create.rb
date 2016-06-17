@@ -125,7 +125,7 @@ module VagrantPlugins
             datacenterid: datacenter_id,
             paymentterm: @machine.provider_config.paymentterm || 1
           )
-          env[:ui].info I18n.t('vagrant_linode.info.created', linodeid: result['linodeid'])
+          env[:ui].info I18n.t('vagrant_linode.info.created', linodeid: result['linodeid'], label: (@machine.provider_config.label or "linode#{result['linodeid']}"))
 
           # @client.linode.job.list(:linodeid => result['linodeid'], :pendingonly => 1)
           # assign the machine id for reference in other commands
