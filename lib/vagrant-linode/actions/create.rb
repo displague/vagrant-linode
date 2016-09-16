@@ -103,18 +103,15 @@ module VagrantPlugins
           end
 
           ### Disk Images
-          xvda_size, swap_size, disk_sanity = @machine.provider_config.xvda_size, @machine.provider_config.swap_size, true
+          disk_size = plan['disk'].to_i * 1024
+          xvda_size, swap_size, xvdc_size = @machine.provider_config.xvda_size, @machine.provider_config.swap_size, @machine.provider_config.xvdc_size
 
-          # Sanity checks for disk size
-          if xvda_size != true
-            disk_sanity = false if ( xvda_size.to_i + swap_size.to_i) > ( plan['disk'].to_i * 1024)
-          end
+          swap_size = swap_size.to_i
+          xvda_size = xvda_size == true ? disk_size - swap_size : xvda_size.to_i
+          xvdc_size = (xvdc_size.is_a?(Vagrant::Config::V2::DummyConfig) or xvdc_size == true) ? (disk_size - swap_size - xvda_size).abs : xvdc_size.to_i
 
-          # throw if disk sizes are too large
-          if xvda_size == true
-            xvda_size = ( ( plan['disk'].to_i * 1024) - swap_size.to_i)
-          elsif disk_sanity == false
-            fail Errors::DiskSize, current: (xvda_size.to_i + swap_size.to_i), max: ( plan['disk'].to_i * 1024)
+          if ( xvda_size + swap_size + xvdc_size) > disk_size
+            fail Errors::DiskSize, current: (xvda_size + swap_size + xvdc_size), max: disk_size
           end
 
           env[:ui].info I18n.t('vagrant_linode.info.creating')
@@ -131,14 +128,9 @@ module VagrantPlugins
           # assign the machine id for reference in other commands
           @machine.id = result['linodeid'].to_s
 
-          if stackscript_id
-            swap = @client.linode.disk.create(
-              linodeid: result['linodeid'],
-              label: 'Vagrant swap',
-              type: 'swap',
-              size: swap_size
-            )
+          disklist = []
 
+          if stackscript_id
             disk = @client.linode.disk.createfromstackscript(
               linodeid: result['linodeid'],
               stackscriptid: stackscript_id,
@@ -150,14 +142,8 @@ module VagrantPlugins
               rootsshkey: pubkey,
               rootpass: root_pass
             )
+            disklist.push(disk['diskid'])
           elsif distribution_id
-            swap = @client.linode.disk.create(
-              linodeid: result['linodeid'],
-              label: 'Vagrant swap',
-              type: 'swap',
-              size: swap_size
-            )
-
             disk = @client.linode.disk.createfromdistribution(
               linodeid: result['linodeid'],
               distributionid: distribution_id,
@@ -167,6 +153,7 @@ module VagrantPlugins
               rootsshkey: pubkey,
               rootpass: root_pass
             )
+            disklist.push(disk['diskid'])
           elsif image_id
             disk = @client.linode.disk.createfromimage(
               linodeid: result['linodeid'],
@@ -176,19 +163,40 @@ module VagrantPlugins
               rootsshkey: pubkey,
               rootpass: root_pass
             )
+            disklist.push(disk['diskid'])
+          else
+            disklist.push('')
+          end
 
+          if swap_size > 0
             swap = @client.linode.disk.create(
               linodeid: result['linodeid'],
               label: 'Vagrant swap',
               type: 'swap',
               size: swap_size
             )
+            disklist.push(swap['diskid'])
+          else
+            disklist.push('')
+          end
+
+          if xvdc_size > 0
+            xvdc_type = @machine.provider_config.xvdc_type.is_a?(Vagrant::Config::V2::DummyConfig) ? "raw" : @machine.provider_config.xvdc_type
+            xvdc = @client.linode.disk.create(
+              linodeid: result['linodeid'],
+              label: 'Vagrant Leftover Disk Linode ' + result['linodeid'].to_s,
+              type: xvdc_type,
+              size: xvdc_size,
+            )
+            disklist.push(xvdc['diskid'])
+          else
+            disklist.push('')
           end
 
           config = @client.linode.config.create(
             linodeid: result['linodeid'],
             label: 'Vagrant Config',
-            disklist: "#{disk['diskid']},#{swap['diskid']}",
+            disklist: disklist.join(','),
             kernelid: kernel_id
           )
 
