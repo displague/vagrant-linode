@@ -14,7 +14,6 @@ Gem::Specification.new do |gem|
   gem.summary       = gem.description
 
   gem.add_runtime_dependency 'linodeapi', '~> 1.0.0'
-  gem.add_runtime_dependency 'json', '~> 1.8.3'
   gem.add_runtime_dependency 'log4r', '~> 1.1.10'
 
   gem.add_development_dependency 'rake', '~> 10.4.2'
