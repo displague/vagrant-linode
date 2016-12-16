@@ -13,12 +13,12 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'https://www.github.com/displague/vagrant-linode'
   gem.summary       = gem.description
 
-  gem.add_runtime_dependency 'linodeapi', '~> 1.0.0'
-  gem.add_runtime_dependency 'log4r', '~> 1.1.10'
+  gem.add_runtime_dependency 'linodeapi', '~> 1.0'
+  gem.add_runtime_dependency 'log4r', '~> 1.1'
 
-  gem.add_development_dependency 'rake', '~> 10.4.2'
-  gem.add_development_dependency 'rspec', '~> 3.4.0'
-  gem.add_development_dependency 'aruba', '~> 0.12.0'
+  gem.add_development_dependency 'rake', '~> 12.0'
+  gem.add_development_dependency 'rspec', '~> 3.5'
+  gem.add_development_dependency 'aruba', '~> 0.14'
 
   gem.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
   gem.executables   = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }

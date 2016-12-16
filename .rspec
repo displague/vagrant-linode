@@ -1,4 +1,7 @@
 --format
-d
---colour
+doc
+--order
+random
+--color
+--fail-fast
 --backtrace

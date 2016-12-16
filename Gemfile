@@ -1,8 +1,6 @@
 source 'https://rubygems.org'
 
-group :plugins do
-  gemspec
-end
+gemspec
 
 group :development do
   # We depend on Vagrant for development, but we don't add it as a
@@ -11,4 +9,8 @@ group :development do
   gem 'vagrant', git: 'https://github.com/mitchellh/vagrant'
   gem 'coveralls', require: false
   gem 'pry'
+end
+
+group :plugins do
+  gem 'vagrant-linode', path: '.'
 end
