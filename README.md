@@ -96,19 +96,24 @@ attribute is `true`.
 ### provider.plan
 
 Each Linode Tier has been assigned a Plan Identifcation Number.
-Current Plan-ID table follows:
+Current (Feb 2017) Plan-ID table follows:
 
-| PlanID  | Plan                        |
-|:------- |:--------------------------- |
-|    1    |   2GB Plan (Linode 2048)    |
-|    2    |   4GB Plan (Linode 4096)    |
-|    4    |   8GB Plan (Linode 8192)    |
-|    6    |  12GB Plan (Linode 12288)   |
-|    7    |  24GB Plan (Linode 24576)   |
-|    8    |  48GB Plan (Linode 49152)   |
-|    9    |  64GB Plan (Linode 65536)   |
-|   10    |  80GB Plan (Linode 81920)   |
-|   12    | 120GB Plan (Linode 122880)  |
+| PlanID  | Plan                          |
+|:------- |:----------------------------- |
+|    1    |   1GB Plan (Linode 1024)      |
+|    2    |   2GB Plan (Linode 2048)      |
+|    3    |   4GB Plan (Linode 4096)      |
+|    4    |   8GB Plan (Linode 8192)      |
+|    5    |  12GB Plan (Linode 12288)     |
+|    6    |  24GB Plan (Linode 24576)     |
+|    7    |  48GB Plan (Linode 49152)     |
+|    8    |  64GB Plan (Linode 65536)     |
+|    9    |  80GB Plan (Linode 81920)     |
+|   10    |  16GB Plan (Linode 16384)     |
+|   11    |  32GB Plan (Linode 32768)     |
+|   12    |  60GB Plan (Linode 61440)    |
+|   13    | 100GB HighMem (Linode 102400) |
+|   14    | 200GB HighMem (Linode 204800) |
 
 This can be obtained through vagrant with:
 ```
@@ -127,7 +132,7 @@ More detail: [Linode API - Plans](https://www.linode.com/api/utility/avail.linod
 ### provider.datacenter
 
 Each region has been specified with a Data Center ID.
-Current Region-ID table is:
+Current (Feb 2017) Datacenter-ID table is:
 
 | DatacenterID | Datacenter | Location            |
 |:-------      |:------     |:--------------------|
@@ -139,6 +144,7 @@ Current Region-ID table is:
 |   8          | tokyo      | Tokyo, JP           |
 |   9          | singapore  | Singapore, SGP      |
 |   10         | frankfurt  | Frankfurt, DE       |
+|   11         | shinagawa1 | Tokyo 2, JP         |
 
 You can find latest datacenter ID number using Vagrant subcommands:
 
