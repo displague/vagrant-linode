@@ -100,18 +100,18 @@ Current (Feb 2017) Plan-ID table follows:
 
 | PlanID  | Plan                          |
 |:------- |:----------------------------- |
-|    1    |   1GB Plan (Linode 1024)      |
-|    2    |   2GB Plan (Linode 2048)      |
-|    3    |   4GB Plan (Linode 4096)      |
-|    4    |   8GB Plan (Linode 8192)      |
-|    5    |  12GB Plan (Linode 12288)     |
-|    6    |  24GB Plan (Linode 24576)     |
-|    7    |  48GB Plan (Linode 49152)     |
-|    8    |  64GB Plan (Linode 65536)     |
-|    9    |  80GB Plan (Linode 81920)     |
-|   10    |  16GB Plan (Linode 16384)     |
-|   11    |  32GB Plan (Linode 32768)     |
-|   12    |  60GB Plan (Linode 61440)    |
+|    1    |   1GB Standard (Linode 1024)  |
+|    2    |   2GB Standard (Linode 2048)  |
+|    3    |   4GB Standard (Linode 4096)  |
+|    4    |   8GB Standard (Linode 8192)  |
+|    5    |  12GB Standard (Linode 12288) |
+|    6    |  24GB Standard (Linode 24576) |
+|    7    |  48GB Standard (Linode 49152) |
+|    8    |  64GB Standard (Linode 65536) |
+|    9    |  80GB Standard (Linode 81920) |
+|   10    |  16GB HighMem (Linode 16384)  |
+|   11    |  32GB HighMem (Linode 32768)  |
+|   12    |  60GB HighMem (Linode 61440)  |
 |   13    | 100GB HighMem (Linode 102400) |
 |   14    | 200GB HighMem (Linode 204800) |
 
