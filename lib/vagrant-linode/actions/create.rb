@@ -70,7 +70,7 @@ module VagrantPlugins
           end
 
           if @machine.provider_config.kernel
-            kernels = @client.avail.kernels
+            kernels = @client.avail.kernels(isxen: 0, iskvm: 1)
             kernel = kernels.find { |k| k.label.downcase.include? @machine.provider_config.kernel.downcase }
             raise( Errors::KernelMatch, kernel: @machine.provider_config.kernel.to_s ) if kernel == nil
             kernel_id = kernel.kernelid || nil

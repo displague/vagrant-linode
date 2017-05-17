@@ -9,7 +9,7 @@ module VagrantPlugins
         def call(env)
           linode_api = env[:linode_api]
           env[:ui].info ('%-4s %-6s %-6s %s' % ['ID', 'IsXen', 'IsKVM', 'Kernel Name'])
-          linode_api.avail.kernels.sort_by(&:kernelid).each do |kernel|
+          linode_api.avail.kernels(isxen: 0, iskvm: 1).sort_by(&:kernelid).each do |kernel|
             env[:ui].info ('%-4s %-6s %-6s %s' % [kernel.kernelid, kernel.isxen, kernel.iskvm, kernel.label])
           end
           @app.call(env)
