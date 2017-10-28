@@ -225,7 +225,7 @@ to install dependencies:
 
     $ bundle
 
-To run the provider's tests:
+To run the provider's tests, first install vagrant [as shown here](https://www.vagrantup.com/downloads.html) and then use rake:
 
     $ bundle exec rake test
 
