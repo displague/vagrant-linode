@@ -25,7 +25,7 @@ module VagrantPlugins
 
           @logger.info('Connecting to Linode api_url...')
 
-          linode = ::LinodeAPI::Raw.new params
+          linode = ::LinodeAPI::Retryable.new params
           env[:linode_api] = linode
 
           @app.call(env)

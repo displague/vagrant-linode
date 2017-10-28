@@ -35,7 +35,7 @@ module VagrantPlugins
         def initialize(machine)
           @logger = Log4r::Logger.new('vagrant::linode::apiclient')
           @config = machine.provider_config
-          @client = ::LinodeAPI::Raw.new(apikey: @config.api_key, endpoint: @config.api_url || nil)
+          @client = ::LinodeAPI::Retryable.new(apikey: @config.api_key, endpoint: @config.api_url || nil)
         end
 
         attr_reader :client
