@@ -70,7 +70,7 @@ module VagrantPlugins
           end
 
           if @machine.provider_config.kernel
-            kernels = @client.avail.kernels(isxen: 0, iskvm: 1)
+            kernels = @client.avail.kernels(isxen: nil, iskvm: 1)
             kernel = kernels.find { |k| k.label.downcase.include? @machine.provider_config.kernel.downcase }
             raise( Errors::KernelMatch, kernel: @machine.provider_config.kernel.to_s ) if kernel == nil
             kernel_id = kernel.kernelid || nil
@@ -118,24 +118,24 @@ module VagrantPlugins
           end
           
           env[:ui].info I18n.t('vagrant_linode.info.destroying')
-          
+
           diskList = @client.linode.disk.list(
             linodeid: @machine.id
           )
-          
+
           diskList.each do |diskEntry|
             diskDeleteResult = @client.linode.disk.delete(
               linodeid: @machine.id,
               diskid: diskEntry['diskid']
             )
-            
+
             job = diskDeleteResult['jobid']
-            
+
             jobStatus = @client.linode.job.list(
               linodeid: @machine.id,
               jobid: job
             )
-            
+
             while jobStatus[0]['host_finish_dt'].nil? || jobStatus[0]['host_finish_dt'].empty? do 
               sleep(5)
               jobStatus = @client.linode.job.list(
@@ -144,18 +144,18 @@ module VagrantPlugins
               )
             end
           end
-          
+
           configList = @client.linode.config.list(
             linodeid: @machine.id
           )
-          
+
           configList.each do |configEntry|
             configDeleteResult = @client.linode.config.delete(
               linodeid: @machine.id,
               configid: configEntry['configid']
             )
           end
-          
+
           env[:ui].info I18n.t('vagrant_linode.info.creating')
 
           if stackscript_id
