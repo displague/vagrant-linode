@@ -2,6 +2,7 @@ en:
   vagrant_linode:
     info:
       off: "Linode is off"
+      not_off: "Linode must be powered off"
       not_created: "Linode has not been created"
       already_active: "Linode is already active"
       already_off: "Linode is already off"

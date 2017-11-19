@@ -188,6 +188,8 @@ module VagrantPlugins
                   b2.use SetupUser
                   b2.use SetupHostname
                   b2.use Provision
+                else
+                  b2.use MessageNotOff
                 end
               end
             else
@@ -258,11 +260,11 @@ module VagrantPlugins
       autoload :ConnectLinode, action_root.join('connect_linode')
       autoload :ReadState, action_root.join('read_state')
       autoload :Create, action_root.join('create')
-      autoload :Destroy, action_root.join('destroy')
       autoload :IsCreated, action_root.join('is_created')
       autoload :IsStopped, action_root.join('is_stopped')
       autoload :MessageAlreadyActive, action_root.join('message_already_active')
       autoload :MessageAlreadyOff, action_root.join('message_already_off')
+      autoload :MessageNotOff, action_root.join('message_not_off')
       autoload :MessageNotCreated, action_root.join('message_not_created')
       autoload :MessageOff, action_root.join('message_off')
       autoload :ModifyProvisionPath, action_root.join('modify_provision_path')

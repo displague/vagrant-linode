@@ -116,7 +116,14 @@ module VagrantPlugins
           elsif disk_sanity == false
             fail Errors::DiskSize, current: (xvda_size.to_i + swap_size.to_i), max: ( plan['disk'].to_i * 1024)
           end
-          
+
+          env[:ui].info I18n.t('vagrant_linode.info.powering_off')
+
+          shutdownjob = @client.linode.shutdown(
+            linodeid: @machine.id
+	  )
+          wait_for_event(env, shutdownjob['jobid'])
+
           env[:ui].info I18n.t('vagrant_linode.info.destroying')
 
           diskList = @client.linode.disk.list(
