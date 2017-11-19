@@ -18,7 +18,6 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'rake', '~> 12.0'
   gem.add_development_dependency 'rspec', '~> 3.5'
-  gem.add_development_dependency 'aruba', '~> 0.14'
 
   gem.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
   gem.executables   = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }
