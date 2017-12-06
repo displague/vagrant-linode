@@ -52,6 +52,7 @@ en:
       kernelid_or_kernel: "Use either kernelid or kernel, not both"
       imageid_or_image: "Use either imageid or image, not both"
       distribution_or_image: "Distribution can not be specified with Image options"
+      volumes: "Volumes must be an array of disks"
     errors:
       public_key: |-
         There was an issue reading the public key at:

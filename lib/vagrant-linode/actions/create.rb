@@ -212,6 +212,18 @@ module VagrantPlugins
           group = @machine.provider_config.group
           group = "" if @machine.provider_config.group == false
 
+          @machine.provider_config.volumes.each_with_index do |volume, i|
+            volume_name = "#{@machine.name}_volume_#{i}",
+            result = @client.volume.create(
+              size: volume[:size],
+              label: volume_name,
+              datacenterid: datacenter_id,
+              linodeid: @machine.id
+            )
+
+            env[:ui].info "disk #{volume_name} created"
+          end
+
           result = @client.linode.update(
             linodeid: @machine.id,
             label: label,
