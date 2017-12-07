@@ -3,21 +3,21 @@ require "log4r"
 module VagrantPlugins
   module Linode
     class ClientWrapper
-      def initialize(client, ui)
+      def initialize(client, logger)
         @client = client
-        @ui = ui
+        @logger = logger
       end
 
       def method_missing(method, *args, &block)
         result = @client.send(method, *args, &block)
 
         if result.is_a? LinodeAPI::Retryable
-          self.class.new(result, @ui)
+          self.class.new(result, @logger)
         else
           result
         end
       rescue ::LinodeAPI::APIError => e
-        @ui.error e.details.inspect
+        @logger.error e.details.inspect
         raise
       end
     end
