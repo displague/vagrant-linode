@@ -40,6 +40,10 @@ module VagrantPlugins
             require File.expand_path('../servers', __FILE__)
             Servers
           end
+          @subcommands.register(:volumes) do
+            require File.expand_path('../volumes', __FILE__)
+            Volumes
+          end
 
           super(argv, env)
         end
