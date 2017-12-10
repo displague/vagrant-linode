@@ -101,7 +101,7 @@ module VagrantPlugins
             fail Errors::PlanID, plan: @machine.provider_config.planid if plan.nil?
             plan_id = @machine.provider_config.planid
           end
-          
+
           ### Disk Images
           xvda_size, swap_size, disk_sanity = @machine.provider_config.xvda_size, @machine.provider_config.swap_size, true
 
@@ -143,7 +143,7 @@ module VagrantPlugins
               jobid: job
             )
 
-            while jobStatus[0]['host_finish_dt'].nil? || jobStatus[0]['host_finish_dt'].empty? do 
+            while jobStatus[0]['host_finish_dt'].nil? || jobStatus[0]['host_finish_dt'].empty? do
               sleep(5)
               jobStatus = @client.linode.job.list(
                 linodeid: @machine.id,
@@ -298,7 +298,7 @@ module VagrantPlugins
 
           @app.call(env)
         end
-        
+
         def get_server_name
           "vagrant_linode-#{rand.to_s.split('.')[1]}"
         end
