@@ -15,7 +15,8 @@ module VagrantPlugins
           volume_definitions = machine.provider_config.volumes
 
           volume_definitions.each do |volume|
-            remote_volume = remote_volumes.find { |v| v.label == volume[:label] }
+            volume_label = "#{machine.name}_#{volume[:label]}"
+            remote_volume = remote_volumes.find { |v| v.label == volume_label }
 
             if remote_volume.nil?
               logger.info "volume \"%s\": %s" % [volume[:label], "does not exist"]
