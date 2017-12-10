@@ -134,3 +134,4 @@ en:
         Supported distributions can be found at the following url - https://manager.linode.com/stackscripts
       stackscript_udf_responses: !-
         The stackscript UDF responses object provided is of the wrong type. It should be a Hash.
+      volume_size_missing: For volumes that need to be created the size has to be specified.

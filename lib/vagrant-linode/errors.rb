@@ -20,7 +20,7 @@ module VagrantPlugins
       class DatacenterMatch < LinodeError
         error_key(:datacenter_match)
       end
- 
+
       class ImageMatch < LinodeError
         error_key(:image_match)
       end
@@ -63,6 +63,10 @@ module VagrantPlugins
 
       class StackscriptUDFFormat < LinodeError
         error_key(:stackscript_udf_responses)
+      end
+
+      class VolumeSizeMissing < LinodeError
+        error_key(:volume_size_missing)
       end
     end
   end
