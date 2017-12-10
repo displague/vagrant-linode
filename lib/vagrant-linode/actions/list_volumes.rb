@@ -32,7 +32,7 @@ module VagrantPlugins
         private
 
         def format_volume(machine, volume)
-          volume_state = if volume.linodeid == machine.id
+          volume_state = if volume.linodeid.to_s == machine.id
                            "attached"
                          elsif volume.linodeid == 0
                            "detached"
