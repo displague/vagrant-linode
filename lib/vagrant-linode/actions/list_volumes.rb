@@ -19,11 +19,11 @@ module VagrantPlugins
             remote_volume = remote_volumes.find { |v| v.label == volume_label }
 
             if remote_volume.nil?
-              logger.info "volume \"%s\": %s" % [volume[:label], "does not exist"]
+              logger.info format_volume(volume_label, "does not exist")
               next
             end
 
-            logger.info format_volume(machine, remote_volume)
+            logger.info format_volume(volume_label, volume_state(machine, remote_volume))
           end
 
           @app.call(env)
@@ -31,16 +31,18 @@ module VagrantPlugins
 
         private
 
-        def format_volume(machine, volume)
-          volume_state = if volume.linodeid.to_s == machine.id
-                           "attached"
-                         elsif volume.linodeid == 0
-                           "detached"
-                         else
-                           "attached to other VM"
-                         end
+        def volume_state(machine, volume)
+          if volume.linodeid.to_s == machine.id
+            "attached"
+          elsif volume.linodeid == 0
+            "detached"
+          else
+            "attached to other VM"
+          end
+        end
 
-          "volume \"%s\": %s" % [volume.label, volume_state]
+        def format_volume(label, state)
+          "volume \"%s\": %s" % [label, state]
         end
       end
     end
