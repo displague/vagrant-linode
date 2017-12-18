@@ -44,7 +44,7 @@ module VagrantPlugins
             end
 
             opts.separator ''
-            opts.separator 'For help on any individual subcommand run `vagrant linode images <subcommand> -h`'
+            opts.separator 'For help on any individual subcommand run `vagrant linode volumes <subcommand> -h`'
           end
 
           @env.ui.info(opts.help, prefix: false)
