@@ -225,7 +225,7 @@ module VagrantPlugins
               )
               env[:ui].info "volume #{volume_name} attached"
             else
-              raise Errors::VolumeSizeMissing unless volume[:size] && volume[:size].to_i > 0
+              raise Errors::VolumeSizeMissing unless volume[:size].to_i > 0
               @client.volume.create(
                 size: volume[:size],
                 label: volume_name,
