@@ -135,3 +135,4 @@ en:
       stackscript_udf_responses: !-
         The stackscript UDF responses object provided is of the wrong type. It should be a Hash.
       volume_size_missing: For volumes that need to be created the size has to be specified.
+      volume_label_missing: You must specify a volume label

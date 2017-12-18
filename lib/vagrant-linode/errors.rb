@@ -68,6 +68,10 @@ module VagrantPlugins
       class VolumeSizeMissing < LinodeError
         error_key(:volume_size_missing)
       end
+
+      class VolumeLabelMissing < LinodeError
+        error_key(:volume_label_missing)
+      end
     end
   end
 end

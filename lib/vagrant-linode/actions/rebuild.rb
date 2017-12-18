@@ -240,6 +240,7 @@ module VagrantPlugins
 
           existing_volumes = @client.volume.list
           @machine.provider_config.volumes.each do |volume|
+            raise Errors::VolumeLabelMissing unless volume[:label]
             volume_name = "#{@machine.name}_#{volume[:label]}"
 
             remote_volume = existing_volumes.find { |v| v.label == volume_name }
