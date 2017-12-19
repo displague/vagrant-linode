@@ -1,6 +1,7 @@
 require 'vagrant-linode/helpers/client'
 require 'vagrant-linode/helpers/waiter'
 require 'vagrant-linode/errors'
+require 'vagrant-linode/services/volume_manager'
 
 module VagrantPlugins
   module Linode
@@ -212,28 +213,7 @@ module VagrantPlugins
           group = @machine.provider_config.group
           group = "" if @machine.provider_config.group == false
 
-          existing_volumes = @client.volume.list
-          @machine.provider_config.volumes.each do |volume|
-            raise Errors::VolumeLabelMissing unless volume[:label]
-            volume_name = "#{@machine.name}_#{volume[:label]}"
-
-            remote_volume = existing_volumes.find { |v| v.label == volume_name }
-            if remote_volume
-              @client.volume.update(
-                volumeid: remote_volume.volumeid,
-                linodeid: @machine.id
-              )
-              env[:ui].info "volume #{volume_name} attached"
-            else
-              raise Errors::VolumeSizeMissing unless volume[:size].to_i > 0
-              @client.volume.create(
-                size: volume[:size],
-                label: volume_name,
-                linodeid: @machine.id
-              )
-              env[:ui].info "volume #{volume_name} created and attached"
-            end
-          end
+          Services::VolumeManager.new(@machine, @client.volume, env[:ui]).perform
 
           result = @client.linode.update(
             linodeid: @machine.id,
