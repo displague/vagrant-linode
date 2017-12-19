@@ -18,3 +18,8 @@ if ENV['COVERAGE'] != 'false'
 end
 
 require 'linode'
+
+require "pry"
+
+I18n.load_path << 'locales/en.yml'
+I18n.reload!
