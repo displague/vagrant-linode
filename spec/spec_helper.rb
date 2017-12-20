@@ -20,6 +20,7 @@ end
 require 'linode'
 
 require "pry"
+require 'rspec/its'
 
 I18n.load_path << 'locales/en.yml'
 I18n.reload!
