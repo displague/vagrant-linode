@@ -17,9 +17,7 @@ if ENV['COVERAGE'] != 'false'
   end
 end
 
-require 'linode'
-
-require "pry"
+require 'pry'
 require 'rspec/its'
 
 I18n.load_path << 'locales/en.yml'
