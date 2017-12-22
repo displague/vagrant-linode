@@ -1,4 +1,5 @@
 require 'log4r'
+require "vagrant-linode/client_wrapper"
 
 module VagrantPlugins
   module Linode
@@ -25,7 +26,7 @@ module VagrantPlugins
 
           @logger.info('Connecting to Linode api_url...')
 
-          linode = ::LinodeAPI::Retryable.new params
+          linode = ClientWrapper.new(::LinodeAPI::Retryable.new(params), env[:ui])
           env[:linode_api] = linode
 
           @app.call(env)
