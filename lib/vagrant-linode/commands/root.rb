@@ -28,6 +28,10 @@ module VagrantPlugins
             require File.expand_path('../kernels', __FILE__)
             Kernels
           end
+          @subcommands.register(:jobs) do
+            require File.expand_path('../jobs', __FILE__)
+            Jobs
+          end
           @subcommands.register(:datacenters) do
             require File.expand_path('../datacenters', __FILE__)
             Datacenters

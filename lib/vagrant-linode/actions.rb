@@ -256,6 +256,14 @@ module VagrantPlugins
         end
       end
 
+      def self.action_list_jobs
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListJobs
+        end
+      end
+
       action_root = Pathname.new(File.expand_path('../actions', __FILE__))
       autoload :ConnectLinode, action_root.join('connect_linode')
       autoload :ReadState, action_root.join('read_state')
@@ -283,6 +291,7 @@ module VagrantPlugins
       autoload :ListPlans, action_root.join('list_plans')
       autoload :ListDistributions, action_root.join('list_distributions')
       autoload :ListKernels, action_root.join('list_kernels')
+      autoload :ListJobs, action_root.join('list_jobs')
       autoload :ListDatacenters, action_root.join('list_datacenters')
     end
   end
