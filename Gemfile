@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '~> 2.2.0'
+ruby '>= 2.2.0'
 
 group :development do
   # We depend on Vagrant for development, but we don't add it as a

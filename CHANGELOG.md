@@ -1,5 +1,7 @@
 Changelog
 =========
+v0.4.0 added support for Linode Volumes
+       added `vagrant linode volumes list` command
 v0.3.0 fixes for Vagrant 2.0.1 (now requires Ruby 2.2.0+)
        xen-only kernels are no longer available (Fixes KVM Grub options)
        rebuild command warns / quits if Linode is not powered down

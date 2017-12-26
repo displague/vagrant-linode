@@ -251,6 +251,18 @@ You can now make modifications. Running `vagrant` within the Bundler
 environment will ensure that plugins installed in your Vagrant
 environment are not loaded.
 
+### Building and Publishing
+
+```
+vi lib/vagrant-linode/version.rb
+vi CHANGELOG.md
+git commit -m 'version 0.1.2' lib/vagrant-linode/version.rb CHANGELOG.md
+git tag -s v0.1.2
+git push --tags origin master
+gem build vagrant-linode.gemspec
+gem push vagrant-linode-0.1.2.gem
+```
+
 [![Join the chat at https://gitter.im/displague/vagrant-linode](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/displague/vagrant-linode?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Code Climate](https://codeclimate.com/github/displague/vagrant-linode/badges/gpa.svg)](https://codeclimate.com/github/displague/vagrant-linode)
 [![Test Coverage](https://codeclimate.com/github/displague/vagrant-linode/badges/coverage.svg)](https://codeclimate.com/github/displague/vagrant-linode)
