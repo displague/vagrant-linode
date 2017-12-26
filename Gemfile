@@ -10,6 +10,10 @@ group :development do
   gem 'pry'
 end
 
+group :test do
+  gem 'rspec-its'
+end
+
 group :plugins do
   gemspec
 end

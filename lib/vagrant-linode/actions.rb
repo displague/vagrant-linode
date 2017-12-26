@@ -256,6 +256,14 @@ module VagrantPlugins
         end
       end
 
+      def self.action_list_volumes
+        Vagrant::Action::Builder.new.tap do |b|
+          # b.use ConfigValidate # is this per machine?
+          b.use ConnectLinode
+          b.use ListVolumes
+        end
+      end
+
       action_root = Pathname.new(File.expand_path('../actions', __FILE__))
       autoload :ConnectLinode, action_root.join('connect_linode')
       autoload :ReadState, action_root.join('read_state')
@@ -284,6 +292,7 @@ module VagrantPlugins
       autoload :ListDistributions, action_root.join('list_distributions')
       autoload :ListKernels, action_root.join('list_kernels')
       autoload :ListDatacenters, action_root.join('list_datacenters')
+      autoload :ListVolumes, action_root.join('list_volumes')
     end
   end
 end

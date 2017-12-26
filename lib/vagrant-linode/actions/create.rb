@@ -1,6 +1,7 @@
 require 'vagrant-linode/helpers/client'
 require 'vagrant-linode/helpers/waiter'
 require 'vagrant-linode/errors'
+require 'vagrant-linode/services/volume_manager'
 
 module VagrantPlugins
   module Linode
@@ -122,21 +123,21 @@ module VagrantPlugins
             datacenterid: datacenter_id,
             paymentterm: @machine.provider_config.paymentterm || 1
           )
-          env[:ui].info I18n.t('vagrant_linode.info.created', linodeid: result['linodeid'], label: (@machine.provider_config.label or "linode#{result['linodeid']}"))
-
-          # @client.linode.job.list(:linodeid => result['linodeid'], :pendingonly => 1)
-          # assign the machine id for reference in other commands
           @machine.id = result['linodeid'].to_s
+          env[:ui].info I18n.t('vagrant_linode.info.created', linodeid: @machine.id, label: (@machine.provider_config.label or "linode#{@machine.id}"))
+
+          # @client.linode.job.list(:linodeid => @machine.id, :pendingonly => 1)
+          # assign the machine id for reference in other commands
 
           disklist = []
 
           if stackscript_id
             disk = @client.linode.disk.createfromstackscript(
-              linodeid: result['linodeid'],
+              linodeid: @machine.id,
               stackscriptid: stackscript_id,
               stackscriptudfresponses: JSON.dump(stackscript_udf_responses),
               distributionid: distribution_id,
-              label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
+              label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + @machine.id,
               type: 'ext4',
               size: xvda_size,
               rootsshkey: pubkey,
@@ -145,9 +146,9 @@ module VagrantPlugins
             disklist.push(disk['diskid'])
           elsif distribution_id
             disk = @client.linode.disk.createfromdistribution(
-              linodeid: result['linodeid'],
+              linodeid: @machine.id,
               distributionid: distribution_id,
-              label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + result['linodeid'].to_s,
+              label: 'Vagrant Disk Distribution ' + distribution_id.to_s + ' Linode ' + @machine.id,
               type: 'ext4',
               size: xvda_size,
               rootsshkey: pubkey,
@@ -156,9 +157,9 @@ module VagrantPlugins
             disklist.push(disk['diskid'])
           elsif image_id
             disk = @client.linode.disk.createfromimage(
-              linodeid: result['linodeid'],
+              linodeid: @machine.id,
               imageid: image_id,
-              label: 'Vagrant Disk Image (' + image_id.to_s + ') for ' + result['linodeid'].to_s,
+              label: 'Vagrant Disk Image (' + image_id.to_s + ') for ' + @machine.id,
               size: xvda_size,
               rootsshkey: pubkey,
               rootpass: root_pass
@@ -170,7 +171,7 @@ module VagrantPlugins
 
           if swap_size > 0
             swap = @client.linode.disk.create(
-              linodeid: result['linodeid'],
+              linodeid: @machine.id,
               label: 'Vagrant swap',
               type: 'swap',
               size: swap_size
@@ -183,8 +184,8 @@ module VagrantPlugins
           if xvdc_size > 0
             xvdc_type = @machine.provider_config.xvdc_type.is_a?(Vagrant::Config::V2::DummyConfig) ? "raw" : @machine.provider_config.xvdc_type
             xvdc = @client.linode.disk.create(
-              linodeid: result['linodeid'],
-              label: 'Vagrant Leftover Disk Linode ' + result['linodeid'].to_s,
+              linodeid: @machine.id,
+              label: 'Vagrant Leftover Disk Linode ' + @machine.id,
               type: xvdc_type,
               size: xvdc_size,
             )
@@ -194,7 +195,7 @@ module VagrantPlugins
           end
 
           config = @client.linode.config.create(
-            linodeid: result['linodeid'],
+            linodeid: @machine.id,
             label: 'Vagrant Config',
             disklist: disklist.join(','),
             kernelid: kernel_id
@@ -202,7 +203,7 @@ module VagrantPlugins
 
           # @todo: allow provisioning to set static configuration for networking
           if @machine.provider_config.private_networking
-            private_network = @client.linode.ip.addprivate linodeid: result['linodeid']
+            private_network = @client.linode.ip.addprivate linodeid: @machine.id
           end
 
           label = @machine.provider_config.label
@@ -212,16 +213,18 @@ module VagrantPlugins
           group = @machine.provider_config.group
           group = "" if @machine.provider_config.group == false
 
+          Services::VolumeManager.new(@machine, @client.volume, env[:ui]).perform
+
           result = @client.linode.update(
-            linodeid: result['linodeid'],
+            linodeid: @machine.id,
             label: label,
             lpm_displaygroup: group
           )
 
-          env[:ui].info I18n.t('vagrant_linode.info.booting', linodeid: result['linodeid'])
+          env[:ui].info I18n.t('vagrant_linode.info.booting', linodeid: @machine.id)
 
-          bootjob = @client.linode.boot linodeid: result['linodeid']
-          # sleep 1 until ! @client.linode.job.list(:linodeid => result['linodeid'], :jobid => bootjob['jobid'], :pendingonly => 1).length
+          bootjob = @client.linode.boot linodeid: @machine.id
+          # sleep 1 until ! @client.linode.job.list(:linodeid => @machine.id, :jobid => bootjob['jobid'], :pendingonly => 1).length
           wait_for_event(env, bootjob['jobid'])
 
           # refresh linode state with provider and output ip address

@@ -52,6 +52,7 @@ en:
       kernelid_or_kernel: "Use either kernelid or kernel, not both"
       imageid_or_image: "Use either imageid or image, not both"
       distribution_or_image: "Distribution can not be specified with Image options"
+      volumes: "Volumes must be an array of disks"
     errors:
       public_key: |-
         There was an issue reading the public key at:
@@ -133,3 +134,5 @@ en:
         Supported distributions can be found at the following url - https://manager.linode.com/stackscripts
       stackscript_udf_responses: !-
         The stackscript UDF responses object provided is of the wrong type. It should be a Hash.
+      volume_size_missing: For volumes that need to be created the size has to be specified.
+      volume_label_missing: You must specify a volume label.

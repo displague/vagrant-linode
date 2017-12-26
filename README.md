@@ -176,9 +176,27 @@ curl -X POST "https://api.linode.com/?api_action=avail.kernels" \
 
 More detail: [Linode API - Kernels](https://www.linode.com/api/utility/avail.kernels)
 
+### provider.volumes - [Volume Handling](https://www.linode.com/docs/platform/how-to-use-block-storage-with-your-linode/)
+
+The plugin can create and attach additional volumes when creating Linodes. `vagrant rebuild` calls will rebuild the VM only and reattach the volume afterwards without losing the contents.
+
+```rb
+config.vm.provider :linode do |linode|
+  linode.plan = "Linode 2048"
+  linode.volumes = [
+    {label: "extra_volume", size: 1},
+  ]
+end
+```
+
+NOTES:
+* The volume needs to be formatted and mounted inside the VM either manually or by a StackScript, etc.
+* The plugin doesn't do any volume metadata management. If a volume is renamed the next `vagrant up` call will create a new one.
+* Running `vagrant destroy` will **NOT** destroy the volumes.
+
 ### nfs.functional
 
-The sync provider, NFS, has been disabled to make rsync easier to use.  To enable NFS, 
+The sync provider, NFS, has been disabled to make rsync easier to use.  To enable NFS,
 run Vagrant with an environment variable `LINODE_NFS_FUNCTIONAL=1`.  This will require
 a bit more configuration between the Linode and the Vagrant host.
 
@@ -193,7 +211,7 @@ command:
 This command will create a new linode, setup your SSH key for authentication,
 create a new user account, and run the provisioners you have configured.
 
-The  environment variable `VAGRANT_DEFAULT_PROVIDER` can be set to `linode` to avoid sending `--provider=linode` on each `vagrant up`. 
+The  environment variable `VAGRANT_DEFAULT_PROVIDER` can be set to `linode` to avoid sending `--provider=linode` on each `vagrant up`.
 
 **Supported Commands**
 

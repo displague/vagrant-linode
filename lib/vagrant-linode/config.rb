@@ -26,6 +26,7 @@ module VagrantPlugins
       attr_accessor :kernel
       attr_accessor :label
       attr_accessor :group
+      attr_accessor :volumes
 
       alias_method :setup?, :setup
 
@@ -57,6 +58,7 @@ module VagrantPlugins
         @kernel             = UNSET_VALUE
         @label              = UNSET_VALUE
         @group              = UNSET_VALUE
+        @volumes            = UNSET_VALUE
       end
 
       def finalize!
@@ -90,6 +92,7 @@ module VagrantPlugins
         @kernel             = 'Latest 64 bit' if @kernel.nil? and @kernelid.nil?
         @label              = false if @label == UNSET_VALUE
         @group              = false if @group == UNSET_VALUE
+        @volumes            = [] if @volumes == UNSET_VALUE
       end
 
       def validate(machine)
@@ -132,6 +135,10 @@ module VagrantPlugins
 
         if (@distribution or @distributionid) and (@imageid or @image)
           errors << I18n.t('vagrant_linode.config.distribution_or_image')
+        end
+
+        if !@volumes.is_a? Array
+          errors << I18n.t("vagrant_linode.config.volumes")
         end
 
         { 'Linode Provider' => errors }
