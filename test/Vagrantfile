@@ -2,20 +2,21 @@
 # vi: set ft=ruby :
 
 Vagrant.configure('2') do |config|
-  config.ssh.username = 'tester'
-  config.ssh.private_key_path = './test_id_rsa'
+  #config.ssh.username = 'tester'
+  config.ssh.private_key_path = '~/.ssh/id_rsa'
 
-  config.vm.synced_folder '.', '/vagrant', disabled: true
+  #config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.network 'forwarded_port', guest: 8080, host: 80
 
   config.vm.provider :linode do |provider, override|
     override.vm.box = 'linode'
-    override.vm.box_url = 'https://github.com/displague/vagrant-linode/raw/master/box/linode.box'
     provider.api_key = ENV['LINODE_API_KEY']
     provider.ssh_key_name = 'Test Key'
     provider.distribution = 'Debian 8'
     provider.datacenter = 'newark'
     provider.plan = '2048'
     provider.label = 'vagrant-'+Time.new.strftime("%F%T").gsub(/[^0-9]/,'')
+
 
     # Disk Image Sizes (Optional configuration)
 
@@ -39,17 +40,18 @@ Vagrant.configure('2') do |config|
     # provider.private_networking = true
   end
 
-  config.vm.provision :shell, path: 'scripts/provision.sh'
+  #config.vm.provision :shell, path: 'scripts/provision.sh'
 
-  config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = 'cookbooks'
-    chef.add_recipe 'test'
-  end
+  #config.vm.provision :chef_solo do |chef|
+  #  chef.cookbooks_path = 'cookbooks'
+  #  chef.add_recipe 'test'
+  #end
 
   # Linode Specific Configurations
   config.vm.define :ubuntu do |ubuntu|
     ubuntu.vm.provider :linode do |provider|
-      provider.distribution = 'Ubuntu 14.04 LTS'
+      provider.distribution = 'Ubuntu 16.04'
+      config.vm.provision :shell, inline: 'sudo apt-get install -y apache2'
 
       # Optional Settings
       provider.label = 'Vagrant-Ubuntu'
