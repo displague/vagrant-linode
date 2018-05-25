@@ -92,8 +92,14 @@ module VagrantPlugins
           end
 
           if @machine.provider_config.plan
+            plan_label = @machine.provider_config.plan.match(/ (\d{4,})$/).captures
+            if plan_label
+              plan_label = plan_label / 1024 + "GB"
+            else
+              plan_label = @machine.provider_config.plan
+            end
             plans = @client.avail.linodeplans
-            plan = plans.find { |p| p.label.include? @machine.provider_config.plan }
+            plan = plans.find { |p| p.label.include? plan_label }
             fail Errors::PlanID, plan: @machine.provider_config.plan if plan.nil?
             plan_id = plan.planid
           else
