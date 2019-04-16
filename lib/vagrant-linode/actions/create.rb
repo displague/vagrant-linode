@@ -1,4 +1,5 @@
 require 'vagrant-linode/helpers/client'
+require 'vagrant-linode/helpers/normalizer'
 require 'vagrant-linode/helpers/waiter'
 require 'vagrant-linode/errors'
 require 'vagrant-linode/services/volume_manager'
@@ -8,6 +9,7 @@ module VagrantPlugins
     module Actions
       class Create
         include Vagrant::Util::Retryable
+        include VagrantPlugins::Linode::Helpers::Normalizer
         include VagrantPlugins::Linode::Helpers::Waiter
 
         def initialize(app, env)
@@ -92,8 +94,9 @@ module VagrantPlugins
           end
 
           if @machine.provider_config.plan
+            plan_label = normalize_plan_label(@machine.provider_config.plan)
             plans = @client.avail.linodeplans
-            plan = plans.find { |p| p.label.include? @machine.provider_config.plan }
+            plan = plans.find { |p| p.label.include? plan_label }
             fail Errors::PlanID, plan: @machine.provider_config.plan if plan.nil?
             plan_id = plan.planid
           else

@@ -39,9 +39,11 @@ Vagrant.configure('2') do |config|
     override.vm.box = 'linode/ubuntu1404'
 
     provider.api_key = 'API_KEY'
-    provider.distribution = 'Ubuntu 16.04 LTS'
+    provider.distribution = 'Ubuntu 18.04 LTS'
     provider.datacenter = 'newark'
-    provider.plan = 'Linode 2048'
+    provider.plan = 'Linode 2GB' # This will work
+    # provider.plan = 'Linode 2048' # This will still work
+    # provider.plan = 'Linode 2' # This may work, but may be ambiguous
     # provider.planid = <int>
     # provider.paymentterm = <*1*,12,24>
     # provider.datacenterid = <int>
