@@ -97,25 +97,32 @@ attribute is `true`.
 
 ### provider.plan
 
-Each Linode Tier has been assigned a Plan Identifcation Number.
-Current (Feb 2017) Plan-ID table follows:
+Each Linode Tier has been assigned a Plan Identification Number.
+Current (April 2019) Plan-ID table follows:
 
-| PlanID  | Plan                          |
-|:------- |:----------------------------- |
-|    1    |   1GB Standard (Linode 1024)  |
-|    2    |   2GB Standard (Linode 2048)  |
-|    3    |   4GB Standard (Linode 4096)  |
-|    4    |   8GB Standard (Linode 8192)  |
-|    5    |  12GB Standard (Linode 12288) |
-|    6    |  24GB Standard (Linode 24576) |
-|    7    |  48GB Standard (Linode 49152) |
-|    8    |  64GB Standard (Linode 65536) |
-|    9    |  80GB Standard (Linode 81920) |
-|   10    |  16GB HighMem (Linode 16384)  |
-|   11    |  32GB HighMem (Linode 32768)  |
-|   12    |  60GB HighMem (Linode 61440)  |
-|   13    | 100GB HighMem (Linode 102400) |
-|   14    | 200GB HighMem (Linode 204800) |
+| Plan ID | Plan Name      |
+|:------- |:-------------- |
+| 1       | Nanode 1GB     |
+| 2       | Linode 2GB     |
+| 3       | Linode 4GB     |
+| 4       | Linode 8GB     |
+| 5       | Linode 16GB    |
+| 6       | Linode 32GB    |
+| 7       | Linode 64GB    |
+| 8       | Linode 96GB    |
+| 9       | Linode 128GB   |
+| 10      | Linode 192GB   |
+| 11      | Linode 24GB    |
+| 12      | Linode 48GB    |
+| 13      | Linode 90GB    |
+| 14      | Linode 150GB   |
+| 15      | Linode 300GB   |
+| 16      | Dedicated 4GB  |
+| 17      | Dedicated 8GB  |
+| 18      | Dedicated 16GB |
+| 19      | Dedicated 32GB |
+| 20      | Dedicated 64GB |
+| 21      | Dedicated 96GB |
 
 This can be obtained through vagrant with:
 ```
